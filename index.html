@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rebecca Wipfler</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: #020d18;
+      color: #e0f4f8;
+      overflow-x: hidden;
+    }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.2rem;
+      gap: 1.8rem;
+    }
+
+    nav a {
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: rgba(0, 220, 200, 0.4);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    nav a:hover { color: #00dcc8; }
+
+    nav .nav-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(0, 220, 200, 0.2);
+      transition: background 0.3s;
+    }
+
+    nav a:hover + .nav-dot,
+    nav .nav-dot:hover { background: #00dcc8; }
+
+    /* ── Depth meter ── */
+    #depth-meter {
+      position: fixed;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      color: rgba(0, 220, 200, 0.25);
+      writing-mode: vertical-lr;
+      letter-spacing: 0.15em;
+      z-index: 100;
+    }
+
+    /* ── Sections ── */
+    section {
+      min-height: 100vh;
+      padding: 6rem 5rem 4rem 3rem;
+      position: relative;
+    }
+
+    /* ── Hero / Surface ── */
+    #hero {
+      background: linear-gradient(to bottom, #0a6ebd 0%, #083d72 40%, #041e3a 75%, #020d18 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 0;
+    }
+
+    .wave {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: linear-gradient(to bottom, #1a8ad4, transparent);
+      opacity: 0.4;
+    }
+
+    #hero h1 {
+      font-size: 3rem;
+      font-weight: normal;
+      color: #e8f4f8;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    #hero .subtitle {
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: rgba(0, 220, 200, 0.7);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    #hero .tagline {
+      font-size: 1.1rem;
+      color: rgba(180, 220, 240, 0.75);
+      max-width: 520px;
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+    }
+
+    .dive-btn {
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: rgba(0, 220, 200, 0.8);
+      text-decoration: none;
+      text-transform: uppercase;
+      border: 0.5px solid rgba(0, 220, 200, 0.3);
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .dive-btn:hover {
+      background: rgba(0, 220, 200, 0.08);
+      color: #00dcc8;
+      border-color: rgba(0, 220, 200, 0.6);
+    }
+
+    /* ── Zone labels ── */
+    .zone-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: rgba(0, 220, 200, 0.2);
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0.5rem 0;
+      background: transparent;
+    }
+
+    /* ── About ── */
+    #about {
+      background: linear-gradient(to bottom, #020d18, #010810);
+    }
+
+    /* ── Expeditions ── */
+    #expeditions {
+      background: linear-gradient(to bottom, #010810, #000508);
+    }
+
+    /* ── Research ── */
+    #research {
+      background: linear-gradient(to bottom, #000508, #000306);
+    }
+
+    /* ── Creative ── */
+    #creative {
+      background: linear-gradient(to bottom, #000306, #000205);
+    }
+
+    /* ── Contact ── */
+    #contact {
+      background: #000205;
+    }
+
+    /* ── Section headings ── */
+    .sec-head {
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #00dcc8;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      padding-left: 0.8rem;
+      border-left: 2px solid #00dcc8;
+    }
+
+    /* ── Content cards ── */
+    .card {
+      background: rgba(0, 220, 200, 0.04);
+      border: 0.5px solid rgba(0, 220, 200, 0.12);
+      border-radius: 6px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      max-width: 640px;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: rgba(200, 230, 240, 0.9);
+      margin-bottom: 0.4rem;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: rgba(150, 200, 220, 0.65);
+      line-height: 1.7;
+    }
+
+    .card .meta {
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      color: rgba(0, 220, 200, 0.45);
+      margin-top: 0.5rem;
+    }
+
+    /* ── Stat row ── */
+    .stats {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat .n {
+      font-family: 'Courier New', monospace;
+      font-size: 2rem;
+      color: #00dcc8;
+      display: block;
+    }
+
+    .stat .l {
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      color: rgba(150, 200, 220, 0.5);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Bio block ── */
+    .bio {
+      font-size: 1.05rem;
+      color: rgba(175, 215, 232, 0.75);
+      line-height: 1.9;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+    }
+
+    .bio a {
+      color: rgba(0, 200, 180, 0.7);
+      text-decoration: none;
+      border-bottom: 0.5px solid rgba(0, 200, 180, 0.3);
+      transition: color 0.2s;
+    }
+
+    .bio a:hover { color: #00dcc8; }
+
+    /* ── Expedition log ── */
+    .exp-entry {
+      display: flex;
+      gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 0.5px solid rgba(0, 220, 200, 0.06);
+      max-width: 640px;
+    }
+
+    .exp-entry:last-child { border-bottom: none; }
+
+    .exp-year {
+      font-family: 'Courier New', monospace;
+      font-size: 0.7rem;
+      color: rgba(0, 220, 200, 0.4);
+      width: 42px;
+      flex-shrink: 0;
+      padding-top: 3px;
+    }
+
+    .exp-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .exp-content h3 {
+      font-size: 0.95rem;
+      font-weight: normal;
+      color: rgba(200, 230, 240, 0.88);
+      margin-bottom: 0.25rem;
+    }
+
+    .exp-content p {
+      font-size: 0.85rem;
+      color: rgba(120, 175, 205, 0.6);
+      line-height: 1.6;
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: 'Courier New', monospace;
+      font-size: 0.6rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 8px;
+      margin-top: 0.4rem;
+      margin-right: 0.3rem;
+    }
+
+    /* ── Contact ── */
+    .contact-link {
+      display: block;
+      font-size: 0.95rem;
+      color: rgba(0, 220, 200, 0.65);
+      text-decoration: none;
+      padding: 0.6rem 0;
+      border-bottom: 0.5px solid rgba(0, 220, 200, 0.07);
+      transition: color 0.2s;
+      max-width: 400px;
+    }
+
+    .contact-link:hover { color: #00dcc8; }
+
+    /* ── Bioluminescent particles ── */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #010810; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 220, 200, 0.2); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- Depth meter -->
+  <div id="depth-meter">0m &nbsp;&nbsp; 200m &nbsp;&nbsp; 1000m &nbsp;&nbsp; 4000m &nbsp;&nbsp; 6500m</div>
+
+  <!-- Navigation -->
+  <nav>
+    <a href="#about">About</a>
+    <div class="nav-dot"></div>
+    <a href="#expeditions">Expeditions</a>
+    <div class="nav-dot"></div>
+    <a href="#research">Research</a>
+    <div class="nav-dot"></div>
+    <a href="#creative">Creative</a>
+    <div class="nav-dot"></div>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <!-- ══ HERO — Surface ══ -->
+  <section id="hero">
+    <div class="wave"></div>
+    <h1>Rebecca Wipfler</h1>
+    <div class="subtitle">Deep-Sea Ecologist &nbsp;·&nbsp; PhD Candidate, Caltech</div>
+    <p class="tagline">
+      I study microbial life where sunlight never reaches — hydrothermal vents,
+      methane seeps, and the abyssal seafloor. I've descended in HOV Alvin,
+      sailed on E/V Nautilus, and logged expeditions from Alaska to American Samoa.
+    </p>
+    <a href="#about" class="dive-btn">Dive in ↓</a>
+  </section>
+
+  <div class="zone-label">— Twilight Zone · 200–1000m —</div>
+
+  <!-- ══ ABOUT ══ -->
+  <section id="about">
+    <div class="sec-head">About</div>
+
+    <div class="stats">
+      <div class="stat"><span class="n">2</span><span class="l">Alvin dives</span></div>
+      <div class="stat"><span class="n">14</span><span class="l">Expeditions</span></div>
+      <div class="stat"><span class="n">5</span><span class="l">Research vessels</span></div>
+      <div class="stat"><span class="n">6,500m</span><span class="l">Max depth</span></div>
+    </div>
+
+    <p class="bio">
+      I'm a PhD candidate in Geological & Planetary Sciences at Caltech, working in the
+      <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a> under
+      Dr. Victoria Orphan. My research focuses on in-situ microbial activity in the deep
+      ocean — the invisible ecosystems sustained by chemistry rather than sunlight.
+      <br><br>
+      Before the deep sea pulled me in, I was hiking into Yellowstone's backcountry
+      to collect thermophilic microbes from boiling springs — a different kind of
+      extreme environment, and where the obsession with chemosynthesis began.
+      I'm also an
+      <a href="https://nautiluslive.org/people/rebecca-wipfler" target="_blank">Ocean Exploration Trust alumni</a>,
+      having joined E/V Nautilus first as an intern and later as Science Manager in Training.
+    </p>
+
+    <div class="card">
+      <h3>NSF Graduate Research Fellow</h3>
+      <p>Nationally competitive fellowship recognizing exceptional early-career research potential in STEM.</p>
+      <div class="meta">2020–2025 &nbsp;·&nbsp; National Science Foundation</div>
+    </div>
+
+    <div class="card">
+      <h3>PhD Candidate — Caltech</h3>
+      <p>Thesis: <em>In-situ Microbial Activity in the Deep Ocean</em></p>
+      <div class="meta">2019–present &nbsp;·&nbsp; Geological & Planetary Sciences</div>
+    </div>
+
+    <div class="card">
+      <h3>B.S. Molecular & Cellular Biology, Summa Cum Laude</h3>
+      <p>University of Illinois Urbana-Champaign</p>
+      <div class="meta">2015–2019</div>
+    </div>
+  </section>
+
+  <div class="zone-label">— Midnight Zone · 1000–4000m —</div>
+
+  <!-- ══ EXPEDITIONS ══ -->
+  <section id="expeditions">
+    <div class="sec-head">Sea adventures & expeditions</div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2025</div>
+      <div class="exp-dot" style="background:#378ADD;"></div>
+      <div class="exp-content">
+        <h3>HOV Alvin dive · AT50-24 — Aleutian Islands, Alaska</h3>
+        <p>Deep methane seep survey on the Aleutian margin. R/V Atlantis. High-pressure incubation systems and CTD deployments.</p>
+        <span class="tag" style="background:rgba(0,100,220,0.15);color:#85B7EB;">HOV Alvin</span>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">Methane seeps</span>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">Alaska</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2024</div>
+      <div class="exp-dot" style="background:#7ab8e0;"></div>
+      <div class="exp-content">
+        <h3>F/V Western Flyer day cruise — Monterey Bay</h3>
+        <p>Day cruise aboard the restored vessel made famous by John Steinbeck & Ed Ricketts' 1940 Sea of Cortez expedition. The most literary ship in oceanography.</p>
+        <span class="tag" style="background:rgba(100,160,220,0.15);color:#7ab8e0;">Day cruise</span>
+        <span class="tag" style="background:rgba(100,160,220,0.15);color:#7ab8e0;">Monterey Bay</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2023</div>
+      <div class="exp-dot" style="background:#378ADD;"></div>
+      <div class="exp-content">
+        <h3>HOV Alvin dive · AT50-12 — Southern California</h3>
+        <p>NSF Methane Seep Footprints project. Sediment, rock, and water sample collection for microbial and geochemical characterization at California margin seeps.</p>
+        <span class="tag" style="background:rgba(0,100,220,0.15);color:#85B7EB;">HOV Alvin</span>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">Methane seeps</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2023</div>
+      <div class="exp-dot" style="background:#5DCAA5;"></div>
+      <div class="exp-content">
+        <h3>R/V Yellowfin — California</h3>
+        <p>Led deployment of autonomous high-pressure water sampler. CTD operations and sample processing.</p>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">ROV cruise</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2021</div>
+      <div class="exp-dot" style="background:#5DCAA5;"></div>
+      <div class="exp-content">
+        <h3>R/V Western Flyer — California</h3>
+        <p>ROV Doc Ricketts dives. Managed high-pressure water sampler deployments and science team training.</p>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">ROV Doc Ricketts</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2021</div>
+      <div class="exp-dot" style="background:#5DCAA5;"></div>
+      <div class="exp-content">
+        <h3>R/V Falkor — Pescadero Basin, Mexico</h3>
+        <p>ROV SuBastian dives to hydrothermal vents. Custom deep ocean visualization system field test. Colonization array deployments.</p>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">ROV SuBastian</span>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">Hydrothermal vents</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2020</div>
+      <div class="exp-dot" style="background:#5DCAA5;"></div>
+      <div class="exp-content">
+        <h3>R/V Western Flyer — California</h3>
+        <p>Equipment preparation, ROV deployments, and bathymetry analysis for sample site selection.</p>
+        <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">ROV cruise</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2018–19</div>
+      <div class="exp-dot" style="background:#AFA9EC;"></div>
+      <div class="exp-content">
+        <h3>E/V Nautilus · Science Manager in Training — Hawaii & American Samoa</h3>
+        <p>Coordinated science operations across multiple cruises aboard Robert Ballard's exploration vessel. Managed ROV deployment records for international distribution. Supervised ocean science interns.</p>
+        <span class="tag" style="background:rgba(100,80,200,0.15);color:#AFA9EC;">E/V Nautilus</span>
+        <span class="tag" style="background:rgba(100,80,200,0.15);color:#AFA9EC;">Ocean Exploration Trust</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2017</div>
+      <div class="exp-dot" style="background:#AFA9EC;"></div>
+      <div class="exp-content">
+        <h3>E/V Nautilus · Ocean Science Intern — Pacific Northwest</h3>
+        <p>Quinault Canyon & Heceta Bank cruises. Sample collection, ROV operations, and live Ship-to-Shore broadcasts.</p>
+        <span class="tag" style="background:rgba(100,80,200,0.15);color:#AFA9EC;">E/V Nautilus</span>
+        <span class="tag" style="background:rgba(100,80,200,0.15);color:#AFA9EC;">Pacific Northwest</span>
+      </div>
+    </div>
+
+    <div class="exp-entry">
+      <div class="exp-year">2015–19</div>
+      <div class="exp-dot" style="background:#EF9F27;"></div>
+      <div class="exp-content">
+        <h3>Yellowstone field research — NASA Astrobiology Institute, UIUC</h3>
+        <p>Backcountry sample collection from remote hydrothermal springs. Studying Sulfolobus islandicus with Dr. Rachel Whitaker. Where the obsession with chemosynthesis began.</p>
+        <span class="tag" style="background:rgba(180,120,0,0.15);color:#EF9F27;">Field research</span>
+        <span class="tag" style="background:rgba(180,120,0,0.15);color:#EF9F27;">Extremophiles</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="zone-label">— Abyssal Zone · 4000–6500m —</div>
+
+  <!-- ══ RESEARCH ══ -->
+  <section id="research">
+    <div class="sec-head">Research & publications</div>
+
+    <div class="card">
+      <h3>Cryptic methane cycling and methylotrophic metabolisms in salt marsh sediment</h3>
+      <p>Krause, S.J., Wipfler, R., et al.</p>
+      <div class="meta">Geochimica et Cosmochimica Acta · 2025</div>
+    </div>
+
+    <div class="card">
+      <h3>DeepSee: multidimensional visualizations of seabed ecosystems</h3>
+      <p>Coscia, A., Sapers, H.M., ... Wipfler, R.L., et al.</p>
+      <div class="meta">CHI Conference on Human Factors in Computing Systems · 2024</div>
+    </div>
+
+    <div class="card">
+      <h3>Diversity and single-cell activity of endolithic microbes in sediment-hosted carbonate nodules</h3>
+      <p>Parra, S.A., ... Wipfler, R.L., Orphan, V.J.</p>
+      <div class="meta">bioRxiv · In progress, 2025</div>
+    </div>
+
+    <div class="card">
+      <h3>Enigmatic seamounts: exploring the geologic origins and biological communities in Papahānaumokuākea Marine National Monument</h3>
+      <p>Kelley, C.; Hourigan, T.; ... Wipfler, R.; et al.</p>
+      <div class="meta">Oceanography · 2019</div>
+    </div>
+  </section>
+
+  <!-- ══ CREATIVE ══ -->
+  <section id="creative">
+    <div class="sec-head">Creative projects</div>
+
+    <div class="card">
+      <h3>Photography</h3>
+      <p>Expedition and underwater images from the field — coming soon.</p>
+    </div>
+
+    <div class="card">
+      <h3>Field notes</h3>
+      <p>Writing from sea — dispatches, observations, and stories from the deep — coming soon.</p>
+    </div>
+
+    <div class="card">
+      <h3>Video</h3>
+      <p>Footage from Alvin dives and ROV expeditions — coming soon.</p>
+    </div>
+  </section>
+
+  <div class="zone-label">— Hadal Zone · &gt;6000m —</div>
+
+  <!-- ══ CONTACT ══ -->
+  <section id="contact">
+    <div class="sec-head">Contact</div>
+
+    <a class="contact-link" href="mailto:rlwipfler@gmail.com">rlwipfler@gmail.com</a>
+    <a class="contact-link" href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab, Caltech</a>
+    <a class="contact-link" href="https://nautiluslive.org/people/rebecca-wipfler" target="_blank">Nautilus Live profile</a>
+    <a class="contact-link" href="https://www.dla.whoi.edu/cruises/9c80219a-3507-4bb3-8fab-1b4b18f8c307" target="_blank">AT50-24 cruise page (WHOI)</a>
+
+    <p style="margin-top:3rem;font-family:'Courier New',monospace;font-size:0.6rem;color:rgba(0,220,200,0.15);letter-spacing:0.2em;">
+      — DEEPEST POINT REACHED —
+    </p>
+  </section>
+
+  <!-- Bioluminescent particles -->
+  <script>
+    const body = document.body;
+    for (let i = 0; i < 60; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1;
+      const colors = ['rgba(0,220,200,', 'rgba(100,180,255,', 'rgba(50,220,180,'];
+      const col = colors[Math.floor(Math.random() * colors.length)];
+      p.style.cssText = `
+        width:${size}px; height:${size}px;
+        left:${Math.random()*98}%;
+        top:${Math.random()*100}%;
+        background:${col}${(0.2 + Math.random()*0.5)});
+        position:fixed;
+        pointer-events:none;
+        z-index:0;
+      `;
+      body.appendChild(p);
+    }
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))
+          .scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
