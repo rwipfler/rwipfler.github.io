@@ -3,199 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Expeditions · Rebecca Wipfler</title>
+  <title>Scientific Expeditions · Rebecca Wipfler</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Georgia', serif; background: #020d18; color: #e0f4f8; }
 
-    body {
-      font-family: 'Georgia', serif;
-      background: #020d18;
-      color: #e0f4f8;
-    }
-
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1.2rem;
-      gap: 1.8rem;
-    }
-    nav a {
-      writing-mode: vertical-lr;
-      font-family: 'Courier New', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      color: rgba(0,220,200,0.5);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
+    nav { position: fixed; top: 0; right: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 2rem 1.2rem; gap: 1.8rem; }
+    nav a { writing-mode: vertical-lr; font-family: 'Courier New', monospace; font-size: 0.65rem; letter-spacing: 0.15em; color: rgba(0,220,200,0.5); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
     nav a:hover { color: #00dcc8; }
 
-    /* ── Page header ── */
-    .page-header {
-      padding: 5rem 3rem 2rem;
-      border-bottom: 0.5px solid rgba(0,220,200,0.08);
-    }
-    .page-header h1 {
-      font-size: 2.2rem;
-      font-weight: normal;
-      color: #e8f4f8;
-      margin-bottom: 0.4rem;
-    }
-    .page-header .sub {
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      color: rgba(0,220,200,0.55);
-      text-transform: uppercase;
-    }
+    .page-header { padding: 5rem 3rem 2rem; border-bottom: 0.5px solid rgba(0,220,200,0.08); }
+    .page-header h1 { font-size: 2.2rem; font-weight: normal; color: #e8f4f8; margin-bottom: 0.4rem; }
+    .page-header .sub { font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(0,220,200,0.55); text-transform: uppercase; }
 
-    /* ── Stats row ── */
-    .stats-row {
-      display: flex;
-      gap: 2rem;
-      padding: 1.5rem 3rem;
-      border-bottom: 0.5px solid rgba(0,220,200,0.06);
-    }
+    .stats-row { display: flex; gap: 2rem; padding: 1.5rem 3rem; border-bottom: 0.5px solid rgba(0,220,200,0.06); flex-wrap: wrap; }
     .stat { text-align: center; }
-    .stat .n {
-      font-family: 'Courier New', monospace;
-      font-size: 1.8rem;
-      color: #00dcc8;
-      display: block;
-    }
-    .stat .l {
-      font-family: 'Courier New', monospace;
-      font-size: 0.6rem;
-      color: rgba(150,200,220,0.45);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
+    .stat .n { font-family: 'Courier New', monospace; font-size: 1.8rem; color: #00dcc8; display: block; }
+    .stat .l { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
 
-    /* ── Section headings ── */
-    .sec-head {
-      font-family: 'Courier New', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
-      color: #00dcc8;
-      text-transform: uppercase;
-      padding-left: 0.8rem;
-      border-left: 2px solid #00dcc8;
-      margin-bottom: 0.8rem;
-    }
+    .sec-head { font-family: 'Courier New', monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: #00dcc8; text-transform: uppercase; padding-left: 0.8rem; border-left: 2px solid #00dcc8; margin-bottom: 0.8rem; }
 
-    /* ── Globe section ── */
-    #globe-section {
-      padding: 2.5rem 3rem;
-      border-bottom: 0.5px solid rgba(0,220,200,0.06);
-    }
-    #globe-hint {
-      font-family: 'Courier New', monospace;
-      font-size: 0.6rem;
-      color: rgba(0,220,200,0.35);
-      letter-spacing: 0.1em;
-      margin-bottom: 0.8rem;
-    }
-    #globe-wrap {
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 0.5px solid rgba(0,220,200,0.12);
-      max-width: 800px;
-    }
-    #globe-svg {
-      display: block;
-      width: 100%;
-      cursor: grab;
-    }
+    #globe-section { padding: 2.5rem 3rem; border-bottom: 0.5px solid rgba(0,220,200,0.06); }
+    #globe-hint { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(0,220,200,0.35); letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    #globe-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 0.5px solid rgba(0,220,200,0.12); max-width: 800px; }
+    #globe-svg { display: block; width: 100%; cursor: grab; }
     #globe-svg:active { cursor: grabbing; }
-    #globe-controls {
-      position: absolute;
-      bottom: 10px; right: 10px;
-      display: flex; flex-direction: column; gap: 4px;
-      z-index: 20;
-    }
-    .globe-btn {
-      width: 28px; height: 28px;
-      background: rgba(2,13,24,0.85);
-      border: 0.5px solid rgba(0,220,200,0.35);
-      border-radius: 4px;
-      color: rgba(0,220,200,0.85);
-      font-size: 16px; line-height: 1;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-family: monospace;
-      transition: background 0.2s;
-      user-select: none;
-    }
+    #globe-controls { position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
+    .globe-btn { width: 28px; height: 28px; background: rgba(2,13,24,0.85); border: 0.5px solid rgba(0,220,200,0.35); border-radius: 4px; color: rgba(0,220,200,0.85); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: monospace; transition: background 0.2s; user-select: none; }
     .globe-btn:hover { background: rgba(0,220,200,0.12); }
-    #globe-tooltip {
-      position: absolute;
-      background: rgba(2,10,20,0.96);
-      border: 0.5px solid rgba(0,220,200,0.4);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.7rem;
-      color: rgba(200,230,240,0.9);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.15s;
-      z-index: 10;
-      max-width: 200px;
-    }
+    #globe-tooltip { position: absolute; background: rgba(2,10,20,0.96); border: 0.5px solid rgba(0,220,200,0.4); border-radius: 8px; padding: 8px 12px; font-size: 0.7rem; color: rgba(200,230,240,0.9); pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 10; max-width: 210px; }
     .gt-name { font-size: 0.75rem; font-weight: bold; color: #00dcc8; margin-bottom: 3px; }
     .gt-body { font-size: 0.65rem; color: rgba(180,220,240,0.75); margin-bottom: 2px; line-height: 1.4; }
     .gt-sub  { font-size: 0.6rem; color: rgba(0,200,180,0.5); font-family: 'Courier New', monospace; }
-    #globe-legend {
-      display: flex;
-      gap: 1.2rem;
-      flex-wrap: wrap;
-      margin-top: 0.8rem;
-    }
-    .leg-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.6rem;
-      color: rgba(150,200,220,0.55);
-    }
-    .leg-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    #globe-legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.8rem; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.55); }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    /* ── Depth section ── */
-    #depth-section {
-      padding: 2.5rem 0 0;
-    }
-    #depth-section .sec-head {
-      margin-left: 3rem;
-    }
-    #depth-section #depth-hint {
-      font-family: 'Courier New', monospace;
-      font-size: 0.6rem;
-      color: rgba(0,220,200,0.35);
-      letter-spacing: 0.1em;
-      margin: 0 0 0.8rem 3rem;
-    }
-    #depth-outer {
-      overflow-x: auto;
-      cursor: grab;
-    }
-    #depth-outer:active { cursor: grabbing; }
-    #depth-outer::-webkit-scrollbar { height: 3px; }
-    #depth-outer::-webkit-scrollbar-track { background: transparent; }
-    #depth-outer::-webkit-scrollbar-thumb { background: rgba(0,220,200,0.2); border-radius: 2px; }
-    #depth-canvas {
-      display: block;
-    }
+    #depth-section { padding: 2.5rem 0 2rem; }
+    #depth-section .sec-head { margin-left: 3rem; }
+    #depth-hint { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(0,220,200,0.35); letter-spacing: 0.1em; margin: 0 0 0.8rem 3rem; }
+    #depth-canvas { display: block; width: 100%; }
   </style>
 </head>
 <body>
@@ -208,19 +55,17 @@
 </nav>
 
 <div class="page-header">
-  <h1>Sea adventures & expeditions</h1>
+  <h1>Scientific Expeditions</h1>
   <div class="sub">12 expeditions · 5 research vessels · 2 Alvin dives · 2017–2025</div>
 </div>
 
 <div class="stats-row">
-  <div class="stat"><span class="n">2</span><span class="l">Alvin dives</span></div>
   <div class="stat"><span class="n">12</span><span class="l">Expeditions</span></div>
   <div class="stat"><span class="n">5</span><span class="l">Research vessels</span></div>
   <div class="stat"><span class="n">~5,500m</span><span class="l">Max depth</span></div>
-  <div class="stat"><span class="n">2017–25</span><span class="l">Years at sea</span></div>
+  <div class="stat"><span class="n">~110</span><span class="l">Days at sea</span></div>
 </div>
 
-<!-- Globe -->
 <div id="globe-section">
   <div class="sec-head">Expedition map</div>
   <div id="globe-hint">drag to rotate · scroll to zoom · hover for details · click to open expedition page</div>
@@ -232,483 +77,352 @@
       <div class="gt-sub"  id="gt-sub"></div>
     </div>
     <div id="globe-controls">
-      <div class="globe-btn" id="zoom-in"  title="Zoom in">+</div>
-      <div class="globe-btn" id="zoom-out" title="Zoom out">−</div>
-      <div class="globe-btn" id="zoom-reset" title="Reset" style="font-size:11px;">⟳</div>
+      <div class="globe-btn" id="zoom-in">+</div>
+      <div class="globe-btn" id="zoom-out">−</div>
+      <div class="globe-btn" id="zoom-reset" style="font-size:11px;">⟳</div>
     </div>
   </div>
   <div id="globe-legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#8B1A2E;"></div>DSV Alvin</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#D4A017;"></div>ROV cruise (incl. E/V Nautilus)</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#8B1A1A;"></div>DSV Alvin</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#E8C030;"></div>ROV / Ship cruise</div>
     <div class="leg-item"><div class="leg-dot" style="background:#7ab8e0;"></div>Day cruise</div>
   </div>
 </div>
 
-<!-- Depth graphic -->
 <div id="depth-section">
   <div class="sec-head">Expeditions by depth</div>
-  <div id="depth-hint">shallow left → deep right · hover markers for details</div>
-  <div id="depth-outer">
-    <canvas id="depth-canvas"></canvas>
-  </div>
+  <div id="depth-hint">shallow left → deep right · arrow tip marks cruise depth on seafloor</div>
+  <canvas id="depth-canvas"></canvas>
 </div>
 
-<!-- D3 + topojson -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
-
 <script>
-// ════════════════════════════════════════════════════════════
-// EXPEDITION DATA — edit here to update both globe and depth
-// ════════════════════════════════════════════════════════════
-const EXPEDITIONS = [
-  { id:'na086',     name:'Quinault Canyon & Olympic Coast', ship:'E/V Nautilus',      year:'2017',    lat:47.5,  lon:-125.0, type:'rov', loc:'Pacific NW, USA',            maxDepth:1800  },
-  { id:'na087',     name:'Heceta Bank',                    ship:'E/V Nautilus',      year:'2017',    lat:44.2,  lon:-124.8, type:'rov', loc:'Oregon, USA',                maxDepth:400   },
-  { id:'na101',     name:'Papahānaumokuākea MNM',          ship:'E/V Nautilus',      year:'2018',    lat:26.5,  lon:-174.0, type:'rov', loc:'NW Hawaiian Ridge',           maxDepth:2000  },
-  { id:'na111',     name:'Search for the Samoan Clipper',  ship:'E/V Nautilus',      year:'2019',    lat:-14.3, lon:-170.7, type:'rov', loc:'American Samoa',             maxDepth:800   },
-  { id:'na112',     name:'American Samoa Sanctuary',       ship:'E/V Nautilus',      year:'2019',    lat:-13.8, lon:-171.8, type:'rov', loc:'American Samoa',             maxDepth:1000  },
-  { id:'wf2020',    name:'California Margin ROV Survey',   ship:'R/V Western Flyer', year:'2020',    lat:36.8,  lon:-122.0, type:'rov',      loc:'Monterey, California',       maxDepth:1800  },
-  { id:'falkor',    name:'Pescadero Basin Vents',          ship:'R/V Falkor',        year:'2021',    lat:23.8,  lon:-108.7, type:'rov',      loc:'Gulf of California, Mexico', maxDepth:3700  },
-  { id:'wf2021',    name:'California Margin ROV II',       ship:'R/V Western Flyer', year:'2021',    lat:35.6,  lon:-121.3, type:'rov',      loc:'California, USA',            maxDepth:1800  },
-  { id:'at5012',    name:'AT50-12 · DSV Alvin',            ship:'R/V Atlantis',      year:'2023',    lat:33.2,  lon:-118.0, type:'alvin',    loc:'S. California margin',       maxDepth:1020  },
-  { id:'yellowfin', name:'California Day Cruise',          ship:'R/V Yellowfin',     year:'2023',    lat:34.1,  lon:-119.8, type:'day',      loc:'California, USA',            maxDepth:50    },
-  { id:'wflyer',    name:'Western Flyer Day Cruise',       ship:'F/V Western Flyer', year:'2024',    lat:36.85, lon:-121.78,type:'day',      loc:'Moss Landing, CA',           maxDepth:30    },
-  { id:'at5024',    name:'AT50-24 · DSV Alvin',            ship:'R/V Atlantis',      year:'2025',    lat:53.0,  lon:-168.5, type:'alvin',    loc:'Aleutian Islands, Alaska',   maxDepth:5500  },
+// ════════════════════════════════════════════════════
+// EXPEDITION DATA — edit this array to update everything
+// ════════════════════════════════════════════════════
+var EXPEDITIONS = [
+  { id:'wflyer',    name:'Western Flyer Day Cruise', cruiseID:'',         ship:'F/V Western Flyer', chiefSci:'Victoria Orphan',          lat:36.85,  lon:-121.78, type:'day',   maxDepth:30   },
+  { id:'yellowfin', name:'California Water Column',  cruiseID:'',         ship:'R/V Yellowfin',     chiefSci:'Victoria Orphan',          lat:34.1,   lon:-119.8,  type:'day',   maxDepth:50   },
+  { id:'na087',     name:'Heceta Bank',              cruiseID:'NA087',    ship:'E/V Nautilus',      chiefSci:'Loren Davis',              lat:44.2,   lon:-124.8,  type:'rov',   maxDepth:400  },
+  { id:'na111',     name:'Samoan Clipper',           cruiseID:'NA111',    ship:'E/V Nautilus',      chiefSci:'R. Matthews & M. Brennan', lat:-14.3,  lon:-170.7,  type:'rov',   maxDepth:800  },
+  { id:'na112',     name:'American Samoa Sanctuary', cruiseID:'NA112',    ship:'E/V Nautilus',      chiefSci:'M. Sudek & H. Spathias',   lat:-13.85, lon:-171.8,  type:'rov',   maxDepth:1000 },
+  { id:'at5012',    name:'California Seeps',         cruiseID:'AT50-12',  ship:'R/V Atlantis',      chiefSci:'Lisa Levin',               lat:33.2,   lon:-118.0,  type:'alvin', maxDepth:1020 },
+  { id:'wf0220',    name:'California Margin',        cruiseID:'WF02-20',  ship:'R/V Western Flyer', chiefSci:'Victoria Orphan',          lat:36.8,   lon:-122.0,  type:'rov',   maxDepth:1800 },
+  { id:'na086',     name:'Quinault Canyon',          cruiseID:'NA086',    ship:'E/V Nautilus',      chiefSci:'Jenny Waddell',            lat:47.5,   lon:-125.0,  type:'rov',   maxDepth:1800 },
+  { id:'wf0521',    name:'California Margin II',     cruiseID:'WF05-21',  ship:'R/V Western Flyer', chiefSci:'Victoria Orphan',          lat:35.6,   lon:-121.3,  type:'rov',   maxDepth:1800 },
+  { id:'na101',     name:'Papahānaumokuākea',         cruiseID:'NA101',    ship:'E/V Nautilus',      chiefSci:'C. Kelley & T. Hourigan',  lat:26.5,   lon:-174.0,  type:'rov',   maxDepth:2000 },
+  { id:'fk210922',  name:'Pescadero Basin',          cruiseID:'FK210922', ship:'R/V Falkor',        chiefSci:'Victoria Orphan',          lat:23.8,   lon:-108.7,  type:'rov',   maxDepth:3700 },
+  { id:'at5024',    name:'Alaska Seeps',             cruiseID:'AT50-24',  ship:'R/V Atlantis',      chiefSci:'Lisa Levin',               lat:53.0,   lon:-168.5,  type:'alvin', maxDepth:5500 },
 ];
 
-const TYPE_COLOR = {
-  alvin: '#8B1A2E',
-  rov:   '#D4A017',
-  day:   '#7ab8e0',
-};
+var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
 
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
 // GLOBE
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
 (function initGlobe() {
-  const W = 800, H = 460, CX = W/2, CY = H/2;
-  const BASE_SCALE = H/2-18;
-  const MIN_SCALE = BASE_SCALE * 0.6;
-  const MAX_SCALE = BASE_SCALE * 5;
-  let currentScale = BASE_SCALE;
+  var W=800, H=460, CX=W/2, CY=H/2;
+  var BASE_SCALE=H/2-18, MIN_SCALE=BASE_SCALE*0.5, MAX_SCALE=BASE_SCALE*6;
+  var currentScale=BASE_SCALE;
 
-  const svg = d3.select('#globe-svg');
-  const defs = svg.append('defs');
+  var svg=d3.select('#globe-svg');
+  var defs=svg.append('defs');
   defs.append('clipPath').attr('id','gclip')
-    .append('circle').attr('id','gclip-circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE);
+    .append('circle').attr('id','gclip-c').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE);
 
-  const proj = d3.geoOrthographic()
-    .scale(BASE_SCALE).translate([CX,CY])
-    .clipAngle(90).rotate([120,-20,0]);
+  var proj=d3.geoOrthographic().scale(BASE_SCALE).translate([CX,CY]).clipAngle(90).rotate([120,-20,0]);
+  var geoPath=d3.geoPath().projection(proj);
 
-  const geoPath = d3.geoPath().projection(proj);
-
-  const oceanCircle = svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE)
-    .attr('fill','#0a2848');
-
-  const grat = d3.geoGraticule().step([30,30])();
-  const gratEl = svg.append('g').attr('clip-path','url(#gclip)')
-    .append('path').datum(grat)
+  svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE).attr('fill','#041428');
+  var grat=d3.geoGraticule().step([30,30])();
+  var gratEl=svg.append('g').attr('clip-path','url(#gclip)').append('path').datum(grat)
     .attr('fill','none').attr('stroke','rgba(0,180,220,0.07)').attr('stroke-width','0.5');
-
-  const landG = svg.append('g').attr('clip-path','url(#gclip)').attr('class','land');
-  const markG = svg.append('g').attr('clip-path','url(#gclip)').attr('class','marks');
-
-  const rimCircle = svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE)
+  var landG=svg.append('g').attr('clip-path','url(#gclip)').attr('class','land');
+  var markG=svg.append('g').attr('clip-path','url(#gclip)').attr('class','marks');
+  svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE)
     .attr('fill','none').attr('stroke','rgba(0,160,220,0.2)').attr('stroke-width','2');
 
-  let rotating = true;
+  var rotating=true;
 
-  function updateScale(newScale) {
-    currentScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
-    proj.scale(currentScale);
-    // clip circle stays at BASE_SCALE visually — update to match current
-    const clipR = Math.min(currentScale, BASE_SCALE);
-    document.getElementById('gclip-circle').setAttribute('r', BASE_SCALE);
-    oceanCircle.attr('r', BASE_SCALE);
-    rimCircle.attr('r', BASE_SCALE);
-    render();
+  function updateScale(ns) {
+    currentScale=Math.max(MIN_SCALE,Math.min(MAX_SCALE,ns));
+    proj.scale(currentScale); render();
   }
 
   function render() {
-    gratEl.attr('d', geoPath(grat));
-    landG.selectAll('.country').attr('d', geoPath);
+    gratEl.attr('d',geoPath(grat));
+    landG.selectAll('.country').attr('d',geoPath);
     markG.selectAll('.mgrp').each(function(d) {
-      const p = proj([d.lon, d.lat]);
-      if (p) d3.select(this).attr('transform',`translate(${p[0]},${p[1]})`).attr('opacity',1);
+      var p=proj([d.lon,d.lat]);
+      if(p) d3.select(this).attr('transform','translate('+p[0]+','+p[1]+')').attr('opacity',1);
       else d3.select(this).attr('opacity',0);
     });
   }
 
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-    .then(r => r.json())
-    .then(world => {
-      const countries = topojson.feature(world, world.objects.countries);
-      landG.selectAll('.country')
-        .data(countries.features)
-        .join('path').attr('class','country')
-        .attr('d', geoPath)
-        .attr('fill','#1e5c32').attr('stroke','#0d3a1e').attr('stroke-width','0.4');
-      buildMarkers();
-      render();
-    })
-    .catch(() => buildMarkers());
+    .then(function(r){return r.json();})
+    .then(function(world) {
+      var countries=topojson.feature(world,world.objects.countries);
+      landG.selectAll('.country').data(countries.features).join('path').attr('class','country')
+        .attr('d',geoPath).attr('fill','#1e5c32').attr('stroke','#0d3a1e').attr('stroke-width','0.4');
+      buildMarkers(); render();
+    }).catch(function(){ buildMarkers(); });
 
   function buildMarkers() {
-    const CDIST = 2.5;
-    const used = new Set();
-    const clusters = [];
-    EXPEDITIONS.forEach((e,i) => {
-      if (used.has(i)) return;
-      const cluster = [i];
-      EXPEDITIONS.forEach((e2,j) => {
-        if (i===j||used.has(j)) return;
-        if (Math.abs(e.lat-e2.lat)<CDIST && Math.abs(e.lon-e2.lon)<CDIST) cluster.push(j);
+    var CDIST=2.5, used=new Set(), clusters=[];
+    EXPEDITIONS.forEach(function(e,i) {
+      if(used.has(i)) return;
+      var cluster=[i];
+      EXPEDITIONS.forEach(function(e2,j) {
+        if(i===j||used.has(j)) return;
+        if(Math.abs(e.lat-e2.lat)<CDIST&&Math.abs(e.lon-e2.lon)<CDIST) cluster.push(j);
       });
-      cluster.forEach(idx => used.add(idx));
+      cluster.forEach(function(idx){used.add(idx);});
       clusters.push(cluster);
     });
-
-    clusters.forEach(cluster => {
-      const e0 = EXPEDITIONS[cluster[0]];
-      const col = cluster.length>1 ? '#00dcc8' : TYPE_COLOR[e0.type];
-      const mr  = cluster.length>1 ? 9 : 6;
-      const p0  = proj([e0.lon, e0.lat]) || [CX,CY];
-
-      const g = markG.append('g').attr('class','mgrp')
-        .datum(e0).attr('transform',`translate(${p0[0]},${p0[1]})`)
-        .style('cursor','pointer');
-
-      g.append('circle').attr('r',mr+5).attr('fill','none')
-        .attr('stroke',col).attr('stroke-width','0.8').attr('opacity','0.3');
+    clusters.forEach(function(cluster) {
+      var e0=EXPEDITIONS[cluster[0]];
+      var col=cluster.length>1?'#00dcc8':TYPE_COLOR[e0.type];
+      var mr=cluster.length>1?9:6;
+      var p0=proj([e0.lon,e0.lat])||[CX,CY];
+      var g=markG.append('g').attr('class','mgrp').datum(e0)
+        .attr('transform','translate('+p0[0]+','+p0[1]+')').style('cursor','pointer');
+      g.append('circle').attr('r',mr+5).attr('fill','none').attr('stroke',col).attr('stroke-width','0.8').attr('opacity','0.3');
       g.append('circle').attr('r',mr).attr('cx',1).attr('cy',1).attr('fill','rgba(0,0,0,0.4)');
-      g.append('circle').attr('r',mr).attr('fill',col)
-        .attr('stroke','rgba(2,13,24,0.8)').attr('stroke-width','1.5');
-      g.append('circle').attr('r',mr*0.35).attr('cx',-mr*0.3).attr('cy',-mr*0.3)
-        .attr('fill','rgba(255,255,255,0.3)');
-      if (cluster.length>1) {
-        g.append('text').text(cluster.length)
-          .attr('text-anchor','middle').attr('dy','0.35em')
-          .attr('font-size','8').attr('font-weight','bold')
-          .attr('font-family','monospace').attr('fill','#020d18');
-      }
-
-      const tt = document.getElementById('globe-tooltip');
-      g.on('mouseenter', function() {
-        document.getElementById('gt-name').textContent = cluster.length>1
-          ? `${cluster.length} expeditions` : e0.name;
-        document.getElementById('gt-body').textContent = cluster.length>1
-          ? cluster.map(i=>EXPEDITIONS[i].name).join(' · ')
-          : `${e0.ship} · ${e0.year}`;
-        document.getElementById('gt-sub').textContent = e0.loc;
-        const svgEl = document.getElementById('globe-svg').getBoundingClientRect();
-        const pp = proj([e0.lon,e0.lat]);
-        if (pp) {
-          tt.style.left = Math.min(pp[0]*(svgEl.width/W)+14, svgEl.width-215)+'px';
-          tt.style.top  = Math.max(pp[1]*(svgEl.height/H)-50,4)+'px';
-        }
+      g.append('circle').attr('r',mr).attr('fill',col).attr('stroke','rgba(2,13,24,0.8)').attr('stroke-width','1.5');
+      g.append('circle').attr('r',mr*0.35).attr('cx',-mr*0.3).attr('cy',-mr*0.3).attr('fill','rgba(255,255,255,0.3)');
+      if(cluster.length>1){g.append('text').text(cluster.length).attr('text-anchor','middle').attr('dy','0.35em').attr('font-size','8').attr('font-weight','bold').attr('font-family','monospace').attr('fill','#020d18');}
+      var tt=document.getElementById('globe-tooltip');
+      g.on('mouseenter',function() {
+        document.getElementById('gt-name').textContent=cluster.length>1?cluster.length+' expeditions':e0.name;
+        document.getElementById('gt-body').textContent=cluster.length>1?cluster.map(function(i){return EXPEDITIONS[i].name;}).join(' · '):e0.ship+(e0.cruiseID?' · '+e0.cruiseID:'');
+        document.getElementById('gt-sub').textContent=e0.chiefSci;
+        var svgEl=document.getElementById('globe-svg').getBoundingClientRect();
+        var pp=proj([e0.lon,e0.lat]);
+        if(pp){tt.style.left=Math.min(pp[0]*(svgEl.width/W)+14,svgEl.width-220)+'px';tt.style.top=Math.max(pp[1]*(svgEl.height/H)-55,4)+'px';}
         tt.style.opacity='1';
-      }).on('mouseleave', () => tt.style.opacity='0')
-        .on('click', () => { if(e0.id) window.location.href=`expedition-${e0.id}.html`; });
+      }).on('mouseleave',function(){tt.style.opacity='0';})
+        .on('click',function(){if(e0.id)window.location.href='expedition-'+e0.id+'.html';});
     });
   }
 
-  // drag to rotate
-  let v0, r0;
-  const drag = d3.drag()
-    .on('start', ev => { rotating=false; v0=[ev.x,ev.y]; r0=proj.rotate(); })
-    .on('drag', ev => {
-      const sc = 180/currentScale;
-      proj.rotate([r0[0]+(ev.x-v0[0])*sc*0.5,
-                   Math.max(-80,Math.min(80,r0[1]-(ev.y-v0[1])*sc*0.5)),
-                   r0[2]]);
+  var v0,r0;
+  d3.select('#globe-svg').call(d3.drag()
+    .on('start',function(ev){rotating=false;v0=[ev.x,ev.y];r0=proj.rotate();})
+    .on('drag',function(ev){
+      var sc=180/currentScale;
+      proj.rotate([r0[0]+(ev.x-v0[0])*sc*0.5,Math.max(-80,Math.min(80,r0[1]-(ev.y-v0[1])*sc*0.5)),r0[2]]);
       render();
-    });
-  d3.select('#globe-svg').call(drag);
+    }));
+  d3.select('#globe-svg').on('wheel',function(event){event.preventDefault();rotating=false;updateScale(currentScale*(event.deltaY>0?0.85:1.18));});
+  document.getElementById('zoom-in').addEventListener('click',function(){rotating=false;updateScale(currentScale*1.4);});
+  document.getElementById('zoom-out').addEventListener('click',function(){rotating=false;updateScale(currentScale/1.4);});
+  document.getElementById('zoom-reset').addEventListener('click',function(){rotating=true;proj.rotate([120,-20,0]);updateScale(BASE_SCALE);});
 
-  // scroll wheel zoom
-  d3.select('#globe-svg').on('wheel', function(event) {
-    event.preventDefault();
-    rotating = false;
-    const delta = event.deltaY > 0 ? 0.85 : 1.18;
-    updateScale(currentScale * delta);
-  });
-
-  // zoom buttons
-  document.getElementById('zoom-in').addEventListener('click', () => {
-    rotating = false; updateScale(currentScale * 1.4);
-  });
-  document.getElementById('zoom-out').addEventListener('click', () => {
-    rotating = false; updateScale(currentScale / 1.4);
-  });
-  document.getElementById('zoom-reset').addEventListener('click', () => {
-    rotating = true;
-    proj.rotate([120,-20,0]);
-    updateScale(BASE_SCALE);
-  });
-
-  // auto-rotate
-  function tick() {
-    if (rotating) { const r=proj.rotate(); proj.rotate([r[0]-0.15,r[1],r[2]]); render(); }
-    requestAnimationFrame(tick);
-  }
+  function tick(){if(rotating){var r=proj.rotate();proj.rotate([r[0]-0.15,r[1],r[2]]);render();}requestAnimationFrame(tick);}
   tick();
 })();
 
-
-// ════════════════════════════════════════════════════════════
-// DEPTH GRAPHIC — sloped seafloor, fits screen width
-// ════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
+// DEPTH GRAPHIC
+// ════════════════════════════════════════════════════
 (function initDepth() {
-  const canvas = document.getElementById('depth-canvas');
-  const ctx = canvas.getContext('2d');
+  var canvas=document.getElementById('depth-canvas');
+  var ctx=canvas.getContext('2d');
+  var sorted=EXPEDITIONS.slice().sort(function(a,b){return a.maxDepth-b.maxDepth;});
+  var SKY_H=70,CANVAS_H=820,MAX_DEPTH=6000;
+  var WATER_Y=SKY_H+16,SURFACE_Y=SKY_H+12,FLOOR_BOT_Y=CANVAS_H-40;
 
-  // Sort expeditions shallow → deep for left→right placement
-  const sorted = [...EXPEDITIONS].sort((a,b) => a.maxDepth - b.maxDepth);
+  function setSize(){var W=Math.max(window.innerWidth||800,400);canvas.width=W;canvas.height=CANVAS_H;return W;}
+  function depthToY(d){var t=Math.min(Math.max(d,0),MAX_DEPTH)/MAX_DEPTH;return(WATER_Y+30)+t*(FLOOR_BOT_Y-(WATER_Y+30));}
+  function dayCruiseY(depth){return SURFACE_Y+6+(depth/200)*40;}
+  function getSlotX(i,W){var m=55;return m+(i/(sorted.length-1))*(W-m*2);}
+  function floorYatX(x,W){
+    var m=55,n=sorted.length;
+    var frac=(x-m)/(W-m*2)*(n-1);
+    frac=Math.max(0,Math.min(n-1.001,frac));
+    var lo=Math.floor(frac),hi=Math.min(lo+1,n-1),t=frac-lo;
+    return depthToY(sorted[lo].maxDepth)+(depthToY(sorted[hi].maxDepth)-depthToY(sorted[lo].maxDepth))*t+Math.sin(x*0.05)*1.5+Math.sin(x*0.17)*0.8;
+  }
+  function findById(id){for(var i=0;i<sorted.length;i++)if(sorted[i].id===id)return i;return -1;}
 
-  const SKY_H    = 80;
-  const CANVAS_H = 780;
-  const MAX_DEPTH = 6000;
-
-  function getCanvasW() {
-    return Math.max(document.documentElement.clientWidth || window.innerWidth, 800);
+  function drawVentPuff(vx,topY,now,seed){
+    var phase=(now*0.35+seed*0.41)%1;
+    var bx=vx+Math.sin(seed*1.3+now*0.2)*4,by=topY-phase*70;
+    var br=2.5+(seed%3)*0.8+phase*3,alpha=0.5-phase*0.45;
+    ctx.fillStyle='rgba(240,240,245,'+alpha+')';
+    ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();
   }
 
-  // Depth → Y pixel
-  const WATER_Y   = SKY_H + 18;
-  const FLOOR_TOP_Y = WATER_Y + 40;
-  const FLOOR_BOT_Y = CANVAS_H - 30;
-
-  function depthToY(depth) {
-    const t = Math.min(depth, MAX_DEPTH) / MAX_DEPTH;
-    return WATER_Y + t * (FLOOR_BOT_Y - WATER_Y);
+  function drawVent(vx,vy,now,vi){
+    var h=22,w=6;
+    ctx.fillStyle='#0a0500';ctx.fillRect(vx-w,vy,w*2,5);
+    ctx.fillStyle='#888888';
+    ctx.beginPath();ctx.moveTo(vx-w,vy+2);ctx.lineTo(vx+w,vy+2);ctx.lineTo(vx+w-2,vy-h);ctx.lineTo(vx-w+2,vy-h);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(40,40,40,0.35)';
+    ctx.beginPath();ctx.moveTo(vx+1,vy+2);ctx.lineTo(vx+w,vy+2);ctx.lineTo(vx+w-2,vy-h);ctx.lineTo(vx+1,vy-h);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(100,100,100,0.4)';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(vx-w,vy+2);ctx.lineTo(vx+w,vy+2);ctx.lineTo(vx+w-2,vy-h);ctx.lineTo(vx-w+2,vy-h);ctx.closePath();ctx.stroke();
+    for(var p=0;p<6;p++)drawVentPuff(vx,vy-h,now,vi*7+p);
   }
 
-  function getSlotX(i, W) {
-    const margin = 60;
-    const usable = W - margin * 2;
-    return margin + (i / (sorted.length - 1)) * usable;
+  function drawCarbonateMound(mx,my,now){
+    ctx.fillStyle='#2a2218';ctx.beginPath();ctx.ellipse(mx,my,36,16,0,0,Math.PI,true);ctx.fill();
+    ctx.fillStyle='#362c1e';ctx.beginPath();ctx.ellipse(mx,my,30,13,0.05,0,Math.PI,true);ctx.fill();
+    ctx.fillStyle='#1e1810';ctx.beginPath();ctx.ellipse(mx,my-4,22,9,-0.05,0,Math.PI,true);ctx.fill();
+    var wP=[[0,-2,12,3],[-10,0,7,2.5],[11,1,6,2],[-5,-5,5,2],[7,-5,5,1.8]];
+    for(var i=0;i<wP.length;i++){ctx.fillStyle='rgba(240,235,220,0.55)';ctx.beginPath();ctx.ellipse(mx+wP[i][0],my+wP[i][1],wP[i][2],wP[i][3],0.3,0,Math.PI*2);ctx.fill();}
+    var oP=[[-18,2,5,2],[16,3,4,2],[2,0,4,1.5],[-9,-3,5,2]];
+    for(var i=0;i<oP.length;i++){ctx.fillStyle='rgba(210,120,30,0.62)';ctx.beginPath();ctx.ellipse(mx+oP[i][0],my+oP[i][1],oP[i][2],oP[i][3],0.2,0,Math.PI*2);ctx.fill();}
+    for(var i=0;i<11;i++){var angle=(i/11)*Math.PI;var r=36+(i%3)*6;var cx2=mx+Math.cos(angle)*r,cy2=my+Math.sin(angle)*r*0.35+2;ctx.fillStyle='rgba('+(158+i*4)+','+(138+i*3)+','+(76+i*4)+',0.75)';ctx.beginPath();ctx.ellipse(cx2,cy2,5,3,angle,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(108,88,46,0.4)';ctx.lineWidth=0.4;ctx.stroke();}
+    for(var b=0;b<7;b++){var bx=mx+(b-3)*9+Math.sin(b*1.4)*3;var phase=(now*0.4+b*0.38)%1;var by=my-10-phase*52,br=1.4+(b%3)*0.5,alpha=0.35-phase*0.28;ctx.fillStyle='rgba(160,200,255,'+alpha+')';ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(120,170,220,'+(alpha*0.7)+')';ctx.lineWidth=0.5;ctx.stroke();}
+    ctx.font='8px "Courier New"';ctx.fillStyle='rgba(80,200,150,0.42)';ctx.textAlign='center';
+    ctx.fillText('carbonate mound · methane seep',mx,my+28);
+    ctx.fillText('microbial mats & clams',mx,my+38);
   }
 
-  function floorYatX(x, W) {
-    const margin = 60;
-    const t = Math.max(0, Math.min(1, (x - margin) / (W - margin * 2)));
-    return FLOOR_TOP_Y + t * (FLOOR_BOT_Y - FLOOR_TOP_Y);
+  function drawPlane(px,py){
+    ctx.save();ctx.translate(px,py);
+    var s=1.0,hullDepth=14,wingY=-14;
+    ctx.fillStyle='rgba(112,100,76,0.88)';
+    ctx.beginPath();ctx.moveTo(-24*s,0);ctx.bezierCurveTo(-24*s,-3*s,-14*s,-5*s,0,-5*s);ctx.bezierCurveTo(10*s,-5*s,18*s,-3*s,21*s,-1*s);ctx.lineTo(21*s,1*s);ctx.bezierCurveTo(16*s,hullDepth*s,6*s,hullDepth*s*1.1,-2*s,hullDepth*s);ctx.bezierCurveTo(-10*s,hullDepth*s,-20*s,hullDepth*s*0.7,-26*s,0);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(148,134,104,0.5)';ctx.lineWidth=0.7;ctx.stroke();
+    ctx.fillStyle='rgba(55,50,38,0.35)';ctx.beginPath();ctx.moveTo(-26*s,0);ctx.bezierCurveTo(-20*s,hullDepth*s*0.7,-10*s,hullDepth*s,-2*s,hullDepth*s);ctx.bezierCurveTo(6*s,hullDepth*s*1.1,16*s,hullDepth*s,21*s,1*s);ctx.lineTo(21*s,0);ctx.bezierCurveTo(16*s,hullDepth*s*0.6,0,hullDepth*s*0.8,-14*s,hullDepth*s*0.5);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(45,40,30,0.6)';ctx.beginPath();ctx.moveTo(0,hullDepth*s);ctx.lineTo(4*s,hullDepth*s);ctx.lineTo(6*s,hullDepth*s*0.7);ctx.lineTo(0,hullDepth*s*0.8);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(85,118,158,0.52)';
+    for(var w=0;w<5;w++){ctx.beginPath();ctx.ellipse((-13+w*6.5)*s,-2.5*s,2.2*s,1.7*s,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(112,150,192,0.3)';ctx.lineWidth=0.4;ctx.stroke();}
+    ctx.fillStyle='rgba(118,108,82,0.80)';ctx.beginPath();ctx.moveTo(-28*s,wingY*s-3*s);ctx.lineTo(24*s,wingY*s-3*s);ctx.lineTo(24*s,wingY*s);ctx.lineTo(-28*s,wingY*s);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='rgba(145,133,102,0.4)';ctx.lineWidth=0.5;ctx.stroke();
+    ctx.strokeStyle='rgba(118,108,82,0.55)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(-10*s,-4*s);ctx.lineTo(-11*s,wingY*s);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(7*s,-3*s);ctx.lineTo(8*s,wingY*s);ctx.stroke();
+    var eX=[-22,-12,-2,8];
+    for(var e=0;e<4;e++){var ex=eX[e]*s,ey=(wingY-4)*s;ctx.fillStyle='rgba(70,65,50,0.8)';ctx.beginPath();ctx.ellipse(ex,ey,4.5*s,2.2*s,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(92,85,65,0.45)';ctx.lineWidth=0.4;ctx.stroke();ctx.strokeStyle='rgba(45,42,32,0.55)';ctx.lineWidth=0.8;ctx.beginPath();ctx.arc(ex-4.5*s,ey,3*s,0,Math.PI*2);ctx.stroke();ctx.strokeStyle='rgba(35,32,24,0.65)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ex-4.5*s,ey-3.2*s);ctx.lineTo(ex-4.5*s,ey+3.2*s);ctx.stroke();ctx.beginPath();ctx.moveTo(ex-7.5*s,ey);ctx.lineTo(ex-1.5*s,ey);ctx.stroke();}
+    ctx.fillStyle='rgba(112,102,78,0.82)';ctx.beginPath();ctx.moveTo(18*s,-1*s);ctx.lineTo(20*s,(wingY-3)*s);ctx.lineTo(23*s,-3*s);ctx.lineTo(21*s,0);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(110,100,76,0.75)';ctx.beginPath();ctx.moveTo(17*s,-2*s);ctx.lineTo(29*s,-4*s);ctx.lineTo(29*s,-2*s);ctx.lineTo(17*s,-0.5*s);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(88,80,60,0.45)';ctx.beginPath();ctx.moveTo(17*s,-2*s);ctx.lineTo(7*s,-4*s);ctx.lineTo(7*s,-2*s);ctx.lineTo(17*s,-0.5*s);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(95,86,65,0.68)';ctx.beginPath();ctx.ellipse(-24*s,-1*s,5.5*s,2*s,0.1,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(100,90,68,0.45)';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(-24*s,-3*s);ctx.lineTo(-24*s,(wingY+1)*s);ctx.stroke();
+    ctx.restore();
+    ctx.font='7.5px "Courier New"';ctx.fillStyle='rgba(200,185,150,0.5)';ctx.textAlign='center';
+    ctx.fillText('Samoan Clipper (S-42) · 1938',px,py+22);
   }
 
-  // Find expedition slot index by id
-  function slotIdxOf(id) {
-    return sorted.findIndex(e => e.id === id);
-  }
+  function drawBrittleStar(bx,by){ctx.save();ctx.translate(bx,by);ctx.fillStyle='rgba(140,110,70,0.55)';ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fill();for(var a=0;a<5;a++){ctx.save();ctx.rotate(a/5*Math.PI*2);ctx.strokeStyle='rgba(130,100,60,0.5)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(3,-3,8,2,12,-1);ctx.stroke();ctx.restore();}ctx.restore();}
+  function drawSeaCucumber(cx,cy){ctx.save();ctx.translate(cx,cy);ctx.fillStyle='rgba(110,75,40,0.5)';ctx.beginPath();ctx.ellipse(0,0,10,4,0.2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(130,100,60,0.45)';ctx.lineWidth=0.8;for(var t=0;t<4;t++){ctx.beginPath();ctx.moveTo(-8+t*2,-3);ctx.lineTo(-9+t*2,-7);ctx.stroke();}ctx.restore();}
 
-  function draw() {
-    const CANVAS_W = getCanvasW();
-    if (canvas.width !== CANVAS_W) { canvas.width = CANVAS_W; canvas.height = CANVAS_H; }
+  function draw(){
+    var W=canvas.width,now=Date.now()/1000;
+    ctx.clearRect(0,0,W,CANVAS_H);
 
-    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    // Sky
+    var sg=ctx.createLinearGradient(0,0,0,SKY_H);sg.addColorStop(0,'#1a6fa8');sg.addColorStop(1,'#0d4a7a');
+    ctx.fillStyle=sg;ctx.fillRect(0,0,W,SKY_H);
+    ctx.fillStyle='rgba(200,230,255,0.05)';for(var i=0;i<50;i++)ctx.fillRect((i*137.5)%W,(i*73.1)%SKY_H,1+(i%3),1);
 
-    // ── Sky ──────────────────────────────────────────────
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, SKY_H);
-    skyGrad.addColorStop(0, '#1a6fa8');
-    skyGrad.addColorStop(1, '#0d4a7a');
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, CANVAS_W, SKY_H);
-    ctx.fillStyle = 'rgba(200,230,255,0.05)';
-    for (let i = 0; i < 60; i++) {
-      ctx.fillRect((i*137.5)%CANVAS_W, (i*73.1)%SKY_H, 1+(i%3), 1);
+    // Ocean with vent glow
+    var ventDepthY=depthToY(3700);
+    for(var y=WATER_Y;y<CANVAS_H;y++){
+      var t=(y-WATER_Y)/(CANVAS_H-WATER_Y);
+      var r=Math.round(10-8*t),g=Math.round(30-22*t),b=Math.round(60-42*t);
+      var vd=Math.abs(y-ventDepthY);
+      if(vd<60){var vs=(1-vd/60)*0.18;r=Math.min(255,r+Math.round(40*vs));g=Math.min(255,g+Math.round(15*vs));}
+      ctx.fillStyle='rgb('+r+','+g+','+b+')';ctx.fillRect(0,y,W,1);
     }
 
-    // ── Ocean ────────────────────────────────────────────
-    for (let y = WATER_Y; y < CANVAS_H; y++) {
-      const t = (y-WATER_Y)/(CANVAS_H-WATER_Y);
-      ctx.fillStyle = `rgb(${Math.round(10-8*t)},${Math.round(30-22*t)},${Math.round(60-42*t)})`;
-      ctx.fillRect(0, y, CANVAS_W, 1);
-    }
+    // Particles
+    for(var i=0;i<160;i++){var px2=(i*97.3*4.1)%W,py2=WATER_Y+20+(i*61.7*3.3)%(CANVAS_H-WATER_Y-40);var a=0.07+(i%3)*0.09;if(i%3===0)ctx.fillStyle='rgba(0,220,200,'+a+')';else if(i%3===1)ctx.fillStyle='rgba(100,180,255,'+(a*0.7)+')';else ctx.fillStyle='rgba(50,220,180,'+(a*0.6)+')';ctx.fillRect(px2,py2,i%5===0?2:1,i%5===0?2:1);}
 
-    // particles
-    for (let i=0;i<180;i++){
-      const px2=(i*97.3*4.1)%CANVAS_W;
-      const py2=WATER_Y+20+(i*61.7*3.3)%(CANVAS_H-WATER_Y-40);
-      const a=0.1+(i%3)*0.12;
-      ctx.fillStyle = i%3===0?`rgba(0,220,200,${a})`:i%3===1?`rgba(100,180,255,${a*0.7})`:`rgba(50,220,180,${a*0.6})`;
-      ctx.fillRect(px2,py2,i%5===0?2:1,i%5===0?2:1);
-    }
+    // Waves
+    ctx.strokeStyle='rgba(120,200,255,0.6)';ctx.lineWidth=1.5;ctx.beginPath();for(var x=0;x<=W;x+=2){var wy=SKY_H+4+Math.sin(x*0.018+now*0.8)*4+Math.sin(x*0.031+now*0.5)*2.5+Math.sin(x*0.009+now*1.1)*3;if(x===0)ctx.moveTo(x,wy);else ctx.lineTo(x,wy);}ctx.stroke();
+    ctx.strokeStyle='rgba(80,160,220,0.3)';ctx.lineWidth=1;ctx.beginPath();for(var x=0;x<=W;x+=2){var wy2=SKY_H+9+Math.sin(x*0.022+now*0.6+1)*3+Math.sin(x*0.014+now*0.9+2)*2;if(x===0)ctx.moveTo(x,wy2);else ctx.lineTo(x,wy2);}ctx.stroke();
+    ctx.fillStyle='rgba(200,230,255,0.22)';for(var i=0;i<25;i++){var fx=((i*173+Math.floor(now*0.5)*11)%W);ctx.fillRect(fx,SKY_H+2+Math.sin(fx*0.02+now)*3,3+i%4,1);}
 
-    // ── Wavy surface ─────────────────────────────────────
-    const now = Date.now()/1000;
-    ctx.strokeStyle='rgba(120,200,255,0.6)'; ctx.lineWidth=1.5;
-    ctx.beginPath();
-    for(let x=0;x<=CANVAS_W;x+=2){
-      const y=SKY_H+4+Math.sin(x*0.018+now*0.8)*4+Math.sin(x*0.031+now*0.5)*2.5+Math.sin(x*0.009+now*1.1)*3;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.strokeStyle='rgba(80,160,220,0.35)'; ctx.lineWidth=1;
-    ctx.beginPath();
-    for(let x=0;x<=CANVAS_W;x+=2){
-      const y=SKY_H+9+Math.sin(x*0.022+now*0.6+1)*3+Math.sin(x*0.014+now*0.9+2)*2;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.fillStyle='rgba(200,230,255,0.3)';
-    for(let i=0;i<30;i++){
-      const x=((i*173+Math.floor(now*0.5)*11)%CANVAS_W);
-      ctx.fillRect(x,SKY_H+2+Math.sin(x*0.02+now)*3,3+i%4,1);
-    }
+    // Surface label
+    ctx.font='9px "Courier New"';ctx.fillStyle='rgba(150,210,255,0.55)';ctx.textAlign='left';ctx.fillText('— surface',6,SURFACE_Y+1);
 
-    // ── Seafloor ─────────────────────────────────────────
-    const floorPts=[];
-    for(let x=0;x<=CANVAS_W;x+=4){
-      const bump=Math.sin(x*0.04)*3+Math.sin(x*0.11)*1.5;
-      floorPts.push([x,floorYatX(x,CANVAS_W)+bump]);
-    }
-    ctx.fillStyle='#0a1a0e';
-    ctx.beginPath(); ctx.moveTo(0,CANVAS_H);
-    floorPts.forEach(([x,y])=>ctx.lineTo(x,y));
-    ctx.lineTo(CANVAS_W,CANVAS_H); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle='rgba(0,180,130,0.3)'; ctx.lineWidth=1;
-    ctx.beginPath(); floorPts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)); ctx.stroke();
-    ctx.fillStyle='rgba(20,60,30,0.5)';
-    for(let i=0;i<120;i++){
-      const x=(i*131.3)%CANVAS_W;
-      const fy=floorYatX(x,CANVAS_W)+Math.sin(x*0.04)*3-2;
-      if(fy<CANVAS_H-5) ctx.fillRect(x,fy-1,2+(i%3),1);
-    }
+    // Seafloor
+    var floorPts=[];for(var x=0;x<=W;x+=3)floorPts.push([x,floorYatX(x,W)]);
 
-    // ── Zone labels ──────────────────────────────────────
-    ctx.font='9px "Courier New"'; ctx.fillStyle='rgba(0,200,180,0.2)'; ctx.textAlign='left';
-    [[200,'· twilight zone'],[1000,'· midnight zone'],[4000,'· abyssal zone']].forEach(([d,label])=>{
-      const y=depthToY(d);
-      ctx.setLineDash([4,8]); ctx.strokeStyle='rgba(0,180,200,0.1)'; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CANVAS_W,y); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillText(`${d}m ${label}`,8,y-3);
-    });
+    // Main dark sediment fill — exact color from screenshot
+    ctx.fillStyle='#0a0500';
+    ctx.beginPath();ctx.moveTo(0,CANVAS_H);for(var i=0;i<floorPts.length;i++)ctx.lineTo(floorPts[i][0],floorPts[i][1]);ctx.lineTo(W,CANVAS_H);ctx.closePath();ctx.fill();
 
-    // Depth scale right
-    ctx.fillStyle='rgba(0,220,200,0.25)'; ctx.textAlign='right'; ctx.font='9px "Courier New"';
-    [0,500,1000,2000,3000,4000,5000,6000].forEach(d=>{
-      const y=depthToY(d);
-      if(y<CANVAS_H-20&&y>WATER_Y){ ctx.fillText(`${d}m`,CANVAS_W-8,y+3); }
-    });
-    ctx.textAlign='left';
+    // Slightly lighter seam just below surface
+    ctx.fillStyle='rgba(35,18,4,0.65)';
+    ctx.beginPath();ctx.moveTo(0,CANVAS_H);for(var i=0;i<floorPts.length;i++)ctx.lineTo(floorPts[i][0],floorPts[i][1]+6);ctx.lineTo(W,CANVAS_H);ctx.closePath();ctx.fill();
 
-    // ── Seafloor features at specific expedition positions ─
-    // Hydrothermal vents → Falkor (Pescadero Basin ~3700m)
-    const falkorIdx = slotIdxOf('falkor');
-    if (falkorIdx >= 0) {
-      const ventX = getSlotX(falkorIdx, CANVAS_W);
-      const ventBaseY = floorYatX(ventX, CANVAS_W)+Math.sin(ventX*0.04)*3;
-      [[-28,0],[0,-4],[28,2]].forEach(([dx,dy])=>{
-        const vx=ventX+dx, vy=ventBaseY+dy;
-        ctx.fillStyle='#2a1a0a';
-        ctx.beginPath(); ctx.moveTo(vx-7,vy); ctx.lineTo(vx+7,vy); ctx.lineTo(vx+4,vy-26); ctx.lineTo(vx-4,vy-26); ctx.closePath(); ctx.fill();
-        ctx.strokeStyle='rgba(200,80,20,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
-        for(let i=0;i<5;i++){
-          const py=vy-28-i*7;
-          ctx.fillStyle=`rgba(${155+i*9},${38+i*4},8,${0.55-i*0.08})`;
-          ctx.beginPath(); ctx.arc(vx+Math.sin(i*0.7)*3,py,3.5-i*0.4,0,Math.PI*2); ctx.fill();
-        }
-      });
-      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(200,120,50,0.45)';
-      ctx.fillText('hydrothermal vents',ventX-34,ventBaseY+16);
-    }
+    // Pale fluff at water-sediment interface
+    ctx.strokeStyle='rgba(160,130,80,0.18)';ctx.lineWidth=3;ctx.beginPath();for(var i=0;i<floorPts.length;i++){if(i===0)ctx.moveTo(floorPts[i][0],floorPts[i][1]-1);else ctx.lineTo(floorPts[i][0],floorPts[i][1]-1);}ctx.stroke();
 
-    // Pushcores → Western Flyer 2021
-    const wf2021Idx = slotIdxOf('wf2021');
-    if (wf2021Idx >= 0) {
-      const pcX = getSlotX(wf2021Idx, CANVAS_W);
-      [pcX-14,pcX,pcX+14].forEach(px=>{
-        const py=floorYatX(px,CANVAS_W)+Math.sin(px*0.04)*3;
-        ctx.strokeStyle='rgba(180,180,160,0.5)'; ctx.lineWidth=1.5;
-        ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py-20); ctx.stroke();
-        ctx.strokeStyle='rgba(140,140,120,0.4)'; ctx.lineWidth=3;
-        ctx.beginPath(); ctx.moveTo(px,py-7); ctx.lineTo(px,py-18); ctx.stroke();
-        ctx.fillStyle='rgba(200,190,160,0.35)'; ctx.fillRect(px-3,py-2,6,3);
-      });
-      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(180,170,140,0.38)';
-      ctx.fillText('pushcores',pcX-16,floorYatX(pcX,CANVAS_W)+16);
-    }
+    // Sediment surface line
+    ctx.strokeStyle='rgba(58,31,8,0.8)';ctx.lineWidth=1.2;ctx.beginPath();for(var i=0;i<floorPts.length;i++){if(i===0)ctx.moveTo(floorPts[i][0],floorPts[i][1]);else ctx.lineTo(floorPts[i][0],floorPts[i][1]);}ctx.stroke();
 
-    // Methane seep clams → AT50-12 (California seeps)
-    const at5012Idx = slotIdxOf('at5012');
-    if (at5012Idx >= 0) {
-      const seepX = getSlotX(at5012Idx, CANVAS_W);
-      const seepY = floorYatX(seepX,CANVAS_W)+Math.sin(seepX*0.04)*3;
-      for(let i=0;i<8;i++){
-        const cx2=seepX+(i-4)*10;
-        const cy2=seepY+Math.abs(i-4)*0.8;
-        ctx.fillStyle=`rgba(${170+i*4},${150+i*3},${90+i*4},0.7)`;
-        ctx.beginPath(); ctx.ellipse(cx2,cy2,5,3,0.3,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle='rgba(120,100,60,0.4)'; ctx.lineWidth=0.4; ctx.stroke();
-      }
-      ctx.fillStyle='rgba(0,180,130,0.1)'; ctx.fillRect(seepX-40,seepY-2,80,4);
-      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(80,200,150,0.38)';
-      ctx.fillText('methane seep clams',seepX-34,seepY+16);
-    }
+    // Ripple marks
+    ctx.strokeStyle='rgba(38,18,4,0.28)';ctx.lineWidth=0.5;
+    for(var r=0;r<18;r++){var ry=CANVAS_H-30-r*22;if(ry<WATER_Y+60)break;ctx.beginPath();for(var x=0;x<=W;x+=4){var ripY=ry+Math.sin(x*0.08+r*0.7)*3;if(ripY>floorYatX(x,W)+4&&ripY<CANVAS_H-4){if(x===0)ctx.moveTo(x,ripY);else ctx.lineTo(x,ripY);}}ctx.stroke();}
 
-    // Microbial mats → AT50-24 (Aleutian seeps, deepest)
-    const at5024Idx = slotIdxOf('at5024');
-    if (at5024Idx >= 0) {
-      const matX = getSlotX(at5024Idx, CANVAS_W);
-      for(let x=matX-40;x<matX+40;x++){
-        const fy=floorYatX(x,CANVAS_W)+Math.sin(x*0.08)*2;
-        const h=1+Math.floor(Math.abs(Math.sin(x*0.6))*2.5);
-        for(let dy2=0;dy2<h;dy2++){
-          ctx.fillStyle=`rgba(${18+Math.random()*16},${55+Math.random()*35},${18+Math.random()*16},0.85)`;
-          ctx.fillRect(x,fy-dy2,1,1);
-        }
-      }
-      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(60,160,80,0.32)';
-      ctx.fillText('microbial mats',matX-28,floorYatX(matX,CANVAS_W)+16);
-    }
+    // Sediment specks
+    for(var i=0;i<280;i++){var sx=(i*131.3+7)%W,sfy=floorYatX(sx,W)-1;if(sfy<CANVAS_H-4){var roll=i%10;if(roll<4)ctx.fillStyle='rgba('+(78+i%22)+','+(42+i%15)+','+(9+i%9)+',0.5)';else if(roll<7)ctx.fillStyle='rgba(9,4,1,0.55)';else ctx.fillStyle='rgba(182,168,142,0.26)';ctx.fillRect(sx,sfy,roll<7?2:1,1);}}
 
-    // ── Expedition markers ───────────────────────────────
-    sorted.forEach((exp,i)=>{
-      const x=getSlotX(i,CANVAS_W);
-      const fY=floorYatX(x,CANVAS_W);
-      const markerY=depthToY(exp.maxDepth);
-      const finalY=markerY;  // always plot at true depth on Y axis
-      const col=TYPE_COLOR[exp.type]||'#00dcc8';
+    // Zone lines
+    ctx.font='9px "Courier New"';ctx.fillStyle='rgba(0,200,180,0.18)';ctx.textAlign='left';
+    var zones=[[200,'· twilight zone'],[1000,'· midnight zone'],[4000,'· abyssal zone']];
+    for(var i=0;i<zones.length;i++){var zy=depthToY(zones[i][0]);ctx.setLineDash([4,8]);ctx.strokeStyle='rgba(0,180,200,0.09)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(0,zy);ctx.lineTo(W,zy);ctx.stroke();ctx.setLineDash([]);ctx.fillText(zones[i][0]+'m '+zones[i][1],6,zy-3);}
+    ctx.fillStyle='rgba(0,220,200,0.22)';ctx.textAlign='right';ctx.font='9px "Courier New"';
+    var dTicks=[500,1000,2000,3000,4000,5000];for(var i=0;i<dTicks.length;i++){var ty=depthToY(dTicks[i]);if(ty<CANVAS_H-18&&ty>WATER_Y)ctx.fillText(dTicks[i]+'m',W-6,ty+3);}
 
-      ctx.setLineDash([2,4]); ctx.strokeStyle=col+'33'; ctx.lineWidth=0.8;
-      ctx.beginPath(); ctx.moveTo(x,finalY+8); ctx.lineTo(x,Math.max(fY-2,finalY+10)); ctx.stroke();
-      ctx.setLineDash([]);
+    // Continental margin label in open water
+    var lblY=depthToY(1400);if(lblY<CANVAS_H-20&&lblY>WATER_Y+30){ctx.font='8px "Courier New"';ctx.fillStyle='rgba(120,90,50,0.22)';ctx.textAlign='left';ctx.fillText('· continental margin sediment ·',W*0.32,lblY);}
 
-      ctx.fillStyle=col+'55';
-      ctx.beginPath(); ctx.moveTo(x-4,fY-2); ctx.lineTo(x+4,fY-2); ctx.lineTo(x,fY+4); ctx.closePath(); ctx.fill();
+    // ── Features ──────────────────────────────────────────
 
-      ctx.fillStyle='rgba(0,0,0,0.35)';
-      ctx.beginPath(); ctx.arc(x+1,finalY+1,7,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=col;
-      ctx.beginPath(); ctx.arc(x,finalY,7,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle='rgba(2,13,24,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
-      ctx.fillStyle='rgba(255,255,255,0.28)';
-      ctx.beginPath(); ctx.arc(x-2.5,finalY-2.5,2.5,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle=col+'35'; ctx.lineWidth=1;
-      ctx.beginPath(); ctx.arc(x,finalY,12,0,Math.PI*2); ctx.stroke();
+    // Carbonate mound at WF02-20
+    var wf20i=findById('wf0220');if(wf20i>=0){var cmx=getSlotX(wf20i,W);drawCarbonateMound(cmx,floorYatX(cmx,W),now);}
 
-      ctx.save();
-      ctx.translate(x,finalY-14);
-      ctx.rotate(-Math.PI/4);
-      ctx.font='500 10px Georgia'; ctx.fillStyle='rgba(200,230,240,0.88)'; ctx.textAlign='left';
-      ctx.fillText(exp.name,0,0);
-      ctx.font='9px "Courier New"'; ctx.fillStyle=col;
-      ctx.fillText(exp.year+' · '+exp.maxDepth+'m',0,11);
+    // Pushcores at WF05-21
+    var wf21i=findById('wf0521');
+    if(wf21i>=0){var pcx=getSlotX(wf21i,W);var pcOff=[-14,0,14];for(var j=0;j<3;j++){var ppx=pcx+pcOff[j],ppy=floorYatX(ppx,W);ctx.strokeStyle='rgba(180,180,160,0.55)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ppx,ppy);ctx.lineTo(ppx,ppy-20);ctx.stroke();ctx.strokeStyle='rgba(140,140,120,0.45)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ppx,ppy-7);ctx.lineTo(ppx,ppy-18);ctx.stroke();ctx.fillStyle='rgba(200,190,160,0.38)';ctx.fillRect(ppx-3,ppy-2,6,3);}ctx.font='8px "Courier New"';ctx.fillStyle='rgba(180,170,140,0.42)';ctx.textAlign='center';ctx.fillText('pushcores',pcx,floorYatX(pcx,W)+20);}
+
+    // Vents at FK210922
+    var fki=findById('fk210922');if(fki>=0){var vx=getSlotX(fki,W);var vOff=[-16,0,16];for(var j=0;j<3;j++){var nvx=vx+vOff[j];drawVent(nvx,floorYatX(nvx,W),now,j);}ctx.font='8px "Courier New"';ctx.fillStyle='rgba(200,155,80,0.45)';ctx.textAlign='center';ctx.fillText('hydrothermal vents',vx,floorYatX(vx,W)+20);}
+
+    // Benthic creatures
+    var britX=W*0.58,britY=floorYatX(W*0.58,W)+18;if(britY<CANVAS_H-15)drawBrittleStar(britX,britY);
+    var cucX=W*0.48,cucY=floorYatX(W*0.48,W)+14;if(cucY<CANVAS_H-15)drawSeaCucumber(cucX,cucY);
+
+    // Plane under NA111
+    var na111i=findById('na111');if(na111i>=0){var planex=getSlotX(na111i,W);drawPlane(planex,floorYatX(planex,W)-4);}
+
+    // ── Expedition markers ─────────────────────────────
+    for(var i=0;i<sorted.length;i++){
+      var exp=sorted[i],x=getSlotX(i,W),col=TYPE_COLOR[exp.type]||'#00dcc8';
+      var isDay=exp.type==='day',mr=6,tipY,dotY;
+      if(isDay){dotY=dayCruiseY(exp.maxDepth);tipY=dotY;}
+      else{tipY=floorYatX(x,W);dotY=tipY-90;}
+      if(!isDay){ctx.setLineDash([3,4]);ctx.strokeStyle=col+'88';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,dotY+mr+1);ctx.lineTo(x,tipY-6);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=col+'aa';ctx.beginPath();ctx.moveTo(x-5,tipY-8);ctx.lineTo(x+5,tipY-8);ctx.lineTo(x,tipY-1);ctx.closePath();ctx.fill();}
+      ctx.fillStyle='rgba(0,0,0,0.3)';ctx.beginPath();ctx.arc(x+1,dotY+1,mr,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,dotY,mr,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='rgba(2,13,24,0.85)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.25)';ctx.beginPath();ctx.arc(x-2,dotY-2,2.2,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle=col+'40';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,dotY,mr+4,0,Math.PI*2);ctx.stroke();
+      ctx.save();ctx.translate(x,dotY-mr-8);ctx.rotate(-Math.PI/4);ctx.textAlign='left';
+      var idPart=exp.cruiseID?exp.cruiseID+' | ':'';
+      ctx.font='500 9.5px Georgia';ctx.fillStyle='rgba(200,230,240,0.9)';ctx.fillText(idPart+exp.name,0,0);
+      ctx.font='8.5px "Courier New"';ctx.fillStyle='rgba(160,200,220,0.52)';ctx.fillText(exp.ship+' · '+exp.chiefSci,0,12);
       ctx.restore();
-    });
+    }
 
-    // Sky label
-    ctx.font='9px "Courier New"'; ctx.fillStyle='rgba(150,210,255,0.35)'; ctx.textAlign='left';
-    ctx.fillText('surface',8,SKY_H/2+4);
+    // Legend
+    ctx.textAlign='left';
+    var legItems=[['DSV Alvin','#8B1A1A'],['ROV / Ship cruise','#E8C030'],['Day cruise','#7ab8e0']];
+    var lx=8;for(var i=0;i<legItems.length;i++){ctx.fillStyle=legItems[i][1];ctx.beginPath();ctx.arc(lx+5,CANVAS_H-12,4,0,Math.PI*2);ctx.fill();ctx.font='8px "Courier New"';ctx.fillStyle='rgba(180,220,240,0.5)';ctx.fillText(legItems[i][0],lx+12,CANVAS_H-8);lx+=legItems[i][0].length*5.5+22;}
   }
 
-  function animate() { draw(); requestAnimationFrame(animate); }
-  animate();
-
-  window.addEventListener('resize', () => {
-    canvas.width = getCanvasW();
-    canvas.height = CANVAS_H;
-  });
+  function animate(){draw();requestAnimationFrame(animate);}
+  setSize();animate();
+  window.addEventListener('resize',function(){setSize();});
 })();
 </script>
 </body>
