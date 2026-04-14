@@ -11,7 +11,6 @@
       font-family: 'Georgia', serif;
       background: #020d18;
       color: #e0f4f8;
-      overflow-x: hidden;
     }
 
     /* ── Nav ── */
@@ -115,6 +114,26 @@
       cursor: grab;
     }
     #globe-svg:active { cursor: grabbing; }
+    #globe-controls {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      display: flex; flex-direction: column; gap: 4px;
+      z-index: 20;
+    }
+    .globe-btn {
+      width: 28px; height: 28px;
+      background: rgba(2,13,24,0.85);
+      border: 0.5px solid rgba(0,220,200,0.35);
+      border-radius: 4px;
+      color: rgba(0,220,200,0.85);
+      font-size: 16px; line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: monospace;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .globe-btn:hover { background: rgba(0,220,200,0.12); }
     #globe-tooltip {
       position: absolute;
       background: rgba(2,10,20,0.96);
@@ -204,13 +223,18 @@
 <!-- Globe -->
 <div id="globe-section">
   <div class="sec-head">Expedition map</div>
-  <div id="globe-hint">drag to rotate · hover for details · click to open expedition page</div>
+  <div id="globe-hint">drag to rotate · scroll to zoom · hover for details · click to open expedition page</div>
   <div id="globe-wrap">
     <svg id="globe-svg" viewBox="0 0 800 460"></svg>
     <div id="globe-tooltip">
       <div class="gt-name" id="gt-name"></div>
       <div class="gt-body" id="gt-body"></div>
       <div class="gt-sub"  id="gt-sub"></div>
+    </div>
+    <div id="globe-controls">
+      <div class="globe-btn" id="zoom-in"  title="Zoom in">+</div>
+      <div class="globe-btn" id="zoom-out" title="Zoom out">−</div>
+      <div class="globe-btn" id="zoom-reset" title="Reset" style="font-size:11px;">⟳</div>
     </div>
   </div>
   <div id="globe-legend">
@@ -224,7 +248,7 @@
 <!-- Depth graphic -->
 <div id="depth-section">
   <div class="sec-head">Expeditions by depth</div>
-  <div id="depth-hint">scroll right to go deeper · hover markers for details</div>
+  <div id="depth-hint">shallow left → deep right · hover markers for details</div>
   <div id="depth-outer">
     <canvas id="depth-canvas"></canvas>
   </div>
@@ -265,22 +289,25 @@ const TYPE_COLOR = {
 // ════════════════════════════════════════════════════════════
 (function initGlobe() {
   const W = 800, H = 460, CX = W/2, CY = H/2;
+  const BASE_SCALE = H/2-18;
+  const MIN_SCALE = BASE_SCALE * 0.6;
+  const MAX_SCALE = BASE_SCALE * 5;
+  let currentScale = BASE_SCALE;
+
   const svg = d3.select('#globe-svg');
   const defs = svg.append('defs');
   defs.append('clipPath').attr('id','gclip')
-    .append('circle').attr('cx',CX).attr('cy',CY).attr('r',H/2-18);
+    .append('circle').attr('id','gclip-circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE);
 
   const proj = d3.geoOrthographic()
-    .scale(H/2-18).translate([CX,CY])
+    .scale(BASE_SCALE).translate([CX,CY])
     .clipAngle(90).rotate([120,-20,0]);
 
   const geoPath = d3.geoPath().projection(proj);
 
-  // ocean sphere
-  svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',H/2-18)
+  const oceanCircle = svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE)
     .attr('fill','#0a2848');
 
-  // graticule
   const grat = d3.geoGraticule().step([30,30])();
   const gratEl = svg.append('g').attr('clip-path','url(#gclip)')
     .append('path').datum(grat)
@@ -289,19 +316,25 @@ const TYPE_COLOR = {
   const landG = svg.append('g').attr('clip-path','url(#gclip)').attr('class','land');
   const markG = svg.append('g').attr('clip-path','url(#gclip)').attr('class','marks');
 
-  // rim
-  svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',H/2-18)
+  const rimCircle = svg.append('circle').attr('cx',CX).attr('cy',CY).attr('r',BASE_SCALE)
     .attr('fill','none').attr('stroke','rgba(0,160,220,0.2)').attr('stroke-width','2');
 
-  let worldData = null;
   let rotating = true;
+
+  function updateScale(newScale) {
+    currentScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+    proj.scale(currentScale);
+    // clip circle stays at BASE_SCALE visually — update to match current
+    const clipR = Math.min(currentScale, BASE_SCALE);
+    document.getElementById('gclip-circle').setAttribute('r', BASE_SCALE);
+    oceanCircle.attr('r', BASE_SCALE);
+    rimCircle.attr('r', BASE_SCALE);
+    render();
+  }
 
   function render() {
     gratEl.attr('d', geoPath(grat));
-    if (worldData) {
-      landG.selectAll('.country').attr('d', geoPath);
-    }
-    // reposition markers
+    landG.selectAll('.country').attr('d', geoPath);
     markG.selectAll('.mgrp').each(function(d) {
       const p = proj([d.lon, d.lat]);
       if (p) d3.select(this).attr('transform',`translate(${p[0]},${p[1]})`).attr('opacity',1);
@@ -309,11 +342,9 @@ const TYPE_COLOR = {
     });
   }
 
-  // load world map
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     .then(r => r.json())
     .then(world => {
-      worldData = world;
       const countries = topojson.feature(world, world.objects.countries);
       landG.selectAll('.country')
         .data(countries.features)
@@ -323,13 +354,9 @@ const TYPE_COLOR = {
       buildMarkers();
       render();
     })
-    .catch(() => {
-      // fallback: just build markers without land
-      buildMarkers();
-    });
+    .catch(() => buildMarkers());
 
   function buildMarkers() {
-    // cluster
     const CDIST = 2.5;
     const used = new Set();
     const clusters = [];
@@ -348,11 +375,10 @@ const TYPE_COLOR = {
       const e0 = EXPEDITIONS[cluster[0]];
       const col = cluster.length>1 ? '#00dcc8' : TYPE_COLOR[e0.type];
       const mr  = cluster.length>1 ? 9 : 6;
-      const p0  = proj([e0.lon, e0.lat]) || [0,0];
+      const p0  = proj([e0.lon, e0.lat]) || [CX,CY];
 
       const g = markG.append('g').attr('class','mgrp')
-        .datum(e0)
-        .attr('transform',`translate(${p0[0]},${p0[1]})`)
+        .datum(e0).attr('transform',`translate(${p0[0]},${p0[1]})`)
         .style('cursor','pointer');
 
       g.append('circle').attr('r',mr+5).attr('fill','none')
@@ -369,52 +395,63 @@ const TYPE_COLOR = {
           .attr('font-family','monospace').attr('fill','#020d18');
       }
 
-      // tooltip
       const tt = document.getElementById('globe-tooltip');
-      g.on('mouseenter', function(event) {
+      g.on('mouseenter', function() {
         document.getElementById('gt-name').textContent = cluster.length>1
           ? `${cluster.length} expeditions` : e0.name;
         document.getElementById('gt-body').textContent = cluster.length>1
           ? cluster.map(i=>EXPEDITIONS[i].name).join(' · ')
           : `${e0.ship} · ${e0.year}`;
         document.getElementById('gt-sub').textContent = e0.loc;
-        const wrap = document.getElementById('globe-wrap').getBoundingClientRect();
         const svgEl = document.getElementById('globe-svg').getBoundingClientRect();
-        const sx = svgEl.width/W, sy = svgEl.height/H;
         const pp = proj([e0.lon,e0.lat]);
         if (pp) {
-          tt.style.left = Math.min(pp[0]*sx+14, svgEl.width-215)+'px';
-          tt.style.top  = Math.max(pp[1]*sy-50,4)+'px';
+          tt.style.left = Math.min(pp[0]*(svgEl.width/W)+14, svgEl.width-215)+'px';
+          tt.style.top  = Math.max(pp[1]*(svgEl.height/H)-50,4)+'px';
         }
         tt.style.opacity='1';
-      }).on('mouseleave', () => tt.style.opacity='0');
-
-      g.on('click', () => {
-        if (e0.id) window.location.href = `expedition-${e0.id}.html`;
-      });
+      }).on('mouseleave', () => tt.style.opacity='0')
+        .on('click', () => { if(e0.id) window.location.href=`expedition-${e0.id}.html`; });
     });
   }
 
-  // drag
+  // drag to rotate
   let v0, r0;
   const drag = d3.drag()
     .on('start', ev => { rotating=false; v0=[ev.x,ev.y]; r0=proj.rotate(); })
     .on('drag', ev => {
-      const sc = 180/(H/2-18);
-      proj.rotate([r0[0]+(ev.x-v0[0])*sc*0.4,
-                   Math.max(-80,Math.min(80,r0[1]-(ev.y-v0[1])*sc*0.4)),
+      const sc = 180/currentScale;
+      proj.rotate([r0[0]+(ev.x-v0[0])*sc*0.5,
+                   Math.max(-80,Math.min(80,r0[1]-(ev.y-v0[1])*sc*0.5)),
                    r0[2]]);
       render();
     });
   d3.select('#globe-svg').call(drag);
 
+  // scroll wheel zoom
+  d3.select('#globe-svg').on('wheel', function(event) {
+    event.preventDefault();
+    rotating = false;
+    const delta = event.deltaY > 0 ? 0.85 : 1.18;
+    updateScale(currentScale * delta);
+  });
+
+  // zoom buttons
+  document.getElementById('zoom-in').addEventListener('click', () => {
+    rotating = false; updateScale(currentScale * 1.4);
+  });
+  document.getElementById('zoom-out').addEventListener('click', () => {
+    rotating = false; updateScale(currentScale / 1.4);
+  });
+  document.getElementById('zoom-reset').addEventListener('click', () => {
+    rotating = true;
+    proj.rotate([120,-20,0]);
+    updateScale(BASE_SCALE);
+  });
+
   // auto-rotate
   function tick() {
-    if (rotating) {
-      const r = proj.rotate();
-      proj.rotate([r[0]-0.15, r[1], r[2]]);
-      render();
-    }
+    if (rotating) { const r=proj.rotate(); proj.rotate([r[0]-0.15,r[1],r[2]]); render(); }
     requestAnimationFrame(tick);
   }
   tick();
@@ -422,7 +459,7 @@ const TYPE_COLOR = {
 
 
 // ════════════════════════════════════════════════════════════
-// DEPTH GRAPHIC — sloped seafloor, scrollable
+// DEPTH GRAPHIC — sloped seafloor, fits screen width
 // ════════════════════════════════════════════════════════════
 (function initDepth() {
   const canvas = document.getElementById('depth-canvas');
@@ -431,36 +468,45 @@ const TYPE_COLOR = {
   // Sort expeditions shallow → deep for left→right placement
   const sorted = [...EXPEDITIONS].sort((a,b) => a.maxDepth - b.maxDepth);
 
-  const SLOT_W   = 160;   // horizontal space per expedition
-  const SKY_H    = 80;    // sky above water
-  const CANVAS_H = 780;   // total canvas height
-  const CANVAS_W = Math.max(sorted.length * SLOT_W + 120, window.innerWidth);
-  const MAX_DEPTH = 6000; // deepest depth to show
+  const SKY_H    = 80;
+  const CANVAS_H = 780;
+  const MAX_DEPTH = 6000;
 
-  canvas.width  = CANVAS_W;
-  canvas.height = CANVAS_H;
+  function getCanvasW() {
+    return Math.max(document.documentElement.clientWidth || window.innerWidth, 800);
+  }
 
-  // Depth → Y pixel (below the water surface line)
-  const WATER_Y = SKY_H + 18; // where surface sits
-  const FLOOR_TOP_Y = WATER_Y + 40; // shallowest floor point (far left)
-  const FLOOR_BOT_Y = CANVAS_H - 30; // deepest floor point (far right)
+  // Depth → Y pixel
+  const WATER_Y   = SKY_H + 18;
+  const FLOOR_TOP_Y = WATER_Y + 40;
+  const FLOOR_BOT_Y = CANVAS_H - 30;
 
   function depthToY(depth) {
-    // map 0..MAX_DEPTH onto WATER_Y..FLOOR_BOT_Y
     const t = Math.min(depth, MAX_DEPTH) / MAX_DEPTH;
     return WATER_Y + t * (FLOOR_BOT_Y - WATER_Y);
   }
 
-  // X position of each expedition slot
-  function slotX(i) { return 80 + i * SLOT_W; }
+  function getSlotX(i, W) {
+    const margin = 60;
+    const usable = W - margin * 2;
+    return margin + (i / (sorted.length - 1)) * usable;
+  }
 
-  // Seafloor Y at a given X (linear slope)
-  function floorYatX(x) {
-    const t = (x - 80) / (slotX(sorted.length-1) - 80 + SLOT_W*0.5);
-    return FLOOR_TOP_Y + Math.max(0,Math.min(1,t)) * (FLOOR_BOT_Y - FLOOR_TOP_Y);
+  function floorYatX(x, W) {
+    const margin = 60;
+    const t = Math.max(0, Math.min(1, (x - margin) / (W - margin * 2)));
+    return FLOOR_TOP_Y + t * (FLOOR_BOT_Y - FLOOR_TOP_Y);
+  }
+
+  // Find expedition slot index by id
+  function slotIdxOf(id) {
+    return sorted.findIndex(e => e.id === id);
   }
 
   function draw() {
+    const CANVAS_W = getCanvasW();
+    if (canvas.width !== CANVAS_W) { canvas.width = CANVAS_W; canvas.height = CANVAS_H; }
+
     ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
     // ── Sky ──────────────────────────────────────────────
@@ -469,277 +515,201 @@ const TYPE_COLOR = {
     skyGrad.addColorStop(1, '#0d4a7a');
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, CANVAS_W, SKY_H);
-
-    // Sky particles (light scatter)
-    ctx.fillStyle = 'rgba(200,230,255,0.06)';
+    ctx.fillStyle = 'rgba(200,230,255,0.05)';
     for (let i = 0; i < 60; i++) {
-      const x = (i * 137.5) % CANVAS_W;
-      const y = (i * 73.1) % SKY_H;
-      ctx.fillRect(x, y, 1+(i%3), 1);
+      ctx.fillRect((i*137.5)%CANVAS_W, (i*73.1)%SKY_H, 1+(i%3), 1);
     }
 
-    // ── Ocean water body ─────────────────────────────────
+    // ── Ocean ────────────────────────────────────────────
     for (let y = WATER_Y; y < CANVAS_H; y++) {
-      const t = (y - WATER_Y) / (CANVAS_H - WATER_Y);
-      const r = Math.round(10 - 8*t);
-      const g = Math.round(30 - 22*t);
-      const b = Math.round(60 - 42*t);
-      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      const t = (y-WATER_Y)/(CANVAS_H-WATER_Y);
+      ctx.fillStyle = `rgb(${Math.round(10-8*t)},${Math.round(30-22*t)},${Math.round(60-42*t)})`;
       ctx.fillRect(0, y, CANVAS_W, 1);
     }
 
-    // Bioluminescent particles
-    for (let i = 0; i < 180; i++) {
-      const x = (i * 97.3 * 4.1) % CANVAS_W;
-      const y = WATER_Y + 20 + (i * 61.7 * 3.3) % (CANVAS_H - WATER_Y - 40);
-      const depth = (y - WATER_Y) / (CANVAS_H - WATER_Y) * MAX_DEPTH;
-      const alpha = 0.1 + (i%3)*0.12;
-      if (i%3===0) ctx.fillStyle = `rgba(0,220,200,${alpha})`;
-      else if (i%3===1) ctx.fillStyle = `rgba(100,180,255,${alpha*0.7})`;
-      else ctx.fillStyle = `rgba(50,220,180,${alpha*0.6})`;
-      ctx.fillRect(x, y, i%5===0?2:1, i%5===0?2:1);
+    // particles
+    for (let i=0;i<180;i++){
+      const px2=(i*97.3*4.1)%CANVAS_W;
+      const py2=WATER_Y+20+(i*61.7*3.3)%(CANVAS_H-WATER_Y-40);
+      const a=0.1+(i%3)*0.12;
+      ctx.fillStyle = i%3===0?`rgba(0,220,200,${a})`:i%3===1?`rgba(100,180,255,${a*0.7})`:`rgba(50,220,180,${a*0.6})`;
+      ctx.fillRect(px2,py2,i%5===0?2:1,i%5===0?2:1);
     }
 
-    // ── Wavy surface line ────────────────────────────────
-    const now = Date.now() / 1000;
-    ctx.strokeStyle = 'rgba(120,200,255,0.6)';
-    ctx.lineWidth = 1.5;
+    // ── Wavy surface ─────────────────────────────────────
+    const now = Date.now()/1000;
+    ctx.strokeStyle='rgba(120,200,255,0.6)'; ctx.lineWidth=1.5;
     ctx.beginPath();
-    for (let x = 0; x <= CANVAS_W; x += 2) {
-      const y = SKY_H + 4
-        + Math.sin(x * 0.018 + now * 0.8) * 4
-        + Math.sin(x * 0.031 + now * 0.5) * 2.5
-        + Math.sin(x * 0.009 + now * 1.1) * 3;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    for(let x=0;x<=CANVAS_W;x+=2){
+      const y=SKY_H+4+Math.sin(x*0.018+now*0.8)*4+Math.sin(x*0.031+now*0.5)*2.5+Math.sin(x*0.009+now*1.1)*3;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke();
-
-    // Second wave layer
-    ctx.strokeStyle = 'rgba(80,160,220,0.35)';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle='rgba(80,160,220,0.35)'; ctx.lineWidth=1;
     ctx.beginPath();
-    for (let x = 0; x <= CANVAS_W; x += 2) {
-      const y = SKY_H + 9
-        + Math.sin(x * 0.022 + now * 0.6 + 1) * 3
-        + Math.sin(x * 0.014 + now * 0.9 + 2) * 2;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    for(let x=0;x<=CANVAS_W;x+=2){
+      const y=SKY_H+9+Math.sin(x*0.022+now*0.6+1)*3+Math.sin(x*0.014+now*0.9+2)*2;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.stroke();
-
-    // Surface foam flecks
-    ctx.fillStyle = 'rgba(200,230,255,0.3)';
-    for (let i = 0; i < 30; i++) {
-      const x = ((i * 173 + Math.floor(now*0.5)*11) % CANVAS_W);
-      const y = SKY_H + 2 + Math.sin(x*0.02 + now)*3;
-      ctx.fillRect(x, y, 3+i%4, 1);
+    ctx.fillStyle='rgba(200,230,255,0.3)';
+    for(let i=0;i<30;i++){
+      const x=((i*173+Math.floor(now*0.5)*11)%CANVAS_W);
+      ctx.fillRect(x,SKY_H+2+Math.sin(x*0.02+now)*3,3+i%4,1);
     }
 
-    // ── Seafloor slope ───────────────────────────────────
-    // Build the seafloor path
-    const floorPts = [];
-    for (let x = 0; x <= CANVAS_W; x += 4) {
-      const baseY = floorYatX(x);
-      // add small bumps/texture
-      const bump = Math.sin(x * 0.04) * 3 + Math.sin(x * 0.11) * 1.5;
-      floorPts.push([x, baseY + bump]);
+    // ── Seafloor ─────────────────────────────────────────
+    const floorPts=[];
+    for(let x=0;x<=CANVAS_W;x+=4){
+      const bump=Math.sin(x*0.04)*3+Math.sin(x*0.11)*1.5;
+      floorPts.push([x,floorYatX(x,CANVAS_W)+bump]);
     }
-
-    // Seafloor fill
-    ctx.fillStyle = '#0a1a0e';
-    ctx.beginPath();
-    ctx.moveTo(0, CANVAS_H);
-    floorPts.forEach(([x,y]) => ctx.lineTo(x, y));
-    ctx.lineTo(CANVAS_W, CANVAS_H);
-    ctx.closePath();
-    ctx.fill();
-
-    // Seafloor surface line
-    ctx.strokeStyle = 'rgba(0,180,130,0.3)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    floorPts.forEach(([x,y],i) => i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
-    ctx.stroke();
-
-    // Sediment texture on floor
-    ctx.fillStyle = 'rgba(20,60,30,0.5)';
-    for (let i = 0; i < 120; i++) {
-      const x = (i * 131.3) % CANVAS_W;
-      const fy = floorYatX(x) + Math.sin(x*0.04)*3 - 2;
-      if (fy < CANVAS_H - 5) ctx.fillRect(x, fy-1, 2+(i%3), 1);
+    ctx.fillStyle='#0a1a0e';
+    ctx.beginPath(); ctx.moveTo(0,CANVAS_H);
+    floorPts.forEach(([x,y])=>ctx.lineTo(x,y));
+    ctx.lineTo(CANVAS_W,CANVAS_H); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(0,180,130,0.3)'; ctx.lineWidth=1;
+    ctx.beginPath(); floorPts.forEach(([x,y],i)=>i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)); ctx.stroke();
+    ctx.fillStyle='rgba(20,60,30,0.5)';
+    for(let i=0;i<120;i++){
+      const x=(i*131.3)%CANVAS_W;
+      const fy=floorYatX(x,CANVAS_W)+Math.sin(x*0.04)*3-2;
+      if(fy<CANVAS_H-5) ctx.fillRect(x,fy-1,2+(i%3),1);
     }
 
     // ── Zone labels ──────────────────────────────────────
-    ctx.font = '9px "Courier New"';
-    ctx.fillStyle = 'rgba(0,200,180,0.2)';
-    ctx.textAlign = 'left';
-    const zones = [[200,'· twilight zone'],[1000,'· midnight zone'],[4000,'· abyssal zone']];
-    zones.forEach(([d,label]) => {
-      const y = depthToY(d);
-      ctx.setLineDash([4,8]);
-      ctx.strokeStyle = 'rgba(0,180,200,0.1)';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CANVAS_W,y); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillText(`${d}m ${label}`, 8, y - 3);
+    ctx.font='9px "Courier New"'; ctx.fillStyle='rgba(0,200,180,0.2)'; ctx.textAlign='left';
+    [[200,'· twilight zone'],[1000,'· midnight zone'],[4000,'· abyssal zone']].forEach(([d,label])=>{
+      const y=depthToY(d);
+      ctx.setLineDash([4,8]); ctx.strokeStyle='rgba(0,180,200,0.1)'; ctx.lineWidth=0.5;
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(CANVAS_W,y); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillText(`${d}m ${label}`,8,y-3);
     });
 
-    // Depth scale (right edge)
-    ctx.fillStyle = 'rgba(0,220,200,0.25)';
-    ctx.textAlign = 'right';
-    ctx.font = '9px "Courier New"';
-    [0,500,1000,2000,3000,4000,5000,6000].forEach(d => {
-      const y = depthToY(d);
-      if (y < CANVAS_H - 20 && y > WATER_Y) {
-        ctx.fillText(`${d}m`, CANVAS_W - 8, y + 3);
-        ctx.strokeStyle = 'rgba(0,220,200,0.08)';
-        ctx.lineWidth = 0.5;
-        ctx.beginPath(); ctx.moveTo(CANVAS_W-70,y); ctx.lineTo(CANVAS_W,y); ctx.stroke();
-      }
+    // Depth scale right
+    ctx.fillStyle='rgba(0,220,200,0.25)'; ctx.textAlign='right'; ctx.font='9px "Courier New"';
+    [0,500,1000,2000,3000,4000,5000,6000].forEach(d=>{
+      const y=depthToY(d);
+      if(y<CANVAS_H-20&&y>WATER_Y){ ctx.fillText(`${d}m`,CANVAS_W-8,y+3); }
     });
-    ctx.textAlign = 'left';
+    ctx.textAlign='left';
 
-    // ── Hydrothermal vents (deep right area) ─────────────
-    const ventX = CANVAS_W - 180;
-    const ventBaseY = floorYatX(ventX) + Math.sin(ventX*0.04)*3;
-    [[ventX,0],[ventX+35,-4],[ventX+70,2]].forEach(([vx,dy]) => {
-      const vy = ventBaseY + dy;
-      ctx.fillStyle = '#2a1a0a';
-      ctx.beginPath();
-      ctx.moveTo(vx-7,vy); ctx.lineTo(vx+7,vy);
-      ctx.lineTo(vx+4,vy-26); ctx.lineTo(vx-4,vy-26);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle='rgba(200,80,20,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
-      for (let i=0;i<5;i++) {
-        const py=vy-28-i*7;
-        ctx.fillStyle=`rgba(${155+i*9},${38+i*4},8,${0.55-i*0.08})`;
-        ctx.beginPath(); ctx.arc(vx+Math.sin(i*0.7)*3,py,3.5-i*0.4,0,Math.PI*2); ctx.fill();
-      }
-    });
-    ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(200,120,50,0.4)';
-    ctx.fillText('hydrothermal vents', ventX-10, ventBaseY+16);
-
-    // ── Methane seep clams (mid-right) ───────────────────
-    const seepX = CANVAS_W * 0.62;
-    const seepY = floorYatX(seepX) + Math.sin(seepX*0.04)*3;
-    for (let i=0;i<8;i++){
-      const cx2=seepX+(i-4)*10+Math.random()*3;
-      const cy2=seepY+Math.abs(i-4)*0.8;
-      ctx.fillStyle=`rgba(${170+i*4},${150+i*3},${90+i*4},0.7)`;
-      ctx.beginPath(); ctx.ellipse(cx2,cy2,5,3,0.3,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle='rgba(120,100,60,0.4)'; ctx.lineWidth=0.4; ctx.stroke();
+    // ── Seafloor features at specific expedition positions ─
+    // Hydrothermal vents → Falkor (Pescadero Basin ~3700m)
+    const falkorIdx = slotIdxOf('falkor');
+    if (falkorIdx >= 0) {
+      const ventX = getSlotX(falkorIdx, CANVAS_W);
+      const ventBaseY = floorYatX(ventX, CANVAS_W)+Math.sin(ventX*0.04)*3;
+      [[-28,0],[0,-4],[28,2]].forEach(([dx,dy])=>{
+        const vx=ventX+dx, vy=ventBaseY+dy;
+        ctx.fillStyle='#2a1a0a';
+        ctx.beginPath(); ctx.moveTo(vx-7,vy); ctx.lineTo(vx+7,vy); ctx.lineTo(vx+4,vy-26); ctx.lineTo(vx-4,vy-26); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle='rgba(200,80,20,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
+        for(let i=0;i<5;i++){
+          const py=vy-28-i*7;
+          ctx.fillStyle=`rgba(${155+i*9},${38+i*4},8,${0.55-i*0.08})`;
+          ctx.beginPath(); ctx.arc(vx+Math.sin(i*0.7)*3,py,3.5-i*0.4,0,Math.PI*2); ctx.fill();
+        }
+      });
+      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(200,120,50,0.45)';
+      ctx.fillText('hydrothermal vents',ventX-34,ventBaseY+16);
     }
-    ctx.fillStyle='rgba(0,180,130,0.1)';
-    ctx.fillRect(seepX-40,seepY-2,80,4);
-    ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(80,200,150,0.35)';
-    ctx.fillText('methane seep clams', seepX-30, seepY+16);
 
-    // ── Pushcores (shallow-mid area) ─────────────────────
-    const pcX = CANVAS_W * 0.38;
-    const pcY = floorYatX(pcX) + Math.sin(pcX*0.04)*3;
-    [pcX-15, pcX, pcX+15].forEach(px => {
-      const py = floorYatX(px) + Math.sin(px*0.04)*3;
-      ctx.strokeStyle='rgba(180,180,160,0.5)'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py-20); ctx.stroke();
-      ctx.strokeStyle='rgba(140,140,120,0.4)'; ctx.lineWidth=3;
-      ctx.beginPath(); ctx.moveTo(px,py-7); ctx.lineTo(px,py-18); ctx.stroke();
-      ctx.fillStyle='rgba(200,190,160,0.35)';
-      ctx.fillRect(px-3,py-2,6,3);
-    });
-    ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(180,170,140,0.35)';
-    ctx.fillText('pushcores', pcX-16, pcY+16);
-
-    // ── Microbial mats ───────────────────────────────────
-    const matX = CANVAS_W * 0.45;
-    for (let x=matX-40;x<matX+40;x++){
-      const fy=floorYatX(x)+Math.sin(x*0.08)*2;
-      const h=1+Math.floor(Math.abs(Math.sin(x*0.6))*2.5);
-      for(let dy2=0;dy2<h;dy2++){
-        ctx.fillStyle=`rgba(${18+Math.random()*16},${55+Math.random()*35},${18+Math.random()*16},0.85)`;
-        ctx.fillRect(x,fy-dy2,1,1);
-      }
+    // Pushcores → Western Flyer 2021
+    const wf2021Idx = slotIdxOf('wf2021');
+    if (wf2021Idx >= 0) {
+      const pcX = getSlotX(wf2021Idx, CANVAS_W);
+      [pcX-14,pcX,pcX+14].forEach(px=>{
+        const py=floorYatX(px,CANVAS_W)+Math.sin(px*0.04)*3;
+        ctx.strokeStyle='rgba(180,180,160,0.5)'; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,py-20); ctx.stroke();
+        ctx.strokeStyle='rgba(140,140,120,0.4)'; ctx.lineWidth=3;
+        ctx.beginPath(); ctx.moveTo(px,py-7); ctx.lineTo(px,py-18); ctx.stroke();
+        ctx.fillStyle='rgba(200,190,160,0.35)'; ctx.fillRect(px-3,py-2,6,3);
+      });
+      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(180,170,140,0.38)';
+      ctx.fillText('pushcores',pcX-16,floorYatX(pcX,CANVAS_W)+16);
     }
-    ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(60,160,80,0.3)';
-    ctx.fillText('microbial mats', matX-30, floorYatX(matX)+16);
+
+    // Methane seep clams → AT50-12 (California seeps)
+    const at5012Idx = slotIdxOf('at5012');
+    if (at5012Idx >= 0) {
+      const seepX = getSlotX(at5012Idx, CANVAS_W);
+      const seepY = floorYatX(seepX,CANVAS_W)+Math.sin(seepX*0.04)*3;
+      for(let i=0;i<8;i++){
+        const cx2=seepX+(i-4)*10;
+        const cy2=seepY+Math.abs(i-4)*0.8;
+        ctx.fillStyle=`rgba(${170+i*4},${150+i*3},${90+i*4},0.7)`;
+        ctx.beginPath(); ctx.ellipse(cx2,cy2,5,3,0.3,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='rgba(120,100,60,0.4)'; ctx.lineWidth=0.4; ctx.stroke();
+      }
+      ctx.fillStyle='rgba(0,180,130,0.1)'; ctx.fillRect(seepX-40,seepY-2,80,4);
+      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(80,200,150,0.38)';
+      ctx.fillText('methane seep clams',seepX-34,seepY+16);
+    }
+
+    // Microbial mats → AT50-24 (Aleutian seeps, deepest)
+    const at5024Idx = slotIdxOf('at5024');
+    if (at5024Idx >= 0) {
+      const matX = getSlotX(at5024Idx, CANVAS_W);
+      for(let x=matX-40;x<matX+40;x++){
+        const fy=floorYatX(x,CANVAS_W)+Math.sin(x*0.08)*2;
+        const h=1+Math.floor(Math.abs(Math.sin(x*0.6))*2.5);
+        for(let dy2=0;dy2<h;dy2++){
+          ctx.fillStyle=`rgba(${18+Math.random()*16},${55+Math.random()*35},${18+Math.random()*16},0.85)`;
+          ctx.fillRect(x,fy-dy2,1,1);
+        }
+      }
+      ctx.font='8px "Courier New"'; ctx.fillStyle='rgba(60,160,80,0.32)';
+      ctx.fillText('microbial mats',matX-28,floorYatX(matX,CANVAS_W)+16);
+    }
 
     // ── Expedition markers ───────────────────────────────
-    sorted.forEach((exp, i) => {
-      const x = slotX(i);
-      const floorY = floorYatX(x);
-      const markerY = depthToY(exp.maxDepth);
-      // clamp marker to be above the floor
-      const finalY = Math.min(markerY, floorY - 14);
-      const col = TYPE_COLOR[exp.type] || '#00dcc8';
+    sorted.forEach((exp,i)=>{
+      const x=getSlotX(i,CANVAS_W);
+      const fY=floorYatX(x,CANVAS_W);
+      const markerY=depthToY(exp.maxDepth);
+      const finalY=Math.min(markerY,fY-14);
+      const col=TYPE_COLOR[exp.type]||'#00dcc8';
 
-      // vertical dashed line from marker down to seafloor
-      ctx.setLineDash([2,4]);
-      ctx.strokeStyle = col + '33';
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(x, finalY + 7);
-      ctx.lineTo(x, floorY - 2);
-      ctx.stroke();
+      ctx.setLineDash([2,4]); ctx.strokeStyle=col+'33'; ctx.lineWidth=0.8;
+      ctx.beginPath(); ctx.moveTo(x,finalY+7); ctx.lineTo(x,fY-2); ctx.stroke();
       ctx.setLineDash([]);
 
-      // small triangle "touchdown" indicator on floor
-      ctx.fillStyle = col + '55';
-      ctx.beginPath();
-      ctx.moveTo(x-4, floorY-2);
-      ctx.lineTo(x+4, floorY-2);
-      ctx.lineTo(x, floorY+4);
-      ctx.closePath();
-      ctx.fill();
+      ctx.fillStyle=col+'55';
+      ctx.beginPath(); ctx.moveTo(x-4,fY-2); ctx.lineTo(x+4,fY-2); ctx.lineTo(x,fY+4); ctx.closePath(); ctx.fill();
 
-      // marker circle
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.beginPath(); ctx.arc(x+1, finalY+1, 7, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = col;
-      ctx.beginPath(); ctx.arc(x, finalY, 7, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = 'rgba(2,13,24,0.8)'; ctx.lineWidth=1.5;
-      ctx.stroke();
-      ctx.fillStyle = 'rgba(255,255,255,0.28)';
-      ctx.beginPath(); ctx.arc(x-2.5, finalY-2.5, 2.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle='rgba(0,0,0,0.35)';
+      ctx.beginPath(); ctx.arc(x+1,finalY+1,7,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=col;
+      ctx.beginPath(); ctx.arc(x,finalY,7,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(2,13,24,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.28)';
+      ctx.beginPath(); ctx.arc(x-2.5,finalY-2.5,2.5,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=col+'35'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(x,finalY,12,0,Math.PI*2); ctx.stroke();
 
-      // pulse ring
-      ctx.strokeStyle = col + '35';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(x, finalY, 12, 0, Math.PI*2); ctx.stroke();
-
-      // label above marker
       ctx.save();
-      ctx.translate(x, finalY - 14);
+      ctx.translate(x,finalY-14);
       ctx.rotate(-Math.PI/4);
-      ctx.font = '500 10px Georgia';
-      ctx.fillStyle = 'rgba(200,230,240,0.88)';
-      ctx.textAlign = 'left';
-      ctx.fillText(exp.name, 0, 0);
-      ctx.font = '9px "Courier New"';
-      ctx.fillStyle = col;
-      ctx.fillText(exp.year + ' · ' + exp.maxDepth + 'm', 0, 11);
+      ctx.font='500 10px Georgia'; ctx.fillStyle='rgba(200,230,240,0.88)'; ctx.textAlign='left';
+      ctx.fillText(exp.name,0,0);
+      ctx.font='9px "Courier New"'; ctx.fillStyle=col;
+      ctx.fillText(exp.year+' · '+exp.maxDepth+'m',0,11);
       ctx.restore();
     });
 
-    // ── Sky label ────────────────────────────────────────
-    ctx.font = '9px "Courier New"';
-    ctx.fillStyle = 'rgba(150,210,255,0.35)';
-    ctx.textAlign = 'left';
-    ctx.fillText('surface', 8, SKY_H/2 + 4);
+    // Sky label
+    ctx.font='9px "Courier New"'; ctx.fillStyle='rgba(150,210,255,0.35)'; ctx.textAlign='left';
+    ctx.fillText('surface',8,SKY_H/2+4);
   }
 
-  // Animate waves
-  function animate() {
-    draw();
-    requestAnimationFrame(animate);
-  }
+  function animate() { draw(); requestAnimationFrame(animate); }
   animate();
 
-  // Resize canvas width on window resize
   window.addEventListener('resize', () => {
-    const newW = Math.max(sorted.length * SLOT_W + 120, window.innerWidth);
-    if (newW !== canvas.width) {
-      canvas.width = newW;
-    }
+    canvas.width = getCanvasW();
+    canvas.height = CANVAS_H;
   });
 })();
 </script>
