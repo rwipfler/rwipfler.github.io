@@ -238,9 +238,8 @@
     </div>
   </div>
   <div id="globe-legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#378ADD;"></div>HOV Alvin</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#5DCAA5;"></div>ROV cruise</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#AFA9EC;"></div>E/V Nautilus</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#8B1A2E;"></div>DSV Alvin</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#D4A017;"></div>ROV cruise (incl. E/V Nautilus)</div>
     <div class="leg-item"><div class="leg-dot" style="background:#7ab8e0;"></div>Day cruise</div>
   </div>
 </div>
@@ -263,25 +262,24 @@
 // EXPEDITION DATA — edit here to update both globe and depth
 // ════════════════════════════════════════════════════════════
 const EXPEDITIONS = [
-  { id:'na086',     name:'Quinault Canyon & Olympic Coast', ship:'E/V Nautilus',      year:'2017',    lat:47.5,  lon:-125.0, type:'nautilus', loc:'Pacific NW, USA',            maxDepth:1800  },
-  { id:'na087',     name:'Heceta Bank',                    ship:'E/V Nautilus',      year:'2017',    lat:44.2,  lon:-124.8, type:'nautilus', loc:'Oregon, USA',                maxDepth:400   },
-  { id:'na101',     name:'Papahānaumokuākea MNM',          ship:'E/V Nautilus',      year:'2018',    lat:26.5,  lon:-174.0, type:'nautilus', loc:'NW Hawaiian Ridge',           maxDepth:2000  },
-  { id:'na111',     name:'Search for the Samoan Clipper',  ship:'E/V Nautilus',      year:'2019',    lat:-14.3, lon:-170.7, type:'nautilus', loc:'American Samoa',             maxDepth:800   },
-  { id:'na112',     name:'American Samoa Sanctuary',       ship:'E/V Nautilus',      year:'2019',    lat:-13.8, lon:-171.8, type:'nautilus', loc:'American Samoa',             maxDepth:1000  },
+  { id:'na086',     name:'Quinault Canyon & Olympic Coast', ship:'E/V Nautilus',      year:'2017',    lat:47.5,  lon:-125.0, type:'rov', loc:'Pacific NW, USA',            maxDepth:1800  },
+  { id:'na087',     name:'Heceta Bank',                    ship:'E/V Nautilus',      year:'2017',    lat:44.2,  lon:-124.8, type:'rov', loc:'Oregon, USA',                maxDepth:400   },
+  { id:'na101',     name:'Papahānaumokuākea MNM',          ship:'E/V Nautilus',      year:'2018',    lat:26.5,  lon:-174.0, type:'rov', loc:'NW Hawaiian Ridge',           maxDepth:2000  },
+  { id:'na111',     name:'Search for the Samoan Clipper',  ship:'E/V Nautilus',      year:'2019',    lat:-14.3, lon:-170.7, type:'rov', loc:'American Samoa',             maxDepth:800   },
+  { id:'na112',     name:'American Samoa Sanctuary',       ship:'E/V Nautilus',      year:'2019',    lat:-13.8, lon:-171.8, type:'rov', loc:'American Samoa',             maxDepth:1000  },
   { id:'wf2020',    name:'California Margin ROV Survey',   ship:'R/V Western Flyer', year:'2020',    lat:36.8,  lon:-122.0, type:'rov',      loc:'Monterey, California',       maxDepth:1800  },
   { id:'falkor',    name:'Pescadero Basin Vents',          ship:'R/V Falkor',        year:'2021',    lat:23.8,  lon:-108.7, type:'rov',      loc:'Gulf of California, Mexico', maxDepth:3700  },
   { id:'wf2021',    name:'California Margin ROV II',       ship:'R/V Western Flyer', year:'2021',    lat:35.6,  lon:-121.3, type:'rov',      loc:'California, USA',            maxDepth:1800  },
-  { id:'at5012',    name:'AT50-12 · HOV Alvin',            ship:'R/V Atlantis',      year:'2023',    lat:33.2,  lon:-118.0, type:'alvin',    loc:'S. California margin',       maxDepth:1020  },
+  { id:'at5012',    name:'AT50-12 · DSV Alvin',            ship:'R/V Atlantis',      year:'2023',    lat:33.2,  lon:-118.0, type:'alvin',    loc:'S. California margin',       maxDepth:1020  },
   { id:'yellowfin', name:'California Day Cruise',          ship:'R/V Yellowfin',     year:'2023',    lat:34.1,  lon:-119.8, type:'day',      loc:'California, USA',            maxDepth:50    },
   { id:'wflyer',    name:'Western Flyer Day Cruise',       ship:'F/V Western Flyer', year:'2024',    lat:36.85, lon:-121.78,type:'day',      loc:'Moss Landing, CA',           maxDepth:30    },
-  { id:'at5024',    name:'AT50-24 · HOV Alvin',            ship:'R/V Atlantis',      year:'2025',    lat:53.0,  lon:-168.5, type:'alvin',    loc:'Aleutian Islands, Alaska',   maxDepth:5500  },
+  { id:'at5024',    name:'AT50-24 · DSV Alvin',            ship:'R/V Atlantis',      year:'2025',    lat:53.0,  lon:-168.5, type:'alvin',    loc:'Aleutian Islands, Alaska',   maxDepth:5500  },
 ];
 
 const TYPE_COLOR = {
-  alvin:   '#378ADD',
-  rov:     '#5DCAA5',
-  nautilus:'#AFA9EC',
-  day:     '#7ab8e0',
+  alvin: '#8B1A2E',
+  rov:   '#D4A017',
+  day:   '#7ab8e0',
 };
 
 // ════════════════════════════════════════════════════════════
@@ -669,11 +667,11 @@ const TYPE_COLOR = {
       const x=getSlotX(i,CANVAS_W);
       const fY=floorYatX(x,CANVAS_W);
       const markerY=depthToY(exp.maxDepth);
-      const finalY=Math.min(markerY,fY-14);
+      const finalY=markerY;  // always plot at true depth on Y axis
       const col=TYPE_COLOR[exp.type]||'#00dcc8';
 
       ctx.setLineDash([2,4]); ctx.strokeStyle=col+'33'; ctx.lineWidth=0.8;
-      ctx.beginPath(); ctx.moveTo(x,finalY+7); ctx.lineTo(x,fY-2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x,finalY+8); ctx.lineTo(x,Math.max(fY-2,finalY+10)); ctx.stroke();
       ctx.setLineDash([]);
 
       ctx.fillStyle=col+'55';
