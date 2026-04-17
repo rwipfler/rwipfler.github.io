@@ -27,35 +27,20 @@
     @media (pointer: coarse) { body { cursor: auto; } }
     a { color: inherit; text-decoration: none; }
 
-    /* ══ HERO OCEAN SURFACE — sunlit blue that shows through ══ */
-    #hero-ocean {
-      position: absolute;
-      inset: 0;
-      /* sunlit reef surface blue → deep */
-      background: linear-gradient(to bottom,
-        #1a8ad4 0%,
-        #0e5fa0 12%,
-        #072f60 28%,
-        #030e25 55%,
-        transparent 100%);
-      z-index: 0;
-      pointer-events: none;
-    }
-    /* caustic shimmer at the very top */
-    #hero-ocean::after {
-      content: '';
-      position: absolute;
-      inset: 0 0 60% 0;
-      background:
-        radial-gradient(ellipse at 30% 0%, rgba(180,230,255,0.22), transparent 55%),
-        radial-gradient(ellipse at 70% 0%, rgba(140,200,255,0.18), transparent 60%),
-        radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.12), transparent 50%);
-    }
-
-    /* ══ FIXED WATER COLUMN — darkens as you scroll ══ */
+    /* ══ FIXED WATER COLUMN — starts reef-blue at top, darkens as you scroll ══ */
     #water-column {
       position: fixed; inset: 0; z-index: -2;
-      background: linear-gradient(to bottom, #06204a 0%, #000006 100%);
+      /* Initial: sunlit surface blue at top fading to near-black.
+         JS overrides the top color on scroll to darken toward abyss. */
+      background: linear-gradient(to bottom, #1a8ad4 0%, #06204a 18%, #020814 55%, #000006 100%);
+    }
+    /* Caustic shimmer — only shows near top via the fixed layer */
+    #water-column::after {
+      content: ''; position: absolute; inset: 0 0 75% 0;
+      background:
+        radial-gradient(ellipse at 25% -5%, rgba(180,230,255,0.18), transparent 50%),
+        radial-gradient(ellipse at 75% -5%, rgba(140,200,255,0.14), transparent 55%);
+      pointer-events: none;
     }
 
     /* ══ CANVAS LAYERS ══ */
@@ -163,11 +148,11 @@
     }
 
     /* ══ MAIN ══ */
-    main { position: relative; z-index: 2; padding-left: 80px; padding-right: 80px; }
+    main { position: relative; z-index: 2; padding-left: 80px; padding-right: 80px; width: 100%; }
     section {
       min-height: 100vh; padding: 120px 40px;
       display: flex; flex-direction: column; justify-content: center;
-      max-width: 860px; position: relative;
+      max-width: 860px; position: relative; width: 100%;
     }
 
     /* ══ HERO ══ */
@@ -427,9 +412,8 @@
 <!-- ══ MAIN CONTENT ══ -->
 <main>
 
-  <!-- HERO — sunlit surface blue -->
+  <!-- HERO — sunlit surface blue comes from #water-column fixed bg -->
   <section id="hero" class="hero">
-    <div id="hero-ocean"></div>
     <h1>Rebecca Wipfler</h1>
     <div class="subtitle">
       <span>Deep-sea Ecologist</span>
@@ -800,8 +784,14 @@ function resizeCanvases() {
     c.width  = window.innerWidth;
     c.height = window.innerHeight;
   });
+  // seafloor canvas width tracks its container
+  const sf = document.getElementById('seafloor-canvas');
+  if (sf) { sf.width = sf.offsetWidth || window.innerWidth; }
+  // rebuild particles so they distribute across new width
+  rebuildBiolum();
+  rebuildSnow();
 }
-window.addEventListener('resize', resizeCanvases);
+window.addEventListener('resize', () => { resizeCanvases(); initStars(); });
 resizeCanvases();
 
 // ════════════════════════════════════════════════════════
@@ -1390,11 +1380,25 @@ const waterCol     = document.getElementById('water-column');
 
 function waterColorFor(pct){
   const lerp=(a,b,t)=>Math.round(a+(b-a)*t);
-  const surf=[6,32,74], abyss=[0,0,6];
-  const wDep=0.22;
-  const top=`rgb(${lerp(surf[0],abyss[0],pct)},${lerp(surf[1],abyss[1],pct)},${lerp(surf[2],abyss[2],pct)})`;
-  const bot=`rgb(${lerp(surf[0],abyss[0],Math.min(1,pct+wDep))},${lerp(surf[1],abyss[1],Math.min(1,pct+wDep))},${lerp(surf[2],abyss[2],Math.min(1,pct+wDep))})`;
-  return `linear-gradient(to bottom,${top} 0%,${bot} 100%)`;
+  // At pct=0 (surface): reef blue top, mid-blue bottom
+  // At pct=1 (abyss): near-black throughout
+  const surfTop=[26,138,212];  // #1a8ad4 — sunlit reef blue
+  const surfBot=[6, 32, 74];   // #06204a — deep blue
+  const abyssCol=[0, 0, 6];    // #000006 — abyss
+
+  // top of viewport color
+  const topR=lerp(lerp(surfTop[0],surfBot[0],pct*1.8), abyssCol[0], Math.max(0,pct-0.1)*1.5);
+  const topG=lerp(lerp(surfTop[1],surfBot[1],pct*1.8), abyssCol[1], Math.max(0,pct-0.1)*1.5);
+  const topB=lerp(lerp(surfTop[2],surfBot[2],pct*1.8), abyssCol[2], Math.max(0,pct-0.1)*1.5);
+
+  // bottom of viewport — always darker than top
+  const wDep=0.25;
+  const botPct=Math.min(1,pct+wDep);
+  const botR=lerp(surfTop[0],abyssCol[0],botPct);
+  const botG=lerp(surfTop[1],abyssCol[1],botPct);
+  const botB=lerp(surfTop[2],abyssCol[2],botPct);
+
+  return `linear-gradient(to bottom,rgb(${topR},${topG},${topB}) 0%,rgb(${botR},${botG},${botB}) 100%)`;
 }
 
 function onScroll(){
