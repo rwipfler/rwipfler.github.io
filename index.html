@@ -784,14 +784,15 @@ function resizeCanvases() {
     c.width  = window.innerWidth;
     c.height = window.innerHeight;
   });
-  // seafloor canvas width tracks its container
-  const sf = document.getElementById('seafloor-canvas');
-  if (sf) { sf.width = sf.offsetWidth || window.innerWidth; }
-  // rebuild particles so they distribute across new width
+}
+window.addEventListener('resize', () => {
+  resizeCanvases();
+  initStars();
   rebuildBiolum();
   rebuildSnow();
-}
-window.addEventListener('resize', () => { resizeCanvases(); initStars(); });
+  const sf = document.getElementById('seafloor-canvas');
+  if (sf) sf.width = sf.offsetWidth || window.innerWidth;
+});
 resizeCanvases();
 
 // ════════════════════════════════════════════════════════
