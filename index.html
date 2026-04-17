@@ -27,14 +27,11 @@
     @media (pointer: coarse) { body { cursor: auto; } }
     a { color: inherit; text-decoration: none; }
 
-    /* ══ FIXED WATER COLUMN — starts reef-blue at top, darkens as you scroll ══ */
+    /* ══ FIXED WATER COLUMN ══ */
     #water-column {
       position: fixed; inset: 0; z-index: -2;
-      /* Initial: sunlit surface blue at top fading to near-black.
-         JS overrides the top color on scroll to darken toward abyss. */
       background: linear-gradient(to bottom, #1a8ad4 0%, #06204a 18%, #020814 55%, #000006 100%);
     }
-    /* Caustic shimmer — only shows near top via the fixed layer */
     #water-column::after {
       content: ''; position: absolute; inset: 0 0 75% 0;
       background:
@@ -303,7 +300,7 @@
     }
     #seafloor-canvas {
       display: block; width: 100%;
-      height: 500px;
+      height: 600px;
     }
 
     /* ══ SCROLLBAR ══ */
@@ -1256,7 +1253,7 @@ function drawDeepCreatures(t,scrollPct) {
   let W,H;
 
   function resize(){
-    W=canvas.offsetWidth; H=500;
+    W=canvas.offsetWidth; H=600;
     canvas.width=W; canvas.height=H;
   }
   resize();
@@ -1265,178 +1262,320 @@ function drawDeepCreatures(t,scrollPct) {
   function drawSeafloor(t){
     ctx.clearRect(0,0,W,H);
 
-    // ── water above seafloor (gradient fading into abyss)
-    const waterGrad=ctx.createLinearGradient(0,0,0,H*0.45);
-    waterGrad.addColorStop(0,'rgba(2,8,20,0)');
-    waterGrad.addColorStop(1,'rgba(1,5,12,0.85)');
-    ctx.fillStyle=waterGrad; ctx.fillRect(0,0,W,H*0.45);
+    // water above — dark abyss fading in
+    const waterGrad=ctx.createLinearGradient(0,0,0,H*0.5);
+    waterGrad.addColorStop(0,'rgba(1,4,12,0)');
+    waterGrad.addColorStop(1,'rgba(1,4,12,0.9)');
+    ctx.fillStyle=waterGrad; ctx.fillRect(0,0,W,H*0.5);
 
-    // ── sediment base — dark brown
-    const sedH=H*0.55;
+    // sediment base
+    const sedH=H*0.52;
     const sedGrad=ctx.createLinearGradient(0,sedH,0,H);
-    sedGrad.addColorStop(0,'#1a1208');
-    sedGrad.addColorStop(0.2,'#0e0800');
-    sedGrad.addColorStop(1,'#050300');
+    sedGrad.addColorStop(0,'#14100a'); sedGrad.addColorStop(0.15,'#0c0800'); sedGrad.addColorStop(1,'#050300');
     ctx.fillStyle=sedGrad; ctx.fillRect(0,sedH,W,H-sedH);
 
-    // sediment surface line with small bumps
-    ctx.strokeStyle='rgba(80,50,15,0.6)'; ctx.lineWidth=1.5;
+    // surface line
+    ctx.strokeStyle='rgba(70,45,12,0.55)'; ctx.lineWidth=1.2;
     ctx.beginPath();
-    for(let x=0;x<=W;x+=4){
-      const y=sedH+Math.sin(x*0.05)*2.5+Math.sin(x*0.13)*1.2;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
+    for(let x=0;x<=W;x+=4){const y=sedH+Math.sin(x*0.05)*2+Math.sin(x*0.12)*1;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
     ctx.stroke();
 
-    // pale fluff layer (sediment-water interface)
-    ctx.strokeStyle='rgba(140,110,70,0.18)'; ctx.lineWidth=3;
+    // pale fluff interface layer
+    ctx.strokeStyle='rgba(120,95,55,0.15)'; ctx.lineWidth=4;
     ctx.beginPath();
-    for(let x=0;x<=W;x+=4){
-      const y=sedH+Math.sin(x*0.05)*2.5+Math.sin(x*0.13)*1.2-1;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
+    for(let x=0;x<=W;x+=4){const y=sedH+Math.sin(x*0.05)*2+Math.sin(x*0.12)*1-2;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
     ctx.stroke();
 
-    // ripple marks in sediment
-    ctx.strokeStyle='rgba(40,22,5,0.25)'; ctx.lineWidth=0.5;
-    for(let r=0;r<8;r++){
-      const ry=sedH+18+r*16; if(ry>H-4) break;
+    // sediment ripple marks
+    ctx.strokeStyle='rgba(35,18,4,0.22)'; ctx.lineWidth=0.5;
+    for(let r=0;r<10;r++){
+      const ry=sedH+14+r*14; if(ry>H-4) break;
       ctx.beginPath();
-      for(let x=0;x<=W;x+=4){
-        const ry2=ry+Math.sin(x*0.07+r*0.8)*2.5;
-        x===0?ctx.moveTo(x,ry2):ctx.lineTo(x,ry2);
-      }
+      for(let x=0;x<=W;x+=4){const ry2=ry+Math.sin(x*0.07+r*0.9)*2;x===0?ctx.moveTo(x,ry2):ctx.lineTo(x,ry2);}
       ctx.stroke();
     }
 
-    // ── LEFT: CARBONATE MOUND ─────────────────────────────
-    const moundX=W*0.22, moundY=sedH-2;
+    // sediment speckles — tan/dark/white like real marine sediment
+    for(let i=0;i<300;i++){
+      const sx=(i*131.3+7)%W, sfy=sedH+(i*73)%(H-sedH-4);
+      const roll=i%10;
+      if(roll<4) ctx.fillStyle=`rgba(${88+i%28},${52+i%18},${14+i%10},0.5)`;
+      else if(roll<7) ctx.fillStyle='rgba(10,5,1,0.5)';
+      else ctx.fillStyle='rgba(195,180,155,0.28)';
+      ctx.fillRect(sx,sfy,roll<7?2:1,1);
+    }
 
-    // mound rock body
-    ctx.fillStyle='#2a2218';
-    ctx.beginPath(); ctx.ellipse(moundX,moundY,80,36,0,0,Math.PI,true); ctx.fill();
-    ctx.fillStyle='#362c1e';
-    ctx.beginPath(); ctx.ellipse(moundX,moundY,66,28,0.04,0,Math.PI,true); ctx.fill();
-    ctx.fillStyle='#1e1810';
-    ctx.beginPath(); ctx.ellipse(moundX,moundY-8,48,20,-0.04,0,Math.PI,true); ctx.fill();
+    // ── CARBONATE MOUND (left) — based on reference photos ──────
+    // Real carbonate: dark basalt-grey rock with orange/tan microbial
+    // mat filling cracks, white carbonate patches, angular not rounded
+    const moundX=W*0.20, moundY=sedH;
 
-    // white microbial mats on mound
-    [[0,-4,24,6],[-22,0,14,5],[24,2,12,4],[-10,-10,10,4],[15,-10,11,3.5]].forEach(([dx,dy,rx,ry])=>{
-      ctx.fillStyle='rgba(240,235,218,0.58)';
-      ctx.beginPath(); ctx.ellipse(moundX+dx,moundY+dy,rx,ry,0.3,0,Math.PI*2); ctx.fill();
+    // main rock mass — dark grey, angular
+    ctx.fillStyle='#2e3530';
+    ctx.beginPath();
+    ctx.moveTo(moundX-110,moundY);
+    ctx.bezierCurveTo(moundX-100,moundY-30, moundX-80,moundY-55, moundX-50,moundY-70);
+    ctx.bezierCurveTo(moundX-20,moundY-85, moundX+10,moundY-88, moundX+40,moundY-80);
+    ctx.bezierCurveTo(moundX+70,moundY-72, moundX+90,moundY-55, moundX+105,moundY-30);
+    ctx.bezierCurveTo(moundX+112,moundY-12, moundX+110,moundY, moundX+110,moundY);
+    ctx.closePath(); ctx.fill();
+
+    // secondary rock facet — slightly lighter grey
+    ctx.fillStyle='#3a4040';
+    ctx.beginPath();
+    ctx.moveTo(moundX-60,moundY);
+    ctx.bezierCurveTo(moundX-55,moundY-38, moundX-30,moundY-60, moundX,moundY-72);
+    ctx.bezierCurveTo(moundX+25,moundY-62, moundX+50,moundY-45, moundX+55,moundY-20);
+    ctx.lineTo(moundX+60,moundY); ctx.closePath(); ctx.fill();
+
+    // rock surface texture — angular crack lines
+    ctx.strokeStyle='rgba(15,18,16,0.7)'; ctx.lineWidth=1;
+    const cracks=[
+      [moundX-40,moundY-30, moundX-10,moundY-65],
+      [moundX+10,moundY-72, moundX+35,moundY-50],
+      [moundX-70,moundY-20, moundX-30,moundY-50],
+      [moundX+50,moundY-48, moundX+80,moundY-28],
+      [moundX-20,moundY-45, moundX+20,moundY-40],
+      [moundX-55,moundY-10, moundX-20,moundY-30],
+    ];
+    cracks.forEach(([x1,y1,x2,y2])=>{
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
     });
-    // orange microbial mats
-    [[-34,4,9,4],[36,5,8,3.5],[4,0,8,3],[-18,-6,10,3.5]].forEach(([dx,dy,rx,ry])=>{
-      ctx.fillStyle='rgba(210,115,28,0.65)';
-      ctx.beginPath(); ctx.ellipse(moundX+dx,moundY+dy,rx,ry,0.2,0,Math.PI*2); ctx.fill();
+
+    // ORANGE/TAN microbial mat filling cracks — the dominant feature
+    // in the reference photos, not white patches but orange streaks
+    ctx.strokeStyle='rgba(185,105,25,0.72)'; ctx.lineWidth=3;
+    [
+      [moundX-40,moundY-30, moundX-10,moundY-65],
+      [moundX-70,moundY-20, moundX-30,moundY-50],
+      [moundX+10,moundY-72, moundX+35,moundY-50],
+      [moundX+50,moundY-48, moundX+80,moundY-28],
+    ].forEach(([x1,y1,x2,y2])=>{
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    });
+    // broader orange mat patches on rock surface
+    [[moundX-55,moundY-18,22,8],[moundX+15,moundY-60,18,6],[moundX-15,moundY-42,28,9],[moundX+55,moundY-35,16,6]].forEach(([cx2,cy2,rx,ry])=>{
+      ctx.fillStyle='rgba(190,108,28,0.55)';
+      ctx.beginPath(); ctx.ellipse(cx2,cy2,rx,ry,0.4,0,Math.PI*2); ctx.fill();
     });
 
-    // clam bed around mound base
-    for(let i=0;i<14;i++){
-      const angle=(i/14)*Math.PI;
-      const r=78+(i%3)*10;
+    // white carbonate patches (authigenic carbonate precipitation)
+    [[moundX-25,moundY-55,10,4],[moundX+5,moundY-45,14,5],[moundX-70,moundY-30,8,3]].forEach(([cx2,cy2,rx,ry])=>{
+      ctx.fillStyle='rgba(210,215,200,0.65)';
+      ctx.beginPath(); ctx.ellipse(cx2,cy2,rx,ry,0.2,0,Math.PI*2); ctx.fill();
+    });
+
+    // clam bed — Vesicomyid clams around mound base, larger and more realistic
+    for(let i=0;i<16;i++){
+      const angle=(i/16)*Math.PI;
+      const r=105+(i%4)*12;
       const cx2=moundX+Math.cos(angle)*r;
-      const cy2=sedH+Math.sin(angle)*r*0.28+3;
-      ctx.fillStyle=`rgba(${155+i*5},${135+i*4},${72+i*5},0.78)`;
-      ctx.beginPath(); ctx.ellipse(cx2,cy2,5.5,3.5,angle,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle='rgba(100,80,40,0.45)'; ctx.lineWidth=0.4; ctx.stroke();
+      const cy2=sedH+Math.sin(angle)*r*0.22+4;
+      // clam shell: two overlapping ellipses
+      ctx.fillStyle=`rgba(${148+i*4},${128+i*3},${68+i*4},0.82)`;
+      ctx.beginPath(); ctx.ellipse(cx2,cy2,7,4.5,angle,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=`rgba(${165+i*3},${148+i*2},${88+i*3},0.5)`;
+      ctx.beginPath(); ctx.ellipse(cx2-1,cy2-1,5,3,angle,0,Math.PI); ctx.fill();
+      ctx.strokeStyle='rgba(90,70,35,0.4)'; ctx.lineWidth=0.5; ctx.stroke();
     }
 
-    // methane bubbles rising from mound
-    for(let b=0;b<9;b++){
-      const bx=moundX+(b-4)*12+Math.sin(b*1.5)*4;
-      const phase=(t*0.0004+b*0.38)%1;
-      const by=moundY-12-phase*160;
-      const br=1.8+(b%3)*0.6;
-      const alpha=0.4-phase*0.32;
-      ctx.fillStyle=`rgba(160,210,255,${alpha})`;
+    // methane bubbles from mound
+    for(let b=0;b<10;b++){
+      const bx=moundX+(b-5)*14+Math.sin(b*1.5)*5;
+      const phase=(t*0.0004+b*0.35)%1;
+      const by=moundY-18-phase*180;
+      const br=1.6+(b%4)*0.5;
+      const alpha=0.45-phase*0.35;
+      ctx.fillStyle=`rgba(160,215,255,${alpha})`;
       ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2); ctx.fill();
-      ctx.strokeStyle=`rgba(120,180,240,${alpha*0.6})`; ctx.lineWidth=0.5; ctx.stroke();
+      ctx.strokeStyle=`rgba(110,175,240,${alpha*0.55})`; ctx.lineWidth=0.4; ctx.stroke();
     }
 
-    // tube worm bush next to mound
-    const twX=moundX+95, twY=sedH;
-    // tubes (white chitinous)
-    [[-28,100],[-14,130],[0,120],[14,135],[28,110],[40,100]].forEach(([dx,h])=>{
-      const tx=twX+dx, ty=twY;
-      ctx.fillStyle='rgba(235,225,200,0.88)';
-      ctx.strokeStyle='rgba(150,135,95,0.5)'; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(tx-3,ty); ctx.lineTo(tx+3,ty);
-      ctx.lineTo(tx+2.5,ty-h); ctx.lineTo(tx-2.5,ty-h); ctx.closePath();
-      ctx.fill(); ctx.stroke();
-      // red plume at top
-      ctx.fillStyle='rgba(210,60,30,0.85)';
-      ctx.beginPath(); ctx.ellipse(tx,ty-h,5,8,0,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle='rgba(180,40,20,0.5)';
-      ctx.beginPath(); ctx.ellipse(tx,ty-h,3,5,0,0,Math.PI*2); ctx.fill();
+    // tube worm bush (Lamellibrachia-style — long and slender, not Riftia)
+    const twX=moundX+125, twY=sedH;
+    [[-30,90],[-16,118],[-4,108],[8,122],[20,105],[32,95],[44,88]].forEach(([dx,h])=>{
+      const tx=twX+dx;
+      // tube — white, very slender
+      ctx.strokeStyle='rgba(230,222,200,0.85)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(tx,twY); ctx.lineTo(tx+dx*0.1,twY-h); ctx.stroke();
+      // plume — feathery red at top
+      ctx.fillStyle='rgba(200,52,25,0.88)';
+      ctx.beginPath(); ctx.ellipse(tx+dx*0.1,twY-h,4,7,0,0,Math.PI*2); ctx.fill();
+      // pale inner plume
+      ctx.fillStyle='rgba(230,100,60,0.45)';
+      ctx.beginPath(); ctx.ellipse(tx+dx*0.1,twY-h+2,2,4,0,0,Math.PI*2); ctx.fill();
     });
 
-    // ── RIGHT FLAT SECTION: sediment with features ────────
-    const flatX=W*0.65;
+    // ── RIGHT FLAT SECTION ──────────────────────────────────
+    const flatX=W*0.62;
 
-    // microbial mats — green patches on flat sediment
-    for(let x=flatX-60;x<flatX+80;x++){
-      const fy=sedH+Math.sin(x*0.05)*2.5+Math.sin(x*0.13)*1.2;
-      const h=1+Math.floor(Math.abs(Math.sin(x*0.6))*2.5);
+    // microbial mats — dark green fuzzy patches
+    for(let x=flatX-50;x<flatX+90;x++){
+      const fy=sedH+Math.sin(x*0.05)*2+Math.sin(x*0.12)*1;
+      const h=1+Math.floor(Math.abs(Math.sin(x*0.55))*2.8);
       for(let dy=0;dy<h;dy++){
-        ctx.fillStyle=`rgba(${14+Math.random()*12},${50+Math.random()*32},${13+Math.random()*12},0.9)`;
+        ctx.fillStyle=`rgba(${12+Math.random()*10},${45+Math.random()*28},${11+Math.random()*10},0.92)`;
         ctx.fillRect(x,fy-dy,1,1);
       }
     }
-    ctx.font='8px monospace'; ctx.fillStyle='rgba(80,200,150,0.35)'; ctx.textAlign='center';
-    ctx.fillText('microbial mats',flatX+10,sedH+22);
 
-    // pushcores
-    const pcX=W*0.78;
-    [-14,0,14].forEach(dx=>{
-      const ppx=pcX+dx, ppy=sedH+Math.sin(ppx*0.05)*2.5+Math.sin(ppx*0.13)*1.2;
-      ctx.strokeStyle='rgba(180,180,160,0.6)'; ctx.lineWidth=1.5;
-      ctx.beginPath(); ctx.moveTo(ppx,ppy); ctx.lineTo(ppx,ppy-24); ctx.stroke();
-      ctx.strokeStyle='rgba(140,140,120,0.5)'; ctx.lineWidth=3;
-      ctx.beginPath(); ctx.moveTo(ppx,ppy-8); ctx.lineTo(ppx,ppy-22); ctx.stroke();
-      ctx.fillStyle='rgba(200,190,160,0.42)'; ctx.fillRect(ppx-3,ppy-2,6,3);
+    // PUSHCORES — tall, slender acrylic tubes with metal collar
+    // Reference: ~60px tall, ~6px wide, clear with sediment sample inside
+    const pcX=W*0.80;
+    [-22,0,22].forEach((dx,idx)=>{
+      const ppx=pcX+dx;
+      const ppy=sedH+Math.sin(ppx*0.05)*2;
+      const tubeH=52, tubeW=5;
+      const slight=(dx===22)?3:dx===-22?-2:0; // slight lean on outer ones
+
+      // sediment plug inside tube (bottom ~40% filled)
+      ctx.fillStyle='rgba(40,25,8,0.7)';
+      ctx.fillRect(ppx-tubeW*0.5+1, ppy-tubeH*0.4, tubeW-2, tubeH*0.4);
+
+      // acrylic tube body — semi-transparent
+      ctx.strokeStyle='rgba(200,210,220,0.7)'; ctx.lineWidth=tubeW;
+      ctx.beginPath(); ctx.moveTo(ppx,ppy); ctx.lineTo(ppx+slight,ppy-tubeH); ctx.stroke();
+
+      // tube inner highlight (acrylic refraction)
+      ctx.strokeStyle='rgba(255,255,255,0.25)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(ppx-1.5,ppy-5); ctx.lineTo(ppx-1.5+slight*0.7,ppy-tubeH+4); ctx.stroke();
+
+      // metal collar at top
+      ctx.fillStyle='rgba(160,165,170,0.88)';
+      ctx.fillRect(ppx-tubeW*0.7+slight, ppy-tubeH-5, tubeW*1.4, 6);
+      ctx.strokeStyle='rgba(120,125,130,0.6)'; ctx.lineWidth=0.5; ctx.stroke();
+
+      // collar detail ring
+      ctx.strokeStyle='rgba(140,145,150,0.5)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(ppx-tubeW*0.7+slight,ppy-tubeH-2); ctx.lineTo(ppx+tubeW*0.7+slight,ppy-tubeH-2); ctx.stroke();
+
+      // push rod / handle stub at very top
+      ctx.strokeStyle='rgba(140,140,130,0.55)'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(ppx+slight,ppy-tubeH-5); ctx.lineTo(ppx+slight,ppy-tubeH-14); ctx.stroke();
     });
-    ctx.fillStyle='rgba(180,170,140,0.4)'; ctx.textAlign='center';
-    ctx.fillText('pushcores',pcX,sedH+22);
+    ctx.font='9px monospace'; ctx.fillStyle='rgba(180,175,155,0.38)'; ctx.textAlign='center';
+    ctx.fillText('pushcores',pcX,sedH+24);
 
-    // isopod on seafloor (#4 — isopod lives on floor, not water column)
-    const isoX=W*0.88, isoY=sedH-4;
+    // ISOPOD — chunky armored oval
+    const isoX=W*0.91, isoY=sedH-5;
     ctx.save(); ctx.translate(isoX,isoY);
-    ctx.fillStyle='rgba(185,168,135,0.85)';
-    ctx.beginPath(); ctx.ellipse(0,0,18,9,0,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle='rgba(120,100,70,0.5)'; ctx.lineWidth=0.5; ctx.stroke();
-    // plates
-    [-8,-3,2,7].forEach(x=>{
-      ctx.strokeStyle='rgba(100,80,55,0.45)'; ctx.lineWidth=0.5;
-      ctx.beginPath(); ctx.moveTo(x,-9); ctx.lineTo(x,9); ctx.stroke();
+    ctx.fillStyle='rgba(175,158,125,0.88)';
+    ctx.beginPath(); ctx.ellipse(0,0,20,10,0,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(110,90,62,0.5)'; ctx.lineWidth=0.5; ctx.stroke();
+    [-9,-4,1,6].forEach(x=>{ctx.strokeStyle='rgba(95,78,52,0.45)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(x,-10);ctx.lineTo(x,10);ctx.stroke();});
+    [-12,-6,0,6,12].forEach(x=>{
+      ctx.strokeStyle='rgba(95,78,52,0.5)';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.moveTo(x,9);ctx.lineTo(x+2,15);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x,-9);ctx.lineTo(x-2,-15);ctx.stroke();
     });
-    // legs
-    [-10,-4,4,10].forEach(x=>{
-      ctx.strokeStyle='rgba(100,80,55,0.5)'; ctx.lineWidth=0.7;
-      ctx.beginPath(); ctx.moveTo(x,8); ctx.lineTo(x+2,14); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x,-8); ctx.lineTo(x-2,-14); ctx.stroke();
-    });
-    // eye
-    ctx.fillStyle='#1a1008';
-    ctx.beginPath(); ctx.arc(-14,-1,1.8,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#180e06'; ctx.beginPath(); ctx.arc(-16,0,2,0,Math.PI*2); ctx.fill();
     ctx.restore();
-    ctx.fillStyle='rgba(185,168,135,0.35)'; ctx.textAlign='center';
-    ctx.fillText('giant isopod',isoX,sedH+22);
 
-    // brittle star on sediment
-    const bsX=W*0.58, bsY=sedH+6;
+    // BRITTLE STAR
+    const bsX=W*0.70, bsY=sedH+8;
     ctx.save(); ctx.translate(bsX,bsY);
-    ctx.fillStyle='rgba(140,110,70,0.6)';
-    ctx.beginPath(); ctx.arc(0,0,3.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(135,105,65,0.65)'; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill();
     for(let arm=0;arm<5;arm++){
       ctx.save(); ctx.rotate(arm/5*Math.PI*2);
-      ctx.strokeStyle='rgba(130,100,60,0.55)'; ctx.lineWidth=1.3;
-      ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(4,-4,9,2,14,-1); ctx.stroke();
+      ctx.strokeStyle='rgba(125,96,58,0.55)'; ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(5,-4,10,2,16,-1); ctx.stroke();
       ctx.restore();
     }
     ctx.restore();
 
-    ctx.textAlign='left'; // reset
+    // SEA PIG (Scotoplanes) — on sediment, pale pink/translucent holothurian
+    // Looks like a chubby water balloon with stubby tube feet and papillae
+    const spX=W*0.53, spY=sedH-3;
+    ctx.save(); ctx.translate(spX,spY);
+    // main body — rounded, slightly translucent pink
+    ctx.fillStyle='rgba(225,185,170,0.78)';
+    ctx.beginPath(); ctx.ellipse(0,0,28,14,0.1,0,Math.PI*2); ctx.fill();
+    // body shading — slightly darker underneath
+    ctx.fillStyle='rgba(195,150,135,0.4)';
+    ctx.beginPath(); ctx.ellipse(0,4,26,9,0,0,Math.PI); ctx.fill();
+    // translucent skin highlight
+    ctx.fillStyle='rgba(255,220,210,0.35)';
+    ctx.beginPath(); ctx.ellipse(-6,-5,12,6,0.3,0,Math.PI); ctx.fill();
+    // tube feet (podia) — stubby, around base
+    ctx.fillStyle='rgba(210,168,155,0.7)';
+    [-18,-10,0,10,18].forEach(x=>{
+      ctx.beginPath(); ctx.ellipse(x,12,2.5,4,0,0,Math.PI*2); ctx.fill();
+    });
+    // dorsal papillae (sensory bumps on top)
+    ctx.fillStyle='rgba(225,190,178,0.6)';
+    [-14,-6,2,10].forEach(x=>{
+      ctx.beginPath(); ctx.ellipse(x,-12,2,3.5,0,0,Math.PI*2); ctx.fill();
+    });
+    // anterior tentacles (feeding, around mouth)
+    ctx.strokeStyle='rgba(200,158,145,0.65)'; ctx.lineWidth=1.2;
+    [-8,-4,0,4,8].forEach(x=>{
+      ctx.beginPath(); ctx.moveTo(x+22,0); ctx.bezierCurveTo(x+28,-4,x+32,-2,x+34,2); ctx.stroke();
+    });
+    ctx.restore();
+    ctx.font='8px monospace'; ctx.fillStyle='rgba(225,185,170,0.32)'; ctx.textAlign='center';
+    ctx.fillText('sea pig',spX,sedH+22);
+
+    // FLAPJACK OCTOPUS (Opisthoteuthis californiana) — floating just above sediment
+    // Disc-shaped, ears like fins, cute round body, webbing between arms
+    const fpX=W*0.42, fpY=sedH-35;
+    const fpBob=Math.sin(t*0.0012)*8; // gentle float
+    ctx.save(); ctx.translate(fpX,fpY+fpBob);
+
+    // mantle — rounded disc, deep reddish-orange (like real Opisthoteuthis)
+    const mantleGrad=ctx.createRadialGradient(0,-3,2,0,-3,26);
+    mantleGrad.addColorStop(0,'rgba(210,100,60,0.92)');
+    mantleGrad.addColorStop(0.6,'rgba(185,75,40,0.85)');
+    mantleGrad.addColorStop(1,'rgba(155,50,25,0.6)');
+    ctx.fillStyle=mantleGrad;
+    ctx.beginPath(); ctx.ellipse(0,-3,26,20,0,0,Math.PI*2); ctx.fill();
+
+    // webbing between arms — umbrella-like, slightly translucent
+    ctx.fillStyle='rgba(195,85,45,0.5)';
+    for(let arm=0;arm<8;arm++){
+      const a1=(arm/8)*Math.PI*2;
+      const a2=((arm+1)/8)*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(Math.cos(a1)*32,Math.sin(a1)*22);
+      ctx.quadraticCurveTo(Math.cos((a1+a2)/2)*28,Math.sin((a1+a2)/2)*18,Math.cos(a2)*32,Math.sin(a2)*22);
+      ctx.closePath(); ctx.fill();
+    }
+
+    // arm tips — slightly darker, 8 arms
+    ctx.fillStyle='rgba(160,55,25,0.7)';
+    for(let arm=0;arm<8;arm++){
+      const a=(arm/8)*Math.PI*2;
+      ctx.beginPath(); ctx.ellipse(Math.cos(a)*32,Math.sin(a)*22,3.5,2,a,0,Math.PI*2); ctx.fill();
+    }
+
+    // fins / "ears" — the iconic feature, two fin-like lobes on sides of mantle
+    ctx.fillStyle='rgba(205,92,52,0.75)';
+    // left ear
+    ctx.beginPath(); ctx.ellipse(-20,-8,10,6,1.2,0,Math.PI*2); ctx.fill();
+    // right ear
+    ctx.beginPath(); ctx.ellipse(20,-8,10,6,-1.2,0,Math.PI*2); ctx.fill();
+
+    // eye — large, round, slightly iridescent blue-green tinge
+    ctx.fillStyle='rgba(30,30,25,0.95)';
+    ctx.beginPath(); ctx.arc(-8,-5,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(30,30,25,0.95)';
+    ctx.beginPath(); ctx.arc(8,-5,5,0,Math.PI*2); ctx.fill();
+    // eye highlight
+    ctx.fillStyle='rgba(140,180,200,0.6)';
+    ctx.beginPath(); ctx.arc(-6,-7,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10,-7,2,0,Math.PI*2); ctx.fill();
+
+    // skin texture dots — chromatophores, slightly raised spots
+    ctx.fillStyle='rgba(155,45,18,0.5)';
+    [[0,-14,2],[−14,-2,1.5],[14,0,1.5],[−6,8,1.2],[8,6,1.2],[-18,-4,1],[16,-6,1]].forEach(([dx,dy,r])=>{
+      ctx.beginPath(); ctx.arc(dx,dy,r,0,Math.PI*2); ctx.fill();
+    });
+
+    ctx.restore();
+    ctx.font='8px monospace'; ctx.fillStyle='rgba(210,100,60,0.35)'; ctx.textAlign='center';
+    ctx.fillText('flapjack octopus',fpX,fpY+fpBob+50);
+
+    ctx.textAlign='left';
   }
 
   function animate(t){ drawSeafloor(t); requestAnimationFrame(animate); }
@@ -1465,21 +1604,16 @@ const pageSections = [...document.querySelectorAll('main section')];
 const waterCol     = document.getElementById('water-column');
 
 function waterColorFor(pct){
+  if (pct < 0.001) return null; // let CSS handle the initial state
   const lerp=(a,b,t)=>Math.round(a+(b-a)*Math.min(1,Math.max(0,t)));
-  // Surface (pct=0): reef blue #1a8ad4 at top, mid-blue at bottom
-  // Abyss (pct=1): near-black throughout
-  const topCol = [
-    lerp(26,  0, pct*2.2),   // R: reef blue → black
-    lerp(138, 0, pct*2.2),   // G
-    lerp(212, 6, pct*1.8),   // B: stays blue longer
-  ];
-  const botPct = Math.min(1, pct + 0.2);
-  const botCol = [
-    lerp(6,   0, botPct*2),
-    lerp(32,  0, botPct*2),
-    lerp(74,  6, botPct*1.6),
-  ];
-  return `linear-gradient(to bottom,rgb(${topCol}) 0%,rgb(${botCol}) 100%)`;
+  const topR=lerp(26,  0, pct*2.5);
+  const topG=lerp(138, 0, pct*2.5);
+  const topB=lerp(212, 6, pct*1.8);
+  const bp=Math.min(1,pct+0.2);
+  const botR=lerp(6,  0, bp*2.2);
+  const botG=lerp(32, 0, bp*2.2);
+  const botB=lerp(74, 6, bp*1.6);
+  return `linear-gradient(to bottom,rgb(${topR},${topG},${topB}) 0%,rgb(${botR},${botG},${botB}) 100%)`;
 }
 
 function onScroll(){
@@ -1491,7 +1625,8 @@ function onScroll(){
   const txt=`DEPTH: ${depthM}m`;
   depthReadout.textContent=txt;
   if(footerDepth) footerDepth.textContent=txt;
-  waterCol.style.background=waterColorFor(pct);
+  const color = waterColorFor(pct);
+  if (color) waterCol.style.background = color;
 
   let activeIdx=0;
   pageSections.forEach((s,i)=>{if(s.getBoundingClientRect().top<window.innerHeight*0.5)activeIdx=i;});
