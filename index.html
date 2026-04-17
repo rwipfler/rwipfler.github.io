@@ -664,7 +664,7 @@
 // ════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════
-const state = { subLag: 1, jellyCount: 4, biolumIntensity: 28, snowDensity: 50, subMode: 0 };
+const state = { subLag: 1, jellyCount: 4, biolumIntensity: 14, snowDensity: 50, subMode: 0 };
 
 // ════════════════════════════════════════════════════════
 // CURSOR + DSV ALVIN
@@ -819,15 +819,15 @@ function drawStars(t) {
 // ════════════════════════════════════════════════════════
 // BIOLUMINESCENCE — sparser, brighter flashes (#6 fix)
 // ════════════════════════════════════════════════════════
-// Colors represent real deep-sea biolum: dinoflagellate blue-green,
-// firefly squid violet, dragonfish red, krill orange-red, comb jelly blue
+// Colors: all blues — dinoflagellate, comb jelly, siphonophore, Vampyroteuthis, deep-sea shrimp
+// No orange/red in the ambient particles — those are reserved for the chaser creature
 const BIOLUM_COLORS = [
-  {r:40, g:180,b:255},  // dinoflagellate blue
-  {r:100,g:255,b:180},  // comb jelly cyan-green
-  {r:180,g:80, b:255},  // firefly squid violet
-  {r:255,g:60, b:80},   // dragonfish red lure
-  {r:255,g:140,b:40},   // krill orange
-  {r:60, g:220,b:255},  // siphonophore blue
+  {r:40,  g:160, b:255},  // deep dinoflagellate blue
+  {r:80,  g:200, b:255},  // comb jelly bright blue
+  {r:20,  g:120, b:220},  // deep cold blue
+  {r:100, g:220, b:255},  // siphonophore cyan-blue
+  {r:60,  g:180, b:255},  // mid blue
+  {r:140, g:210, b:255},  // pale ice blue
 ];
 let biolumParticles=[], mouseTrail=[];
 
@@ -857,6 +857,91 @@ function rebuildBiolum() {
   }
 }
 rebuildBiolum();
+
+// ── COMB JELLY FLASH BURSTS ──
+// Ripple-sequenced clusters mimicking ctenophore comb row iridescence
+let combBursts = [];
+function rebuildCombBursts() {
+  combBursts = [];
+  for (let b = 0; b < 4; b++) {
+    const dots = [];
+    for (let d = 0; d < 14; d++) {
+      const angle = (d / 14) * Math.PI * 2;
+      const r = 8 + Math.random() * 18;
+      dots.push({
+        ox: Math.cos(angle)*r + (Math.random()-0.5)*6,
+        oy: Math.sin(angle)*r + (Math.random()-0.5)*6,
+        phase: d / 14, r: Math.random()*1.5+0.8,
+      });
+    }
+    combBursts.push({
+      x: Math.random()*window.innerWidth,
+      docY: Math.random()*document.documentElement.scrollHeight,
+      vx: (Math.random()-0.5)*0.06, vy: -(Math.random()*0.04+0.02),
+      phase: Math.random()*Math.PI*2, dots,
+      cycleSpeed: Math.random()*0.0015+0.001,
+    });
+  }
+}
+rebuildCombBursts();
+
+function drawCombBursts(t) {
+  const scrollY = window.scrollY;
+  for (const b of combBursts) {
+    b.x += b.vx; b.docY += b.vy;
+    if (b.x < -60) b.x = window.innerWidth+60;
+    if (b.x > window.innerWidth+60) b.x = -60;
+    if (b.docY < -100) { b.docY = document.documentElement.scrollHeight+100; b.x = Math.random()*window.innerWidth; }
+    const vy = b.docY - scrollY;
+    if (vy < -80 || vy > window.innerHeight+80) continue;
+    for (const d of b.dots) {
+      const wave = (t*b.cycleSpeed + b.phase + d.phase*3) % (Math.PI*2);
+      const pulse = Math.pow(Math.max(0, Math.sin(wave)), 3);
+      if (pulse < 0.05) continue;
+      const px = b.x+d.ox, py = vy+d.oy;
+      const glowR = d.r*(3+pulse*5);
+      const grad = biolumCtx.createRadialGradient(px,py,0,px,py,glowR);
+      grad.addColorStop(0, `rgba(80,200,255,${pulse*0.75})`);
+      grad.addColorStop(0.4, `rgba(40,160,255,${pulse*0.22})`);
+      grad.addColorStop(1, `rgba(20,120,220,0)`);
+      biolumCtx.fillStyle=grad; biolumCtx.fillRect(px-glowR,py-glowR,glowR*2,glowR*2);
+      biolumCtx.beginPath(); biolumCtx.arc(px,py,d.r,0,Math.PI*2);
+      biolumCtx.fillStyle=`rgba(120,220,255,${pulse*0.75})`; biolumCtx.fill();
+    }
+  }
+}
+
+// ── CHASER PAIR ──
+// Bright blue prey dot chased by a dim red predator (dragonfish-style:
+// red biolum ~700nm is invisible to most deep-sea prey species)
+const chaser = {
+  preyX: Math.random()*window.innerWidth, preyY: Math.random()*window.innerHeight,
+  preyVx: (Math.random()-0.5)*1.2, preyVy: (Math.random()-0.5)*0.8,
+  preyPhase: Math.random()*Math.PI*2,
+  predX: Math.random()*window.innerWidth, predY: Math.random()*window.innerHeight,
+};
+function drawChaser(t) {
+  chaser.preyX += chaser.preyVx;
+  chaser.preyY += chaser.preyVy + Math.sin(t*0.001+chaser.preyPhase)*0.4;
+  if (chaser.preyX<0||chaser.preyX>window.innerWidth)  chaser.preyVx*=-1;
+  if (chaser.preyY<0||chaser.preyY>window.innerHeight) chaser.preyVy*=-1;
+  chaser.predX += (chaser.preyX-chaser.predX)*0.003;
+  chaser.predY += (chaser.preyY-chaser.predY)*0.003;
+  // prey
+  const pp = 0.6+0.4*Math.sin(t*0.004+chaser.preyPhase);
+  const pg = biolumCtx.createRadialGradient(chaser.preyX,chaser.preyY,0,chaser.preyX,chaser.preyY,14);
+  pg.addColorStop(0,`rgba(80,200,255,${pp*0.9})`); pg.addColorStop(0.4,`rgba(40,160,255,${pp*0.3})`); pg.addColorStop(1,`rgba(20,120,220,0)`);
+  biolumCtx.fillStyle=pg; biolumCtx.fillRect(chaser.preyX-14,chaser.preyY-14,28,28);
+  biolumCtx.beginPath(); biolumCtx.arc(chaser.preyX,chaser.preyY,2.5,0,Math.PI*2);
+  biolumCtx.fillStyle=`rgba(140,230,255,${pp})`; biolumCtx.fill();
+  // predator (dim red — dragonfish)
+  const rp = 0.3+0.2*Math.sin(t*0.002);
+  const rdg = biolumCtx.createRadialGradient(chaser.predX,chaser.predY,0,chaser.predX,chaser.predY,10);
+  rdg.addColorStop(0,`rgba(200,30,20,${rp*0.6})`); rdg.addColorStop(1,`rgba(180,10,0,0)`);
+  biolumCtx.fillStyle=rdg; biolumCtx.fillRect(chaser.predX-10,chaser.predY-10,20,20);
+  biolumCtx.beginPath(); biolumCtx.arc(chaser.predX,chaser.predY,1.8,0,Math.PI*2);
+  biolumCtx.fillStyle=`rgba(220,40,20,${rp})`; biolumCtx.fill();
+}
 
 function drawBiolum(t) {
   biolumCtx.clearRect(0,0,biolumCanvas.width,biolumCanvas.height);
@@ -1363,8 +1448,8 @@ function drawDeepCreatures(t,scrollPct) {
 // ════════════════════════════════════════════════════════
 let currentScrollPct=0;
 function loop(t){
-  drawStars(t); drawBiolum(t); drawSnow(t); drawJellies(t);
-  drawDeepCreatures(t,currentScrollPct);
+  drawStars(t); drawBiolum(t); drawCombBursts(t); drawChaser(t);
+  drawSnow(t); drawJellies(t); drawDeepCreatures(t,currentScrollPct);
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
@@ -1380,26 +1465,21 @@ const pageSections = [...document.querySelectorAll('main section')];
 const waterCol     = document.getElementById('water-column');
 
 function waterColorFor(pct){
-  const lerp=(a,b,t)=>Math.round(a+(b-a)*t);
-  // At pct=0 (surface): reef blue top, mid-blue bottom
-  // At pct=1 (abyss): near-black throughout
-  const surfTop=[26,138,212];  // #1a8ad4 — sunlit reef blue
-  const surfBot=[6, 32, 74];   // #06204a — deep blue
-  const abyssCol=[0, 0, 6];    // #000006 — abyss
-
-  // top of viewport color
-  const topR=lerp(lerp(surfTop[0],surfBot[0],pct*1.8), abyssCol[0], Math.max(0,pct-0.1)*1.5);
-  const topG=lerp(lerp(surfTop[1],surfBot[1],pct*1.8), abyssCol[1], Math.max(0,pct-0.1)*1.5);
-  const topB=lerp(lerp(surfTop[2],surfBot[2],pct*1.8), abyssCol[2], Math.max(0,pct-0.1)*1.5);
-
-  // bottom of viewport — always darker than top
-  const wDep=0.25;
-  const botPct=Math.min(1,pct+wDep);
-  const botR=lerp(surfTop[0],abyssCol[0],botPct);
-  const botG=lerp(surfTop[1],abyssCol[1],botPct);
-  const botB=lerp(surfTop[2],abyssCol[2],botPct);
-
-  return `linear-gradient(to bottom,rgb(${topR},${topG},${topB}) 0%,rgb(${botR},${botG},${botB}) 100%)`;
+  const lerp=(a,b,t)=>Math.round(a+(b-a)*Math.min(1,Math.max(0,t)));
+  // Surface (pct=0): reef blue #1a8ad4 at top, mid-blue at bottom
+  // Abyss (pct=1): near-black throughout
+  const topCol = [
+    lerp(26,  0, pct*2.2),   // R: reef blue → black
+    lerp(138, 0, pct*2.2),   // G
+    lerp(212, 6, pct*1.8),   // B: stays blue longer
+  ];
+  const botPct = Math.min(1, pct + 0.2);
+  const botCol = [
+    lerp(6,   0, botPct*2),
+    lerp(32,  0, botPct*2),
+    lerp(74,  6, botPct*1.6),
+  ];
+  return `linear-gradient(to bottom,rgb(${topCol}) 0%,rgb(${botCol}) 100%)`;
 }
 
 function onScroll(){
