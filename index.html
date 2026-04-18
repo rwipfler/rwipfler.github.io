@@ -661,7 +661,7 @@
 // ════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════
-const state = { subLag: 1, jellyCount: 4, biolumIntensity: 14, snowDensity: 50, subMode: 0 };
+const state = { subLag: 8, jellyCount: 4, biolumIntensity: 14, snowDensity: 50, subMode: 0 };
 
 // ════════════════════════════════════════════════════════
 // CURSOR + DSV ALVIN
@@ -699,7 +699,8 @@ animateSub.pitchDir= 0;
 animateSub.pitch   = 0;
 
 function animateSub() {
-  const lag = Math.min(0.9, state.subLag/100);
+  // lag: state.subLag 1-30 maps to 0.04-0.25 follow speed
+  const lag = 0.04 + (state.subLag / 100) * 0.21;
   driftT += 0.008;
   driftX *= 0.95; driftY *= 0.95;
 
@@ -742,17 +743,20 @@ function animateSub() {
 
   // CSS: position beam with transform-origin at left (beam points right from origin)
   // For left-facing sub we need to flip the beam div
+  // Beam: always use transform-origin left center (beam shoots rightward from origin).
+  // For right-facing: origin is at the right side of the sub, beam shoots right.
+  // For left-facing:  origin is at the left side of the sub, beam shoots left
+  //                   by rotating 180deg.
+  subBeam.classList.remove('facing-left');
   if (animateSub.facing === 1) {
-    subBeam.classList.remove('facing-left');
+    // facing right: beam origin at right-ish side of sub, no flip
     subBeam.style.transform =
       `translate(${beamOriginX}px,${beamOriginY}px) rotate(${pitchContrib}deg) translateY(-50%)`;
   } else {
-    subBeam.classList.add('facing-left');
-    // For left-facing: beam extends to the left, origin at right edge of div
+    // facing left: beam origin at left side of sub, rotate 180 to shoot left
+    // We shift the div left by its full width so the right edge (transform-origin) sits at beamOriginX
     subBeam.style.transform =
-      `translate(${beamOriginX - 260}px,${beamOriginY}px) rotate(${180 + pitchContrib}deg) translateY(-50%)`;
-    subBeam.style.transform =
-      `translate(${beamOriginX}px,${beamOriginY}px) rotate(${180 + pitchContrib}deg) translateY(-50%)`;
+      `translate(${beamOriginX - 260}px,${beamOriginY}px) rotate(${pitchContrib}deg) translateY(-50%) scaleX(-1)`;
   }
 
   const rad = finalBeamAngle * Math.PI/180;
@@ -1616,21 +1620,29 @@ function waterColorFor(pct){
   return `linear-gradient(to bottom,rgb(${topR},${topG},${topB}) 0%,rgb(${botR},${botG},${botB}) 100%)`;
 }
 
+let hasScrolled = false;
 function onScroll(){
-  const maxScroll=document.documentElement.scrollHeight-window.innerHeight;
-  const pct=Math.min(1,Math.max(0,window.scrollY/maxScroll));
-  currentScrollPct=pct;
-  depthCursor.style.top=(8+pct*78)+'%';
-  const depthM=Math.round(pct*6500);
-  const txt=`DEPTH: ${depthM}m`;
-  depthReadout.textContent=txt;
-  if(footerDepth) footerDepth.textContent=txt;
-  const color = waterColorFor(pct);
-  if (color) waterCol.style.background = color;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+  currentScrollPct = pct;
+  depthCursor.style.top = (8 + pct*78)+'%';
+  const depthM = Math.round(pct*6500);
+  const txt = `DEPTH: ${depthM}m`;
+  depthReadout.textContent = txt;
+  if (footerDepth) footerDepth.textContent = txt;
 
-  let activeIdx=0;
-  pageSections.forEach((s,i)=>{if(s.getBoundingClientRect().top<window.innerHeight*0.5)activeIdx=i;});
-  navLinks.forEach((a,i)=>a.classList.toggle('active',i===activeIdx));
+  // Only override the CSS gradient once user actually scrolls
+  if (window.scrollY > 10) {
+    hasScrolled = true;
+  }
+  if (hasScrolled) {
+    const color = waterColorFor(pct);
+    if (color) waterCol.style.background = color;
+  }
+
+  let activeIdx = 0;
+  pageSections.forEach((s,i) => { if (s.getBoundingClientRect().top < window.innerHeight*0.5) activeIdx=i; });
+  navLinks.forEach((a,i) => a.classList.toggle('active', i===activeIdx));
 }
 window.addEventListener('scroll',onScroll,{passive:true});
 onScroll();
