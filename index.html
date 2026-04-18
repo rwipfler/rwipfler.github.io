@@ -1567,7 +1567,7 @@ function drawDeepCreatures(t,scrollPct) {
 
     // skin texture dots — chromatophores, slightly raised spots
     ctx.fillStyle='rgba(155,45,18,0.5)';
-    [[0,-14,2],[−14,-2,1.5],[14,0,1.5],[−6,8,1.2],[8,6,1.2],[-18,-4,1],[16,-6,1]].forEach(([dx,dy,r])=>{
+    [[0,-14,2],[-14,-2,1.5],[14,0,1.5],[-6,8,1.2],[8,6,1.2],[-18,-4,1],[16,-6,1]].forEach(([dx,dy,r])=>{
       ctx.beginPath(); ctx.arc(dx,dy,r,0,Math.PI*2); ctx.fill();
     });
 
