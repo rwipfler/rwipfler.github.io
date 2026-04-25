@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watch Live · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #020d18;
+      --ink: #d9e6f5;
+      --ink-dim: #7892b5;
+      --cyan: #4fc8d8;
+      --biolum: #6effd4;
+      --border: rgba(79,200,216,0.12);
+      --panel: rgba(5,14,32,0.55);
+      --amber: #f0b030;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--ink); }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(79,200,216,0.10), transparent 30%),
+        linear-gradient(to bottom, #10365f 0%, #0a2344 16%, #05162d 36%, #020d18 68%, #01060c 100%);
+    }
+    #biolum-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    nav {
+      position: fixed; top: 0; right: 14px; bottom: 0; width: 44px; z-index: 10;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.35em;
+    }
+    nav a { writing-mode: vertical-rl; color: var(--ink-dim); text-decoration: none; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
+    nav a:hover, nav a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(79,200,216,0.55); }
+    main { position: relative; z-index: 2; padding-bottom: 4rem; }
+    .page-header { padding: 5rem 3rem 1.6rem; border-bottom: 0.5px solid rgba(79,200,216,0.10); }
+    .page-header h1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 500; }
+    .page-header .sub { margin-top: 0.4rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.22em; color: rgba(79,200,216,0.70); text-transform: uppercase; }
+    .stats-row { display: flex; flex-wrap: wrap; gap: 2rem; padding: 1.5rem 3rem; border-bottom: 0.5px solid rgba(79,200,216,0.08); }
+    .stat { text-align: center; }
+    .stat .n { display: block; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: var(--biolum); }
+    .stat .l { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: rgba(150,200,220,0.48); letter-spacing: 0.12em; text-transform: uppercase; }
+    .section { padding: 2.5rem 3rem 0; max-width: 1200px; }
+    .sec-head { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.25em; color: var(--cyan); text-transform: uppercase; padding-left: 0.8rem; border-left: 2px solid var(--cyan); margin-bottom: 0.9rem; }
+    .bio-block { max-width: 760px; font-size: 1.25rem; line-height: 1.55; color: rgba(217,230,245,0.88); margin-bottom: 1.2rem; }
+    .bio-block strong { color: var(--biolum); font-weight: 500; }
+    .embed-wrap {
+      max-width: 920px; background: var(--panel); border: 1px solid var(--border); padding: 16px; overflow: hidden;
+      box-shadow: 0 0 20px rgba(79,200,216,0.08);
+    }
+    .embed-box {
+      aspect-ratio: 16 / 9; width: 100%; border: 1px solid rgba(79,200,216,0.12);
+      background: radial-gradient(circle at 30% 30%, rgba(79,200,216,0.12), transparent 22%), linear-gradient(135deg, rgba(8,24,48,0.96), rgba(4,12,26,0.96));
+      display: grid; place-items: center; text-align: center; padding: 1.5rem;
+    }
+    .embed-box p { max-width: 580px; }
+    .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+    .stream-card {
+      border: 1px solid var(--border); background: var(--panel); padding: 18px;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .stream-card:hover { border-color: rgba(110,255,212,0.34); box-shadow: 0 0 24px rgba(79,200,216,0.10); transform: translateY(-2px); }
+    .tag-head { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.28em; color: var(--amber); margin-bottom: 10px; text-transform: uppercase; }
+    .stream-card h3 { font-size: 1.7rem; font-weight: 500; margin-bottom: 0.35rem; }
+    .stream-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.10em; color: rgba(79,200,216,0.70); text-transform: uppercase; margin-bottom: 0.75rem; }
+    .stream-card p { font-size: 1.08rem; line-height: 1.5; color: rgba(217,230,245,0.88); }
+    .stream-card p + p { margin-top: 0.65rem; }
+    .stream-links { display: flex; flex-wrap: wrap; gap: 0.7rem 1rem; margin-top: 1rem; }
+    .stream-link { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--biolum); text-decoration: none; border-bottom: 1px solid rgba(110,255,212,0.28); padding-bottom: 2px; }
+    .stream-link:hover { color: #fff; border-bottom-color: rgba(110,255,212,0.75); }
+    .status-pill {
+      display: inline-block; margin-top: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.56rem; letter-spacing: 0.14em;
+      text-transform: uppercase; border: 1px solid rgba(79,200,216,0.18); padding: 0.28rem 0.45rem; color: rgba(150,200,220,0.75);
+    }
+    footer { padding: 2.5rem 3rem 3.5rem; position: relative; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.28em; color: rgba(150,200,220,0.42); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    @media (max-width: 760px) {
+      nav { position: static; width: auto; flex-direction: row; justify-content: flex-start; padding: 1rem 1.2rem 0; gap: 1rem; }
+      nav a { writing-mode: horizontal-tb; }
+      .page-header, .stats-row, .section, footer { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="biolum-layer"></canvas>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="expeditions.html">Expeditions</a>
+    <a href="creative.html">Creative</a>
+    <a href="live.html" class="active">Watch</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Watch Live</h1>
+      <div class="sub">livestream hubs · rov dives · archived highlights</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><span class="n">5</span><span class="l">Official sources</span></div>
+      <div class="stat"><span class="n">1</span><span class="l">Featured embed slot</span></div>
+      <div class="stat"><span class="n">0</span><span class="l">Fragile direct links</span></div>
+    </div>
+
+    <section class="section">
+      <div class="sec-head">How to use this page</div>
+      <p class="bio-block">
+        This page is meant to point people toward <strong>official, stable sources for deep-sea livestreams and recent dive footage</strong>.
+        Some programs stream continuously during active expeditions, while others cycle between live operations, archived dives, and highlights.
+      </p>
+      <p class="bio-block">
+        For stability, I recommend embedding <strong>at most one featured video</strong> and linking out to official hubs for everything else.
+      </p>
+    </section>
+
+    <section class="section">
+      <div class="sec-head">Featured embed slot</div>
+      <div class="embed-wrap">
+        <div class="embed-box">
+          <p class="bio-block" style="margin:0; font-size:1.1rem;">
+            Replace this box with a single YouTube embed once you decide which source you want to feature most often.
+            I would use this for <strong>Nautilus Live</strong> or a current <strong>Schmidt Ocean</strong> dive when one is active.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="sec-head">Official stream hubs</div>
+      <div class="stream-grid">
+        <article class="stream-card">
+          <div class="tag-head">Ocean Exploration Trust</div>
+          <h3>Nautilus Live</h3>
+          <div class="stream-meta">E/V Nautilus · ROV Hercules · live telepresence</div>
+          <p>One of the best public-facing deep-sea exploration portals, with active dives, expedition pages, archives, and ship-to-shore programming.</p>
+          <span class="status-pill">strong default pick</span>
+          <div class="stream-links">
+            <a class="stream-link" href="https://nautiluslive.org/" target="_blank" rel="noopener noreferrer">Main hub ↗</a>
+            <a class="stream-link" href="https://nautiluslive.org/expeditions/2026" target="_blank" rel="noopener noreferrer">2026 expeditions ↗</a>
+          </div>
+        </article>
+
+        <article class="stream-card">
+          <div class="tag-head">NOAA Ocean Exploration</div>
+          <h3>Okeanos Explorer</h3>
+          <div class="stream-meta">NOAA · livestreams · Pacific operations</div>
+          <p>NOAA’s official livestream hub for Okeanos Explorer operations, updates, and links to recent expedition media.</p>
+          <p>Good to include because it is authoritative, but it may cycle between active operations and in-port status.</p>
+          <span class="status-pill">late april 2026 restart</span>
+          <div class="stream-links">
+            <a class="stream-link" href="https://oceanexplorer.noaa.gov/livestreams/" target="_blank" rel="noopener noreferrer">Livestream hub ↗</a>
+            <a class="stream-link" href="https://oceanexplorer.noaa.gov/okeanos/" target="_blank" rel="noopener noreferrer">Ship status ↗</a>
+          </div>
+        </article>
+
+        <article class="stream-card">
+          <div class="tag-head">Schmidt Ocean Institute</div>
+          <h3>R/V Falkor (too)</h3>
+          <div class="stream-meta">ROV SuBastian · live from Falkor (too)</div>
+          <p>Schmidt’s live page and expedition ecosystem are a strong addition here, especially for ROV SuBastian dives and high-quality archived dive footage.</p>
+          <span class="status-pill">include this one</span>
+          <div class="stream-links">
+            <a class="stream-link" href="https://schmidtocean.org/technology/live-from-rv-falkor/" target="_blank" rel="noopener noreferrer">Live page ↗</a>
+            <a class="stream-link" href="https://schmidtocean.org/cruises/schmidt-ocean-institute-2026-expeditions/" target="_blank" rel="noopener noreferrer">2026 expeditions ↗</a>
+          </div>
+        </article>
+
+        <article class="stream-card">
+          <div class="tag-head">OceanX</div>
+          <h3>OceanXplorer</h3>
+          <div class="stream-meta">science + media vessel · videos and public-facing content</div>
+          <p>Less of a pure livestream portal than Nautilus or NOAA, but still worth including for expedition media, vessel tech, and broad public engagement.</p>
+          <span class="status-pill">more media-forward</span>
+          <div class="stream-links">
+            <a class="stream-link" href="https://oceanx.org/" target="_blank" rel="noopener noreferrer">Main site ↗</a>
+            <a class="stream-link" href="https://oceanx.org/oceanxplorer/" target="_blank" rel="noopener noreferrer">Vessel page ↗</a>
+            <a class="stream-link" href="https://www.youtube.com/oceanx" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+          </div>
+        </article>
+
+        <article class="stream-card">
+          <div class="tag-head">Archive / backup source</div>
+          <h3>Schmidt Ocean YouTube</h3>
+          <div class="stream-meta">highlights · replays · dive clips</div>
+          <p>A useful backup link when the main expedition page rotates or when you want viewers to browse older SuBastian dives and highlights.</p>
+          <span class="status-pill">good archive option</span>
+          <div class="stream-links">
+            <a class="stream-link" href="https://www.youtube.com/channel/UC1m5LdKP0m64n8nY3NhK6Zg" target="_blank" rel="noopener noreferrer">Channel ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 R. WIPFLER</span>
+    <span>OFFICIAL STREAM HUBS ONLY</span>
+    <span>SEPARATE FROM CREATIVE PAGE</span>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('biolum-layer');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = Array.from({ length: Math.max(32, Math.floor(window.innerWidth / 36)) }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.0 + 0.5,
+        vy: Math.random() * 0.16 + 0.02,
+        vx: (Math.random() - 0.5) * 0.1,
+        glow: Math.random() * Math.PI * 2,
+        a: Math.random() * 0.40 + 0.16
+      }));
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.x += p.vx + Math.sin((t * 0.00022) + p.glow) * 0.05;
+        p.y += p.vy;
+        if (p.y > canvas.height + 10) p.y = -10;
+        if (p.x > canvas.width + 10) p.x = -10;
+        if (p.x < -10) p.x = canvas.width + 10;
+        const alpha = p.a + 0.14 * Math.sin((t * 0.0016) + p.glow);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 7);
+        g.addColorStop(0, `rgba(110,255,212,${Math.max(0, alpha)})`);
+        g.addColorStop(0.45, `rgba(79,200,216,${Math.max(0, alpha * 0.42)})`);
+        g.addColorStop(1, 'rgba(79,200,216,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+  </script>
+</body>
+</html>

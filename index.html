@@ -18,7 +18,7 @@
       --accent: #4fc8d8;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: #000006; color: var(--ink); }
+    html, body { background: transparent; color: var(--ink); }
     body {
       font-family: 'Cormorant Garamond', Georgia, serif;
       overflow-x: hidden;
@@ -29,8 +29,8 @@
 
     /* ══ FIXED WATER COLUMN ══ */
     #water-column {
-      position: fixed; inset: 0; z-index: -2;
-      background: linear-gradient(to bottom, #1a8ad4 0%, #06204a 18%, #020814 55%, #000006 100%);
+      position: fixed; inset: 0; z-index: 0;
+      background: linear-gradient(to bottom, #63aef2 0%, #4d93d8 5%, #3779be 10%, #2563a4 16%, #174c86 24%, #0e3868 34%, #09284d 46%, #051b36 60%, #021022 76%, #000006 100%);
     }
     #water-column::after {
       content: ''; position: absolute; inset: 0 0 75% 0;
@@ -38,17 +38,19 @@
         radial-gradient(ellipse at 25% -5%, rgba(180,230,255,0.18), transparent 50%),
         radial-gradient(ellipse at 75% -5%, rgba(140,200,255,0.14), transparent 55%);
       pointer-events: none;
+      opacity: var(--surface-haze-opacity, 1);
+      transition: opacity 0.12s linear;
     }
 
     /* ══ CANVAS LAYERS ══ */
     #stars, #biolum-layer, #marine-snow {
       position: fixed; inset: 0; pointer-events: none;
     }
-    #stars       { z-index: -1; }
-    #biolum-layer{ z-index: 0;  }
-    #marine-snow { z-index: 0;  }
-    #creatures-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
-    #alvin-layer     { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+    #stars       { z-index: 1; }
+    #biolum-layer{ z-index: 2;  }
+    #marine-snow { z-index: 3;  }
+    #creatures-layer { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
+    #alvin-layer     { position: fixed; inset: 0; pointer-events: none; z-index: 6; }
 
     /* ══ DSV ALVIN ══ */
     #alvin {
@@ -66,7 +68,7 @@
         rgba(255,230,140,0.11) 35%,
         rgba(255,220,100,0.04) 60%,
         transparent 100%);
-      pointer-events: none; z-index: 2;
+      pointer-events: none; z-index: 5;
       border-radius: 0 50% 50% 0;
     }
     #sub-beam.facing-left {
@@ -76,7 +78,8 @@
         rgba(255,230,140,0.11) 35%,
         rgba(255,220,100,0.04) 60%,
         transparent 100%);
-      border-radius: 50% 0 0 50%;
+        pointer-events: none; z-index: 5;
+      border-radius: 0 50% 50% 0;
     }
 
     /* ══ CUSTOM CURSOR — cyan ══ */
@@ -145,7 +148,7 @@
     }
 
     /* ══ MAIN ══ */
-    main { position: relative; z-index: 2; padding-left: 80px; padding-right: 80px; width: 100%; }
+    main { position: relative; z-index: 5; padding-left: 80px; padding-right: 80px; width: 100%; }
     section {
       min-height: 100vh; padding: 120px 40px;
       display: flex; flex-direction: column; justify-content: center;
@@ -313,7 +316,7 @@
       padding: 36px 80px 52px; font-family: 'JetBrains Mono', monospace;
       font-size: 9px; letter-spacing: 0.3em; color: var(--ink-dim);
       display: flex; justify-content: space-between;
-      opacity: 0.4; position: relative; z-index: 2;
+      opacity: 0.4; position: relative; z-index: 5;
     }
 
     @media (max-width: 800px) {
@@ -967,7 +970,13 @@ function drawBiolum(t) {
 
     const dist=Math.hypot(p.x-mouseX,p.y-mouseY);
     const boost=dist<100?(1-dist/100)*0.9:0;
-    const alpha=Math.min(1,pulse*p.maxAlpha+boost);
+
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const depthPct = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+    const biolumGlobal = Math.max(0, Math.min(1, (depthPct - 0.015) / 0.05));
+    const surfaceFade = Math.max(0, Math.min(1, (p.y - window.innerHeight * 0.16) / (window.innerHeight * 0.18)));
+
+    const alpha=Math.min(1,(pulse*p.maxAlpha+boost) * biolumGlobal * surfaceFade);
     if (alpha<0.04) continue; // skip near-invisible particles
 
     const c=p.color;
@@ -1608,19 +1617,37 @@ const pageSections = [...document.querySelectorAll('main section')];
 const waterCol     = document.getElementById('water-column');
 
 function waterColorFor(pct){
-  if (pct < 0.001) return null; // let CSS handle the initial state
-  const lerp=(a,b,t)=>Math.round(a+(b-a)*Math.min(1,Math.max(0,t)));
-  const topR=lerp(26,  0, pct*2.5);
-  const topG=lerp(138, 0, pct*2.5);
-  const topB=lerp(212, 6, pct*1.8);
-  const bp=Math.min(1,pct+0.2);
-  const botR=lerp(6,  0, bp*2.2);
-  const botG=lerp(32, 0, bp*2.2);
-  const botB=lerp(74, 6, bp*1.6);
-  return `linear-gradient(to bottom,rgb(${topR},${topG},${topB}) 0%,rgb(${botR},${botG},${botB}) 100%)`;
+  // Keep the surface look for only the first ~0.5–1% of scroll,
+  // then drive to near-black much earlier.
+  if (pct < 0.008) return '';
+
+  const t = Math.min(1, Math.max(0, (pct - 0.008) / 0.11));
+  const ease = Math.pow(t, 0.62);
+  const lerp=(a,b,x)=>Math.round(a+(b-a)*Math.min(1,Math.max(0,x)));
+
+  const c0 = [lerp(99,  0, ease*1.55), lerp(174, 0, ease*1.55), lerp(242, 6, ease*1.25)];
+  const c1 = [lerp(77,  0, ease*1.45), lerp(147, 0, ease*1.45), lerp(216, 6, ease*1.18)];
+  const c2 = [lerp(55,  0, ease*1.34), lerp(121, 0, ease*1.34), lerp(190, 6, ease*1.08)];
+  const c3 = [lerp(37,  0, ease*1.22), lerp(99,  0, ease*1.22), lerp(164, 6, ease*0.98)];
+  const c4 = [lerp(23,  0, ease*1.10), lerp(76,  0, ease*1.10), lerp(134, 6, ease*0.88)];
+  const c5 = [lerp(14,  0, ease*0.98), lerp(56,  0, ease*0.98), lerp(104, 6, ease*0.80)];
+  const c6 = [lerp(9,   0, ease*0.86), lerp(40,  0, ease*0.86), lerp(77,  6, ease*0.72)];
+  const c7 = [lerp(5,   0, ease*0.76), lerp(27,  0, ease*0.76), lerp(54,  6, ease*0.66)];
+  const c8 = [lerp(2,   0, ease*0.68), lerp(16,  0, ease*0.68), lerp(34,  6, ease*0.60)];
+
+  return `linear-gradient(to bottom,
+    rgb(${c0[0]},${c0[1]},${c0[2]}) 0%,
+    rgb(${c1[0]},${c1[1]},${c1[2]}) 5%,
+    rgb(${c2[0]},${c2[1]},${c2[2]}) 10%,
+    rgb(${c3[0]},${c3[1]},${c3[2]}) 16%,
+    rgb(${c4[0]},${c4[1]},${c4[2]}) 24%,
+    rgb(${c5[0]},${c5[1]},${c5[2]}) 34%,
+    rgb(${c6[0]},${c6[1]},${c6[2]}) 46%,
+    rgb(${c7[0]},${c7[1]},${c7[2]}) 60%,
+    rgb(${c8[0]},${c8[1]},${c8[2]}) 76%,
+    rgb(0,0,6) 100%)`;
 }
 
-let hasScrolled = false;
 function onScroll(){
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
   const pct = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
@@ -1631,14 +1658,13 @@ function onScroll(){
   depthReadout.textContent = txt;
   if (footerDepth) footerDepth.textContent = txt;
 
-  // Only override the CSS gradient once user actually scrolls
-  if (window.scrollY > 10) {
-    hasScrolled = true;
-  }
-  if (hasScrolled) {
-    const color = waterColorFor(pct);
-    if (color) waterCol.style.background = color;
-  }
+  // Preserve the original CSS gradient only right at the very top,
+  // then darken quickly and fade out the separate surface haze.
+  const color = waterColorFor(pct);
+  waterCol.style.background = color;
+
+  const hazeOpacity = Math.max(0, 1 - Math.min(1, pct / 0.06));
+  waterCol.style.setProperty('--surface-haze-opacity', hazeOpacity.toFixed(3));
 
   let activeIdx = 0;
   pageSections.forEach((s,i) => { if (s.getBoundingClientRect().top < window.innerHeight*0.5) activeIdx=i; });

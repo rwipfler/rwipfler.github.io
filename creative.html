@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #d9e6f5;
+      --ink-dim: #7892b5;
+      --cyan: #4fc8d8;
+      --biolum: #6effd4;
+      --amber: #f0b030;
+      --violet: #b090ff;
+      --bg-top: #174c86;
+      --bg-mid: #051b36;
+      --bg-bot: #000006;
+      --card: rgba(5,14,32,0.42);
+      --border: rgba(216,230,245,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: transparent; color: var(--ink); }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+      background: linear-gradient(to bottom, #2b6eaf 0%, var(--bg-top) 12%, #0e3868 22%, #09284d 38%, var(--bg-mid) 58%, #021022 76%, var(--bg-bot) 100%);
+    }
+    a { color: inherit; text-decoration: none; }
+
+    #biolum-canvas {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+
+    nav {
+      position: fixed; top: 0; right: 14px; bottom: 0;
+      width: 44px; z-index: 8;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      gap: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.35em;
+    }
+    nav a {
+      writing-mode: vertical-rl; color: var(--ink-dim);
+      transition: color 0.3s, text-shadow 0.3s;
+      padding: 4px 0; text-transform: uppercase;
+    }
+    nav a:hover, nav a.active {
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(79,200,216,0.6);
+    }
+
+    .page-wrap { position: relative; z-index: 2; }
+    .page-header {
+      padding: 5rem 3rem 2rem;
+      border-bottom: 0.5px solid rgba(79,200,216,0.12);
+      backdrop-filter: blur(2px);
+    }
+    .page-header h1 {
+      font-size: clamp(42px, 6vw, 70px);
+      font-weight: 500;
+      line-height: 0.95;
+      margin-bottom: 0.4rem;
+      color: var(--ink);
+    }
+    .page-header .sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.24em;
+      color: rgba(79,200,216,0.7);
+      text-transform: uppercase;
+    }
+
+    .intro {
+      padding: 2rem 3rem 0;
+      max-width: 960px;
+    }
+    .bio-block {
+      font-size: 20px;
+      line-height: 1.65;
+      max-width: 760px;
+      color: rgba(220,232,242,0.9);
+      margin-bottom: 1.3rem;
+    }
+    .bio-block.small {
+      font-size: 17px;
+      color: rgba(200,220,240,0.82);
+    }
+
+    .stats-row {
+      display: flex; gap: 2rem; padding: 1.5rem 3rem;
+      border-bottom: 0.5px solid rgba(79,200,216,0.08);
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat .n {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem; color: var(--biolum); display: block;
+    }
+    .stat .l {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: rgba(150,200,220,0.55);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .section {
+      padding: 2.5rem 3rem 1.5rem;
+    }
+    .sec-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.25em;
+      color: var(--cyan); text-transform: uppercase;
+      padding-left: 0.8rem; border-left: 2px solid var(--cyan);
+      margin-bottom: 0.95rem;
+    }
+    .section-note {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.09em;
+      color: rgba(150,200,220,0.55);
+      margin-bottom: 1.4rem;
+      max-width: 860px;
+      line-height: 1.7;
+    }
+    .zone-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.25em;
+      color: rgba(79,200,216,0.4);
+      text-transform: uppercase; text-align: center;
+      padding: 1.25rem 0 0.25rem;
+      position: relative; z-index: 2;
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+      gap: 24px;
+    }
+    .artist-card {
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(6px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .artist-card::before {
+      content: '';
+      position: absolute;
+      inset: -20% auto auto -12%;
+      width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(110,255,212,0.09) 0%, rgba(110,255,212,0.02) 35%, transparent 68%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .artist-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(110,255,212,0.34);
+      box-shadow: 0 0 24px rgba(79,200,216,0.14), 0 0 40px rgba(110,255,212,0.06);
+    }
+    .artist-card:hover::before { opacity: 1; }
+
+    .artist-media {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 10px;
+      padding: 18px 18px 0;
+    }
+    .media-slot {
+      position: relative;
+      border: 1px solid rgba(79,200,216,0.14);
+      background:
+        radial-gradient(circle at 18% 22%, rgba(110,255,212,0.12) 0%, transparent 22%),
+        linear-gradient(180deg, rgba(12,30,58,0.92) 0%, rgba(4,14,30,0.98) 100%);
+      min-height: 190px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+    .media-slot.secondary { min-height: 190px; }
+    .media-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .placeholder-art {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 18px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      color: rgba(210,228,242,0.85);
+    }
+    .media-label {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      color: var(--biolum);
+      text-transform: uppercase;
+      background: rgba(2,10,20,0.68);
+      padding: 5px 7px;
+      border: 1px solid rgba(110,255,212,0.16);
+      border-radius: 999px;
+    }
+
+    .artist-body {
+      padding: 18px 18px 20px;
+    }
+    .artist-body .tag-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.28em;
+      color: var(--violet); margin-bottom: 14px; text-transform: uppercase;
+    }
+    .artist-body h3 {
+      font-size: 28px; font-weight: 500; line-height: 1.05;
+      margin-bottom: 10px;
+    }
+    .artist-body p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; line-height: 1.7; color: var(--ink-dim);
+    }
+    .why {
+      margin-top: 12px;
+      color: rgba(220,240,255,0.82);
+    }
+    .setup-note {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(79,200,216,0.15);
+      color: rgba(170,210,230,0.72);
+    }
+    .card-links {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .card-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--biolum);
+      border-bottom: 1px solid rgba(110,255,212,0.25);
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .card-link:hover {
+      color: #fff;
+      border-color: rgba(255,255,255,0.45);
+    }
+
+    .tip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap: 16px;
+    }
+    .tip-card {
+      border-left: 2px solid rgba(79,200,216,0.25);
+      padding: 16px 18px 16px 20px;
+      background: rgba(5,14,32,0.22);
+    }
+    .tip-card h3 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .tip-card p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      line-height: 1.7;
+      color: var(--ink-dim);
+    }
+
+    footer {
+      padding: 36px 80px 52px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.3em;
+      color: var(--ink-dim);
+      display: flex; justify-content: space-between;
+      opacity: 0.5; position: relative; z-index: 5;
+      flex-wrap: wrap; gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      nav { font-size: 8px; right: 8px; width: 32px; }
+      .page-header, .intro, .stats-row, .section { padding-left: 1.3rem; padding-right: 2.7rem; }
+      footer { padding-left: 1.3rem; padding-right: 2.7rem; }
+      .page-header h1 { font-size: 40px; }
+      .bio-block { font-size: 18px; }
+      .artist-media { grid-template-columns: 1fr; }
+      .media-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="biolum-canvas"></canvas>
+
+  <nav>
+    <a href="index.html">Surface</a>
+    <a href="expeditions.html">Expeditions</a>
+    <a href="creative.html" class="active">Creative</a>
+    <a href="live.html">Watch</a>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="page-header">
+      <h1>Creative &amp; Community</h1>
+      <div class="sub">artists · field artifacts · deep-sea visual culture</div>
+    </div>
+
+    <div class="intro">
+      <p class="bio-block">
+        This page collects both the artists I keep returning to and some of the field-adjacent things I have made, worn, printed, or photographed. It is not meant to be exhaustive. It is a curated record of the visual culture that shapes how I think about the deep ocean and how I share it with other people.
+      </p>
+      <p class="bio-block small">
+        The format here is deliberate: each artist entry includes the creator, what they make, and why I keep it around. Below that, the project section works more like a field-artifact shelf, with room for the weirder and more personal things that still belong to the same deep-sea world.
+      </p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><span class="n">6</span><span class="l">Featured artists</span></div>
+      <div class="stat"><span class="n">5</span><span class="l">Project placeholders</span></div>
+      <div class="stat"><span class="n">2</span><span class="l">Image slots per card</span></div>
+      <div class="stat"><span class="n">1</span><span class="l">Your point of view</span></div>
+    </div>
+
+    <div class="zone-label">— Twilight Zone · creators you already collect —</div>
+
+    <section class="section">
+      <div class="sec-head">Current artists</div>
+      <div class="section-note">
+        Each card now has a large image area for the creator’s work and a second smaller slot for a photo in your office, on your shelf, or assembled by you. Replace the placeholders later with real image files.
+      </div>
+
+      <div class="media-grid">
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/zoekeller-main.jpg" alt="Marine biodiversity illustration by Zoe Keller">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/zoekeller-office.jpg" alt="Zoe Keller artwork in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Biodiversity illustration</div>
+            <h3>Zoe Keller</h3>
+            <p>Maine-based nature artist working in detailed pencil and digital drawings that explore biodiversity and the interconnectedness of fragile ecosystems. Her ocean biodiversity work includes deep-sea species such as barreleyes, vampire squid, siphonophores, and atolla jellies.</p>
+            <p class="why">Why I keep coming back: the compositions feel like systems thinking in image form, which fits the way I think about the ocean.</p>
+            <p class="setup-note">Best card use: one full biodiversity composition plus one photo of a print or book page in your office.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://www.zoekeller.com/ocean-biodiversity-prints" target="_blank" rel="noopener noreferrer">Ocean prints ↗</a>
+              <a class="card-link" href="https://www.zoekeller.com/about" target="_blank" rel="noopener noreferrer">About ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/nocturnalsea-main.jpg" alt="Marine wildlife artwork by NocturnalSea">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/nocturnalsea-office.jpg" alt="NocturnalSea artwork in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Marine wildlife art</div>
+            <h3>NocturnalSea</h3>
+            <p>A traditional marine and wildlife artist based primarily out of Connecticut, with work centered on ocean life and natural-history-style species art. This one pushes more toward classic wildlife illustration than merch-first branding.</p>
+            <p class="why">Why I keep coming back: the work has a clean marine-life focus and gives the page another mode besides shirts and papercraft.</p>
+            <p class="setup-note">Best card use: one species illustration or product image plus one photo of the print or item in your workspace.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://www.redbubble.com/people/nocturnalsea/shop" target="_blank" rel="noopener noreferrer">Shop ↗</a>
+              <a class="card-link" href="https://www.deviantart.com/nocturnalsea/about" target="_blank" rel="noopener noreferrer">Artist bio ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/sneepsnorp-main.jpg" alt="Bigfin squid or giant isopod papercraft by Sneepsnorp">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/sneepsnorp-office.jpg" alt="Sneepsnorp papercraft displayed in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Papercraft</div>
+            <h3>Sneepsnorp</h3>
+            <p>Large-format deep-sea papercraft builds, including bigfin squid and giant isopod designs, with a strong sense of structure and creature personality.</p>
+            <p class="why">Why I keep coming back: the work makes odd deep-sea animals feel tangible and engineered, not just illustrated.</p>
+            <p class="setup-note">Best card use: one clean product image plus one photo of the assembled build in your workspace.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://sneepsnorp3d.com/" target="_blank" rel="noopener noreferrer">Visit site ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/roughforradio-main.jpg" alt="Deep-sea apparel artwork by Roughforradio">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/roughforradio-office.jpg" alt="Roughforradio item in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Wearable art</div>
+            <h3>Roughforradio</h3>
+            <p>Independent shop with marine-life apparel and prints, including blanket octopus and vampire squid pieces.</p>
+            <p class="why">Why it fits here: this is the kind of work that makes deep-sea organisms feel visible in ordinary life instead of locked inside science spaces.</p>
+            <p class="setup-note">Best card use: one art-forward product image and one photo showing scale, fabric, or how it actually looks in your space.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://www.etsy.com/ca/shop/Roughforradio?ref=yr_purchases" target="_blank" rel="noopener noreferrer">Open shop ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/pikaole-main.jpg" alt="Cephalopod art by Pikaole">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/pikaole-office.jpg" alt="Pikaole item in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Illustration</div>
+            <h3>Pikaole</h3>
+            <p>Cephalopod-leaning apparel and graphic art on Redbubble, including the red bubble / cephalopod work you flagged.</p>
+            <p class="why">Why I would include it: strong stylization without losing the appeal of the animal itself.</p>
+            <p class="setup-note">Best card use: one flat artwork image plus one real-world photo if you own the piece.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://www.redbubble.com/people/pikaole/shop" target="_blank" rel="noopener noreferrer">View shop ↗</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/artists/mernstw-main.jpg" alt="Vampire squid design by mernstw">
+              <div class="media-label">Creator work</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/artists/mernstw-office.jpg" alt="mernstw item in my office">
+              <div class="media-label">In my office</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Illustration</div>
+            <h3>mernstw</h3>
+            <p>Graphic apparel and print work with a good vampire squid / baby squid niche and a playful, creature-first approach.</p>
+            <p class="why">Why I would keep it: it supports the more charming and characterful side of deep-sea communication.</p>
+            <p class="setup-note">Best card use: one clean artwork shot and one secondary image if you have it in your office or wardrobe.</p>
+            <div class="card-links">
+              <a class="card-link" href="https://www.redbubble.com/people/mernstw/shop" target="_blank" rel="noopener noreferrer">View shop ↗</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    
+
+    <div class="zone-label">— Midnight Zone · field artifacts, costumes, prints, and one-off builds —</div>
+
+    <section class="section">
+      <div class="sec-head">Field artifacts &amp; personal projects</div>
+      <div class="section-note">
+        This section is for the things that sit somewhere between outreach, costume, workshop, and obsession: objects I have built, worn, printed, photographed, or kept because they make the deep sea feel real. The placeholders below are set up so you can add images and tighten captions later without changing the page structure.
+      </div>
+
+      <div class="media-grid">
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/projects/isopod-costume-main.jpg" alt="Giant isopod Halloween costume at MBARI">
+              <div class="media-label">Main image</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/projects/isopod-costume-detail.jpg" alt="Giant isopod costume photographed with real isopods">
+              <div class="media-label">Detail / second image</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Costume · Field culture</div>
+            <h3>Giant isopod costume at MBARI</h3>
+            <p>Placeholder for your Halloween giant isopod costume, including the photos with actual isopods. This is one of the strongest items to feature because it is specific, funny, and immediately tied to your field community.</p>
+            <p class="why">Suggested caption direction: built for Halloween, worn at MBARI, and photographed alongside live giant isopods.</p>
+            <p class="setup-note">Use one full-body shot plus one closer photo with the real animals or the costume details.</p>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/projects/crushed-cup-art-main.jpg" alt="Crushed cup art display">
+              <div class="media-label">Main image</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/projects/crushed-cup-art-detail.jpg" alt="Close-up of crushed cup art">
+              <div class="media-label">Detail / second image</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Deep-sea object art</div>
+            <h3>Crushed cup art</h3>
+            <p>Placeholder for your crushed cup pieces and any photos of them displayed together. This works well here because it connects directly to pressure, depth, and deep-ocean culture.</p>
+            <p class="why">Suggested caption direction: souvenirs of pressure made into a small visual collection rather than just individual novelty objects.</p>
+            <p class="setup-note">Use one image showing the full set and one close-up of your favorite cup or design.</p>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/projects/deepsea-3dprints-main.jpg" alt="3D printed deep-sea models">
+              <div class="media-label">Main image</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/projects/deepsea-3dprints-detail.jpg" alt="Close-up of 3D printed deep-sea model">
+              <div class="media-label">Detail / second image</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">3D prints · Models</div>
+            <h3>3D printed deep-sea objects</h3>
+            <p>Placeholder for deep-sea-themed 3D prints, whether they are display pieces, educational models, or things you made because you wanted the animals or equipment on your desk in physical form.</p>
+            <p class="why">Suggested caption direction: small physical models used to make deep-ocean forms feel less abstract and more present.</p>
+            <p class="setup-note">Use one image showing the overall setup and one close detail of the print texture or shape.</p>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/projects/workshop-build-main.jpg" alt="Custom build or workshop project">
+              <div class="media-label">Main image</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/projects/workshop-build-detail.jpg" alt="Close-up of custom build or workshop project">
+              <div class="media-label">Detail / second image</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Build · Future slot</div>
+            <h3>Custom build / weird future project</h3>
+            <p>Flexible placeholder for something harder to categorize later: a model, prop, custom tool, display piece, or another one-off object that belongs on the page but not in the artist section.</p>
+            <p class="why">Suggested caption direction: one sentence on what it is and why you made it.</p>
+            <p class="setup-note">Keep this as a flexible slot for whatever turns out best in photos.</p>
+          </div>
+        </article>
+
+        <article class="artist-card">
+          <div class="artist-media">
+            <div class="media-slot">
+              <img src="images/projects/collection-shelf-main.jpg" alt="Deep-sea shelf or office collection">
+              <div class="media-label">Main image</div>
+            </div>
+            <div class="media-slot secondary">
+              <img src="images/projects/collection-shelf-detail.jpg" alt="Close-up of deep-sea shelf or office collection">
+              <div class="media-label">Detail / second image</div>
+            </div>
+          </div>
+          <div class="artist-body">
+            <div class="tag-head">Workspace · Collection</div>
+            <h3>Deep-sea shelf / office collection</h3>
+            <p>Placeholder for a broader office or shelf photo that shows several pieces together. This can tie the page together and make the artist cards feel like part of a real physical environment rather than isolated links.</p>
+            <p class="why">Suggested caption direction: the objects and images I keep around to make the deep sea feel present in daily work.</p>
+            <p class="setup-note">Use one wide shelf shot and one close-up of a particularly good corner vignette.</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <footer>
+      <span>© 2026 R. WIPFLER</span>
+      <span>CREATIVE &amp; COMMUNITY</span>
+      <span>ARTISTS · FIELD ARTIFACTS</span>
+    </footer>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('biolum-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      const pageHeight = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = pageHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = pageHeight + 'px';
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+      makeParticles(pageHeight);
+    }
+
+    function makeParticles(pageHeight) {
+      const count = Math.max(80, Math.floor((window.innerWidth * pageHeight) / 16000));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * pageHeight,
+        r: Math.random() * 1.8 + 0.5,
+        s: Math.random() * 0.16 + 0.03,
+        drift: (Math.random() - 0.5) * 0.14,
+        a: Math.random() * 0.45 + 0.08,
+        pulse: Math.random() * Math.PI * 2
+      }));
+    }
+
+    function draw() {
+      const pageHeight = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+      ctx.clearRect(0, 0, window.innerWidth, pageHeight);
+      const scrollY = window.scrollY;
+      for (const p of particles) {
+        p.y -= p.s;
+        p.x += Math.sin((p.y + p.pulse) * 0.008) * p.drift;
+        p.pulse += 0.01;
+        if (p.y < scrollY - 50) {
+          p.y = scrollY + window.innerHeight + Math.random() * 220;
+          p.x = Math.random() * window.innerWidth;
+        }
+        const alpha = p.a + Math.sin(p.pulse) * 0.06;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(110,255,212,${Math.max(0.04, alpha)})`;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = 'rgba(110,255,212,0.45)';
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  </script>
+</body>
+</html>
