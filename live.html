@@ -29,12 +29,35 @@
     }
     #biolum-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
     nav {
-      position: fixed; top: 0; right: 14px; bottom: 0; width: 44px; z-index: 10;
+      position: fixed; top: 0; right: 14px; bottom: 0; width: 44px; z-index: 100;
       display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
       font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.35em;
     }
-    nav a { writing-mode: vertical-rl; color: var(--ink-dim); text-decoration: none; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; }
+    nav a { writing-mode: vertical-rl; color: var(--ink-dim); text-decoration: none; text-transform: uppercase; transition: color 0.25s, text-shadow 0.25s; padding: 4px 0; }
     nav a:hover, nav a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(79,200,216,0.55); }
+    nav a.nav-surface { color: rgba(110,255,212,0.4); letter-spacing: 0.28em; }
+    nav a.nav-surface:hover { color: var(--biolum); text-shadow: 0 0 12px rgba(110,255,212,0.55); }
+
+    /* ── DIVE OUT BUTTON ── */
+    .dive-out-btn {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 110;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px;
+      border: 1px solid rgba(110,255,212,0.22);
+      background: rgba(3,10,22,0.72); backdrop-filter: blur(8px);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(110,255,212,0.6);
+      border-radius: 999px; text-decoration: none;
+      transition: all 0.3s; white-space: nowrap;
+    }
+    .dive-out-btn:hover {
+      border-color: var(--biolum); color: var(--biolum);
+      box-shadow: 0 0 24px rgba(110,255,212,0.12);
+      background: rgba(4,16,36,0.84);
+    }
+    .dive-out-icon { font-size: 13px; opacity: 0.8; }
     main { position: relative; z-index: 2; padding-bottom: 4rem; }
     .page-header { padding: 5rem 3rem 1.6rem; border-bottom: 0.5px solid rgba(79,200,216,0.10); }
     .page-header h1 { font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 500; }
@@ -81,16 +104,56 @@
       nav a { writing-mode: horizontal-tb; }
       .page-header, .stats-row, .section, footer { padding-left: 1.25rem; padding-right: 1.25rem; }
     }
+
+    /* ── SURFACE RAIL ── */
+    .surface-rail {
+      position: fixed; top: 0; left: 14px; bottom: 0;
+      width: 40px; z-index: 10; pointer-events: none;
+    }
+    .surface-rail .rail-spine {
+      position: absolute; left: 22px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(79,200,216,0.08) 8%, rgba(79,200,216,0.07) 90%, transparent);
+    }
+    .surface-link {
+      position: absolute; top: 22px; left: 0;
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(79,200,216,0.4); text-decoration: none;
+      pointer-events: all; transition: color 0.3s, text-shadow 0.3s;
+    }
+    .surface-link:hover { color: var(--biolum); text-shadow: 0 0 8px rgba(110,255,212,0.4); }
+    .zone-badge {
+      position: absolute; bottom: 28px; left: 0;
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(79,200,216,0.22); white-space: nowrap; pointer-events: none;
+    }
+    @media (max-width: 760px) { .surface-rail { display: none; } }
   </style>
 </head>
 <body>
   <canvas id="biolum-layer"></canvas>
 
+  <div class="surface-rail">
+    <div class="rail-spine"></div>
+    <a href="index.html" class="surface-link">↑ Surface</a>
+    <div class="zone-badge">— Hadal Zone · Watch Live —</div>
+  </div>
+
+  <a href="index.html" class="dive-out-btn">
+    <span class="dive-out-icon">↑</span>
+    <span>Dive Out · Return to Surface</span>
+  </a>
+
   <nav>
-    <a href="index.html">Home</a>
+    <a href="index.html"          class="nav-surface">↑ Surface</a>
+    <a href="about.html">About</a>
     <a href="expeditions.html">Expeditions</a>
+    <a href="research.html">Research</a>
     <a href="creative.html">Creative</a>
-    <a href="live.html" class="active">Watch</a>
+    <a href="live.html"           class="active">Watch</a>
     <a href="index.html#contact">Contact</a>
   </nav>
 

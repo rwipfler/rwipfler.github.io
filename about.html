@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #d9e6f5;
+      --ink-dim: #7892b5;
+      --cyan: #4fc8d8;
+      --biolum: #6effd4;
+      --amber: #f0b030;
+      --violet: #b090ff;
+      --border: rgba(79,200,216,0.12);
+      --panel: rgba(5,14,32,0.55);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; color: var(--ink); }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(79,200,216,0.10), transparent 30%),
+        linear-gradient(to bottom, #10365f 0%, #0a2344 16%, #05162d 36%, #020d18 68%, #01060c 100%);
+    }
+    a { color: inherit; text-decoration: none; }
+    #biolum-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+    /* ── NAV RAIL ── */
+    nav {
+      position: fixed; top: 0; right: 14px; bottom: 0; width: 44px; z-index: 100;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.35em;
+    }
+    nav a { writing-mode: vertical-rl; color: var(--ink-dim); text-decoration: none; text-transform: uppercase; transition: color 0.3s, text-shadow 0.3s; padding: 4px 0; }
+    nav a:hover, nav a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(79,200,216,0.6); }
+    nav a.nav-surface { color: rgba(110,255,212,0.4); letter-spacing: 0.28em; }
+    nav a.nav-surface:hover { color: var(--biolum); text-shadow: 0 0 12px rgba(110,255,212,0.55); }
+
+    /* ── DIVE OUT BUTTON ── */
+    .dive-out-btn {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 110; display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; border: 1px solid rgba(110,255,212,0.22);
+      background: rgba(3,10,22,0.72); backdrop-filter: blur(8px);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: rgba(110,255,212,0.6); border-radius: 999px;
+      text-decoration: none; transition: all 0.3s; white-space: nowrap;
+    }
+    .dive-out-btn:hover { border-color: var(--biolum); color: var(--biolum); box-shadow: 0 0 24px rgba(110,255,212,0.12); background: rgba(4,16,36,0.84); }
+    .dive-out-icon { font-size: 13px; opacity: 0.8; }
+
+    /* ── SURFACE RAIL ── */
+    .surface-rail { position: fixed; top: 0; left: 14px; bottom: 0; width: 40px; z-index: 10; pointer-events: none; }
+    .surface-rail .rail-spine { position: absolute; left: 22px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, rgba(79,200,216,0.08) 8%, rgba(79,200,216,0.07) 90%, transparent); }
+    .surface-link { position: absolute; top: 22px; left: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(79,200,216,0.4); text-decoration: none; pointer-events: all; transition: color 0.3s, text-shadow 0.3s; }
+    .surface-link:hover { color: var(--biolum); text-shadow: 0 0 8px rgba(110,255,212,0.4); }
+    .zone-badge { position: absolute; bottom: 28px; left: 0; writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(79,200,216,0.22); white-space: nowrap; pointer-events: none; }
+
+    /* ── LAYOUT ── */
+    main { position: relative; z-index: 2; padding: 0 80px 6rem 80px; max-width: 1000px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { padding: 5rem 0 2.5rem; border-bottom: 0.5px solid rgba(79,200,216,0.10); }
+    .page-header h1 { font-size: clamp(2.8rem, 5vw, 4.5rem); font-weight: 500; line-height: 0.95; margin-bottom: 0.5rem; }
+    .page-header .sub { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.24em; color: rgba(79,200,216,0.7); text-transform: uppercase; }
+
+    /* ── PHOTO GRID ── */
+    .photo-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 16px; padding: 2.5rem 0; max-width: 800px; }
+    .photo-slot {
+      position: relative; border: 1px solid rgba(79,200,216,0.14);
+      background: linear-gradient(135deg, rgba(8,24,48,0.94), rgba(4,14,30,0.98));
+      overflow: hidden;
+    }
+    .photo-slot.primary { aspect-ratio: 3/4; }
+    .photo-slot.secondary { aspect-ratio: 4/3; align-self: start; }
+    .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-label {
+      position: absolute; bottom: 12px; left: 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.2em;
+      color: var(--biolum); background: rgba(2,10,20,0.7); padding: 4px 8px;
+      border: 1px solid rgba(110,255,212,0.16); border-radius: 999px; text-transform: uppercase;
+    }
+    .photo-placeholder {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px; padding: 20px; text-align: center;
+    }
+    .photo-placeholder .ph-icon { font-size: 2rem; opacity: 0.2; }
+    .photo-placeholder p { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.18em; color: rgba(79,200,216,0.3); text-transform: uppercase; line-height: 1.7; }
+
+    /* ── CV BUTTON ── */
+    .cv-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 22px; margin-bottom: 3rem;
+      border: 1px solid rgba(79,200,216,0.28);
+      background: rgba(5,18,40,0.45); backdrop-filter: blur(4px);
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--cyan); transition: all 0.3s;
+    }
+    .cv-btn:hover { border-color: var(--cyan); background: rgba(8,28,60,0.6); box-shadow: 0 0 20px rgba(79,200,216,0.12); color: #fff; }
+    .cv-icon { font-size: 14px; }
+
+    /* ── SECTION HEADS ── */
+    .sec-label { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; letter-spacing: 0.25em; color: var(--cyan); text-transform: uppercase; padding-left: 0.8rem; border-left: 2px solid var(--cyan); margin-bottom: 1.2rem; }
+
+    /* ── BIO BLOCKS ── */
+    .bio-section { padding: 2.5rem 0; border-bottom: 0.5px solid rgba(79,200,216,0.07); max-width: 680px; }
+    .bio-section:last-child { border-bottom: none; }
+    .bio-p { font-size: 19px; line-height: 1.7; color: rgba(217,230,245,0.88); margin-bottom: 1.2rem; }
+    .bio-p:last-child { margin-bottom: 0; }
+    .bio-p a { color: var(--biolum); border-bottom: 1px solid rgba(110,255,212,0.28); transition: color 0.2s; }
+    .bio-p a:hover { color: #fff; }
+    .bio-p em { font-style: italic; color: rgba(217,230,245,0.7); }
+
+    /* ── HUMAN SECTION — slightly warmer tone ── */
+    .human-section { padding: 2.5rem 0; border-bottom: 0.5px solid rgba(79,200,216,0.07); max-width: 680px; }
+    .human-section .bio-p { color: rgba(200,220,240,0.78); font-style: italic; font-size: 18px; }
+
+    /* ── QUICK FACTS ── */
+    .facts-section { padding: 2.5rem 0 3rem; }
+    .facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: rgba(79,200,216,0.06); max-width: 800px; }
+    .fact-cell { padding: 18px 22px; background: rgba(3,12,28,0.55); }
+    .fact-label { font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.22em; color: var(--ink-dim); text-transform: uppercase; margin-bottom: 6px; }
+    .fact-value { font-size: 16px; color: var(--ink); line-height: 1.4; }
+    .fact-value a { color: var(--biolum); border-bottom: 1px solid rgba(110,255,212,0.2); transition: color 0.2s; }
+    .fact-value a:hover { color: #fff; }
+
+    /* ── LINKS ROW ── */
+    .links-row { display: flex; flex-wrap: wrap; gap: 0; margin-top: 2.5rem; max-width: 680px; border-top: 0.5px solid rgba(79,200,216,0.1); }
+    .profile-link { display: block; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-dim); padding: 0.65rem 0; border-bottom: 0.5px solid rgba(79,200,216,0.08); width: 100%; transition: color 0.2s; }
+    .profile-link:hover { color: var(--biolum); }
+
+    /* ── FOOTER ── */
+    footer { padding: 2.5rem 80px 3.5rem; position: relative; z-index: 2; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; letter-spacing: 0.28em; color: rgba(150,200,220,0.38); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+
+    @media (max-width: 760px) {
+      main { padding: 0 1.5rem 4rem 1.5rem; }
+      .photo-grid { grid-template-columns: 1fr; }
+      .photo-slot.secondary { aspect-ratio: 16/9; }
+      nav { font-size: 8px; }
+      .surface-rail { display: none; }
+      footer { padding: 2rem 1.5rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="biolum-layer"></canvas>
+
+  <div class="surface-rail">
+    <div class="rail-spine"></div>
+    <a href="index.html" class="surface-link">↑ Surface</a>
+    <div class="zone-badge">— Twilight Zone · About —</div>
+  </div>
+
+  <a href="index.html" class="dive-out-btn">
+    <span class="dive-out-icon">↑</span>
+    <span>Dive Out · Return to Surface</span>
+  </a>
+
+  <nav>
+    <a href="index.html"          class="nav-surface">↑ Surface</a>
+    <a href="about.html"          class="active">About</a>
+    <a href="expeditions.html">Expeditions</a>
+    <a href="research.html">Research</a>
+    <a href="creative.html">Creative</a>
+    <a href="live.html">Watch</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <h1>Rebecca Wipfler</h1>
+      <div class="sub">Deep-sea ecologist · PhD candidate · Caltech</div>
+    </div>
+
+    <!-- PHOTOS -->
+    <div class="photo-grid">
+      <div class="photo-slot primary">
+        <!-- Replace src with your portrait photo -->
+        <!-- <img src="images/about/portrait.jpg" alt="Rebecca Wipfler"> -->
+        <div class="photo-placeholder">
+          <div class="ph-icon">⬡</div>
+          <p>Portrait photo<br>recommended 3×4 ratio</p>
+        </div>
+        <div class="photo-label">Field · 2024</div>
+      </div>
+      <div class="photo-slot secondary">
+        <!-- Replace src with a field / on-deck photo -->
+        <!-- <img src="images/about/field.jpg" alt="On deck during AT50-24"> -->
+        <div class="photo-placeholder">
+          <div class="ph-icon">⬡</div>
+          <p>Field photo<br>on-deck or lab recommended</p>
+        </div>
+        <div class="photo-label">AT50-24 · 2025</div>
+      </div>
+    </div>
+
+    <!-- CV BUTTON -->
+    <a href="cv/wipfler_cv.pdf" class="cv-btn" target="_blank">
+      <span class="cv-icon">↓</span>
+      <span>Download CV</span>
+    </a>
+
+    <!-- THE SCIENTIST -->
+    <div class="bio-section">
+      <div class="sec-label">The scientist</div>
+      <p class="bio-p">
+        I'm a fifth-year PhD candidate in the
+        <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a>
+        at Caltech's Division of Geological and Planetary Sciences, working on the
+        biogeochemistry of deep-sea methane seeps. My dissertation asks a deceptively
+        simple question: what are the microbes actually <em>doing</em> down there?
+        Answering it has meant building custom high-pressure incubation systems and
+        deploying them from research vessels — measuring microbial metabolic activity
+        in situ, at depth, in the dark, on the seafloor where pressure alone would
+        crush most conventional gear.
+      </p>
+      <p class="bio-p">
+        Before Caltech, I studied Molecular and Cellular Biology at the University
+        of Illinois Urbana-Champaign, where I worked with
+        <a href="https://mcb.illinois.edu/faculty/profile/rachelwh" target="_blank">Dr. Rachel Whitaker</a>
+        on extremophile archaea in Yellowstone hydrothermal springs — backcountry
+        sample collection for the NASA Astrobiology Institute. That work convinced me
+        that the most interesting microbiology was happening in the least hospitable
+        places on earth, and it set the trajectory for everything since.
+      </p>
+      <p class="bio-p">
+        I'm also an
+        <a href="https://nautiluslive.org/people/rebecca-wipfler" target="_blank">Ocean Exploration Trust alumna</a>,
+        having joined E/V Nautilus first as an ocean science intern and later as
+        Science Manager in Training — coordinating operations, managing ROV deployments,
+        and supervising the next cohort of students through exactly the kind of field
+        experience that shaped my own scientific direction.
+      </p>
+      <p class="bio-p">
+        I am supported by an
+        <a href="https://www.nsfgrfp.org/" target="_blank">NSF Graduate Research Fellowship</a>
+        (2020–2025). I've descended to the seafloor in HOV Alvin twice, and logged
+        roughly 110 days at sea across 12 expeditions spanning Alaska, California,
+        Mexico, Hawaii, American Samoa, and the Pacific Northwest.
+      </p>
+    </div>
+
+    <!-- BEYOND THE LAB -->
+    <div class="human-section">
+      <div class="sec-label">Beyond the lab</div>
+      <p class="bio-p">
+        When I'm not at sea or debugging pressure systems, I collect crushed cups —
+        the Styrofoam ones that researchers decorate and send to depth on ROVs, which
+        come back miniaturized and slightly uncanny. I once built a full-scale giant
+        isopod Halloween costume and wore it to MBARI, where I was photographed
+        alongside actual giant isopods. I'm drawn to artists who think about the deep
+        ocean seriously — biodiversity illustrators, makers of strange marine objects —
+        and I keep their work around me in the lab as a reminder that science and
+        wonder are not separate things.
+      </p>
+    </div>
+
+    <!-- QUICK FACTS -->
+    <div class="facts-section">
+      <div class="sec-label">Vitals</div>
+      <div class="facts-grid">
+        <div class="fact-cell">
+          <div class="fact-label">Current position</div>
+          <div class="fact-value">PhD Candidate, Geological &amp; Planetary Sciences</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Institution</div>
+          <div class="fact-value"><a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab · Caltech</a></div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Dissertation</div>
+          <div class="fact-value"><em>In-situ Microbial Activity in the Deep Ocean</em></div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">PhD timeline</div>
+          <div class="fact-value">2019 – present</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Undergraduate</div>
+          <div class="fact-value">B.S. Molecular &amp; Cellular Biology, Summa Cum Laude · UIUC · 2019</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Funding</div>
+          <div class="fact-value">NSF Graduate Research Fellow · 2020–2025</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Field work</div>
+          <div class="fact-value">12 expeditions · ~110 days at sea · 2 Alvin dives</div>
+        </div>
+        <div class="fact-cell">
+          <div class="fact-label">Max depth</div>
+          <div class="fact-value">~5,500 m</div>
+        </div>
+      </div>
+
+      <div class="links-row">
+        <a class="profile-link" href="mailto:rlwipfler@gmail.com">rlwipfler@gmail.com ↗</a>
+        <a class="profile-link" href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab, Caltech ↗</a>
+        <a class="profile-link" href="https://nautiluslive.org/people/rebecca-wipfler" target="_blank">Nautilus Live profile ↗</a>
+        <a class="profile-link" href="https://www.dla.whoi.edu/cruises/9c80219a-3507-4bb3-8fab-1b4b18f8c307" target="_blank">AT50-24 cruise page (WHOI) ↗</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 R. WIPFLER</span>
+    <span>CALTECH · GPS · ORPHAN LAB</span>
+    <span>33°N 118°W · PASADENA, CA</span>
+  </footer>
+
+  <script>
+    const canvas = document.getElementById('biolum-layer');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = Array.from({ length: Math.max(32, Math.floor(window.innerWidth / 36)) }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.0 + 0.5,
+        vy: Math.random() * 0.16 + 0.02,
+        vx: (Math.random() - 0.5) * 0.1,
+        glow: Math.random() * Math.PI * 2,
+        a: Math.random() * 0.40 + 0.16
+      }));
+    }
+    function draw(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.x += p.vx + Math.sin((t * 0.00022) + p.glow) * 0.05;
+        p.y += p.vy;
+        if (p.y > canvas.height + 10) p.y = -10;
+        if (p.x > canvas.width + 10) p.x = -10;
+        if (p.x < -10) p.x = canvas.width + 10;
+        const alpha = p.a + 0.14 * Math.sin((t * 0.0016) + p.glow);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 7);
+        g.addColorStop(0, `rgba(110,255,212,${Math.max(0, alpha)})`);
+        g.addColorStop(0.45, `rgba(79,200,216,${Math.max(0, alpha * 0.42)})`);
+        g.addColorStop(1, 'rgba(79,200,216,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    resize();
+    requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+  </script>
+</body>
+</html>

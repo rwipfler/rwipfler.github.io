@@ -4,53 +4,139 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scientific Expeditions · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --ink: #d9e6f5;
+      --ink-dim: #7892b5;
+      --cyan: #4fc8d8;
+      --biolum: #6effd4;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Georgia', serif; background: #020d18; color: #e0f4f8; }
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(79,200,216,0.10), transparent 30%),
+        linear-gradient(to bottom, #10365f 0%, #0a2344 16%, #05162d 36%, #020d18 68%, #01060c 100%);
+    }
 
-    nav { position: fixed; top: 0; right: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; padding: 2rem 1.2rem; gap: 1.8rem; }
-    nav a { writing-mode: vertical-lr; font-family: 'Courier New', monospace; font-size: 0.65rem; letter-spacing: 0.15em; color: rgba(0,220,200,0.5); text-decoration: none; text-transform: uppercase; transition: color 0.3s; }
-    nav a:hover { color: #00dcc8; }
+    nav { position: fixed; top: 0; right: 14px; bottom: 0; width: 44px; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; }
+    nav a { writing-mode: vertical-rl; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.35em; color: var(--ink-dim); text-decoration: none; text-transform: uppercase; transition: color 0.3s, text-shadow 0.3s; padding: 4px 0; }
+    nav a:hover, nav a.active { color: var(--cyan); text-shadow: 0 0 10px rgba(79,200,216,0.6); }
+    nav a.nav-surface { color: rgba(110,255,212,0.4); letter-spacing: 0.28em; }
+    nav a.nav-surface:hover { color: var(--biolum); text-shadow: 0 0 12px rgba(110,255,212,0.55); }
 
-    .page-header { padding: 5rem 3rem 2rem; border-bottom: 0.5px solid rgba(0,220,200,0.08); }
-    .page-header h1 { font-size: 2.2rem; font-weight: normal; color: #e8f4f8; margin-bottom: 0.4rem; }
-    .page-header .sub { font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(0,220,200,0.55); text-transform: uppercase; }
+    /* ── DIVE OUT BUTTON ── */
+    .dive-out-btn {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 110;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px;
+      border: 1px solid rgba(110,255,212,0.22);
+      background: rgba(3,10,22,0.72); backdrop-filter: blur(8px);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(110,255,212,0.6);
+      border-radius: 999px; text-decoration: none;
+      transition: all 0.3s; white-space: nowrap;
+    }
+    .dive-out-btn:hover {
+      border-color: var(--biolum); color: var(--biolum);
+      box-shadow: 0 0 24px rgba(110,255,212,0.12);
+      background: rgba(4,16,36,0.84);
+    }
+    .dive-out-icon { font-size: 13px; opacity: 0.8; }
 
-    .stats-row { display: flex; gap: 2rem; padding: 1.5rem 3rem; border-bottom: 0.5px solid rgba(0,220,200,0.06); flex-wrap: wrap; }
+    .page-header { padding: 5rem 3rem 2rem; border-bottom: 0.5px solid rgba(79,200,216,0.08); position: relative; z-index: 2; }
+    .page-header h1 { font-size: 2.2rem; font-weight: normal; color: var(--ink); margin-bottom: 0.4rem; }
+    .page-header .sub { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.2em; color: rgba(79,200,216,0.55); text-transform: uppercase; }
+
+    .stats-row { display: flex; gap: 2rem; padding: 1.5rem 3rem; border-bottom: 0.5px solid rgba(79,200,216,0.06); flex-wrap: wrap; position: relative; z-index: 2; }
     .stat { text-align: center; }
-    .stat .n { font-family: 'Courier New', monospace; font-size: 1.8rem; color: #00dcc8; display: block; }
-    .stat .l { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
+    .stat .n { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: var(--biolum); display: block; }
+    .stat .l { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
 
-    .sec-head { font-family: 'Courier New', monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: #00dcc8; text-transform: uppercase; padding-left: 0.8rem; border-left: 2px solid #00dcc8; margin-bottom: 0.8rem; }
+    .sec-head { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--cyan); text-transform: uppercase; padding-left: 0.8rem; border-left: 2px solid var(--cyan); margin-bottom: 0.8rem; }
 
-    #globe-section { padding: 2.5rem 3rem; border-bottom: 0.5px solid rgba(0,220,200,0.06); }
-    #globe-hint { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(0,220,200,0.35); letter-spacing: 0.1em; margin-bottom: 0.8rem; }
-    #globe-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 0.5px solid rgba(0,220,200,0.12); max-width: 800px; }
+    #globe-section { padding: 2.5rem 3rem; border-bottom: 0.5px solid rgba(79,200,216,0.06); position: relative; z-index: 2; }
+    #globe-hint { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(79,200,216,0.35); letter-spacing: 0.1em; margin-bottom: 0.8rem; }
+    #globe-wrap { position: relative; border-radius: 10px; overflow: hidden; border: 0.5px solid rgba(79,200,216,0.12); max-width: 800px; }
     #globe-svg { display: block; width: 100%; cursor: grab; }
     #globe-svg:active { cursor: grabbing; }
     #globe-controls { position: absolute; bottom: 10px; right: 10px; display: flex; flex-direction: column; gap: 4px; z-index: 20; }
-    .globe-btn { width: 28px; height: 28px; background: rgba(2,13,24,0.85); border: 0.5px solid rgba(0,220,200,0.35); border-radius: 4px; color: rgba(0,220,200,0.85); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: monospace; transition: background 0.2s; user-select: none; }
-    .globe-btn:hover { background: rgba(0,220,200,0.12); }
-    #globe-tooltip { position: absolute; background: rgba(2,10,20,0.96); border: 0.5px solid rgba(0,220,200,0.4); border-radius: 8px; padding: 8px 12px; font-size: 0.7rem; color: rgba(200,230,240,0.9); pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 10; max-width: 210px; }
-    .gt-name { font-size: 0.75rem; font-weight: bold; color: #00dcc8; margin-bottom: 3px; }
+    .globe-btn { width: 28px; height: 28px; background: rgba(2,13,24,0.85); border: 0.5px solid rgba(79,200,216,0.35); border-radius: 4px; color: rgba(79,200,216,0.85); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; transition: background 0.2s; user-select: none; }
+    .globe-btn:hover { background: rgba(79,200,216,0.12); }
+    #globe-tooltip { position: absolute; background: rgba(2,10,20,0.96); border: 0.5px solid rgba(79,200,216,0.4); border-radius: 8px; padding: 8px 12px; font-size: 0.7rem; color: rgba(200,230,240,0.9); pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 10; max-width: 210px; }
+    .gt-name { font-size: 0.75rem; font-weight: bold; color: var(--cyan); margin-bottom: 3px; }
     .gt-body { font-size: 0.65rem; color: rgba(180,220,240,0.75); margin-bottom: 2px; line-height: 1.4; }
-    .gt-sub  { font-size: 0.6rem; color: rgba(0,200,180,0.5); font-family: 'Courier New', monospace; }
+    .gt-sub  { font-size: 0.6rem; color: rgba(79,200,216,0.5); font-family: 'JetBrains Mono', monospace; }
     #globe-legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.8rem; }
-    .leg-item { display: flex; align-items: center; gap: 5px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.55); }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(150,200,220,0.55); }
     .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-    #depth-section { padding: 2.5rem 0 2rem; }
+    #depth-section { padding: 2.5rem 0 2rem; position: relative; z-index: 2; }
     #depth-section .sec-head { margin-left: 3rem; }
-    #depth-hint { font-family: 'Courier New', monospace; font-size: 0.6rem; color: rgba(0,220,200,0.35); letter-spacing: 0.1em; margin: 0 0 0.8rem 3rem; }
+    #depth-hint { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: rgba(79,200,216,0.35); letter-spacing: 0.1em; margin: 0 0 0.8rem 3rem; }
     #depth-canvas { display: block; width: 100%; }
+
+    /* ── SURFACE RAIL ── */
+    .surface-rail {
+      position: fixed; top: 0; left: 14px; bottom: 0;
+      width: 40px; z-index: 10; pointer-events: none;
+    }
+    .surface-rail .rail-spine {
+      position: absolute; left: 22px; top: 0; bottom: 0; width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(79,200,216,0.08) 8%, rgba(79,200,216,0.07) 90%, transparent);
+    }
+    .surface-link {
+      position: absolute; top: 22px; left: 0;
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      color: rgba(79,200,216,0.4); text-decoration: none;
+      pointer-events: all;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+    .surface-link:hover {
+      color: var(--biolum);
+      text-shadow: 0 0 8px rgba(110,255,212,0.4);
+    }
+    .zone-badge {
+      position: absolute; bottom: 28px; left: 0;
+      writing-mode: vertical-rl; transform: rotate(180deg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(79,200,216,0.22); white-space: nowrap;
+      pointer-events: none;
+    }
+    @media (max-width: 760px) { .surface-rail { display: none; } }
   </style>
 </head>
 <body>
 
+<canvas id="biolum-layer" style="position:fixed;inset:0;pointer-events:none;z-index:0;"></canvas>
+
+<div class="surface-rail">
+  <div class="rail-spine"></div>
+  <a href="index.html" class="surface-link">↑ Surface</a>
+  <div class="zone-badge">— Midnight Zone · Expeditions —</div>
+</div>
+
+<a href="index.html" class="dive-out-btn">
+  <span class="dive-out-icon">↑</span>
+  <span>Dive Out · Return to Surface</span>
+</a>
+
 <nav>
-  <a href="index.html">Home</a>
-  <a href="expeditions.html" style="color:#00dcc8;">Expeditions</a>
-  <a href="index.html#research">Research</a>
+  <a href="index.html"          class="nav-surface">↑ Surface</a>
+    <a href="about.html">About</a>
+  <a href="expeditions.html"    class="active">Expeditions</a>
+  <a href="research.html">Research</a>
+  <a href="creative.html">Creative</a>
+  <a href="live.html">Watch</a>
   <a href="index.html#contact">Contact</a>
 </nav>
 
@@ -183,7 +269,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     });
     clusters.forEach(function(cluster) {
       var e0=EXPEDITIONS[cluster[0]];
-      var col=cluster.length>1?'#00dcc8':TYPE_COLOR[e0.type];
+      var col=cluster.length>1?'#4fc8d8':TYPE_COLOR[e0.type];
       var mr=cluster.length>1?9:6;
       var p0=proj([e0.lon,e0.lat])||[CX,CY];
       var g=markG.append('g').attr('class','mgrp').datum(e0)
@@ -277,7 +363,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     for(var i=0;i<oP.length;i++){ctx.fillStyle='rgba(210,120,30,0.62)';ctx.beginPath();ctx.ellipse(mx+oP[i][0],my+oP[i][1],oP[i][2],oP[i][3],0.2,0,Math.PI*2);ctx.fill();}
     for(var i=0;i<11;i++){var angle=(i/11)*Math.PI;var r=36+(i%3)*6;var cx2=mx+Math.cos(angle)*r,cy2=my+Math.sin(angle)*r*0.35+2;ctx.fillStyle='rgba('+(158+i*4)+','+(138+i*3)+','+(76+i*4)+',0.75)';ctx.beginPath();ctx.ellipse(cx2,cy2,5,3,angle,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(108,88,46,0.4)';ctx.lineWidth=0.4;ctx.stroke();}
     for(var b=0;b<7;b++){var bx=mx+(b-3)*9+Math.sin(b*1.4)*3;var phase=(now*0.4+b*0.38)%1;var by=my-10-phase*52,br=1.4+(b%3)*0.5,alpha=0.35-phase*0.28;ctx.fillStyle='rgba(160,200,255,'+alpha+')';ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(120,170,220,'+(alpha*0.7)+')';ctx.lineWidth=0.5;ctx.stroke();}
-    ctx.font='8px "Courier New"';ctx.fillStyle='rgba(80,200,150,0.42)';ctx.textAlign='center';
+    ctx.font='8px monospace';ctx.fillStyle='rgba(80,200,150,0.42)';ctx.textAlign='center';
     ctx.fillText('carbonate mound · methane seep',mx,my+28);
     ctx.fillText('microbial mats & clams',mx,my+38);
   }
@@ -305,7 +391,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     ctx.fillStyle='rgba(95,86,65,0.68)';ctx.beginPath();ctx.ellipse(-24*s,-1*s,5.5*s,2*s,0.1,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle='rgba(100,90,68,0.45)';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(-24*s,-3*s);ctx.lineTo(-24*s,(wingY+1)*s);ctx.stroke();
     ctx.restore();
-    ctx.font='7.5px "Courier New"';ctx.fillStyle='rgba(200,185,150,0.5)';ctx.textAlign='center';
+    ctx.font='7.5px monospace';ctx.fillStyle='rgba(200,185,150,0.5)';ctx.textAlign='center';
     ctx.fillText('Samoan Clipper (S-42) · 1938',px,py+22);
   }
 
@@ -332,7 +418,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     }
 
     // Particles
-    for(var i=0;i<160;i++){var px2=(i*97.3*4.1)%W,py2=WATER_Y+20+(i*61.7*3.3)%(CANVAS_H-WATER_Y-40);var a=0.07+(i%3)*0.09;if(i%3===0)ctx.fillStyle='rgba(0,220,200,'+a+')';else if(i%3===1)ctx.fillStyle='rgba(100,180,255,'+(a*0.7)+')';else ctx.fillStyle='rgba(50,220,180,'+(a*0.6)+')';ctx.fillRect(px2,py2,i%5===0?2:1,i%5===0?2:1);}
+    for(var i=0;i<160;i++){var px2=(i*97.3*4.1)%W,py2=WATER_Y+20+(i*61.7*3.3)%(CANVAS_H-WATER_Y-40);var a=0.07+(i%3)*0.09;if(i%3===0)ctx.fillStyle='rgba(79,200,216,'+a+')';else if(i%3===1)ctx.fillStyle='rgba(100,180,255,'+(a*0.7)+')';else ctx.fillStyle='rgba(50,220,180,'+(a*0.6)+')';ctx.fillRect(px2,py2,i%5===0?2:1,i%5===0?2:1);}
 
     // Waves
     ctx.strokeStyle='rgba(120,200,255,0.6)';ctx.lineWidth=1.5;ctx.beginPath();for(var x=0;x<=W;x+=2){var wy=SKY_H+4+Math.sin(x*0.018+now*0.8)*4+Math.sin(x*0.031+now*0.5)*2.5+Math.sin(x*0.009+now*1.1)*3;if(x===0)ctx.moveTo(x,wy);else ctx.lineTo(x,wy);}ctx.stroke();
@@ -340,7 +426,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     ctx.fillStyle='rgba(200,230,255,0.22)';for(var i=0;i<25;i++){var fx=((i*173+Math.floor(now*0.5)*11)%W);ctx.fillRect(fx,SKY_H+2+Math.sin(fx*0.02+now)*3,3+i%4,1);}
 
     // Surface label
-    ctx.font='9px "Courier New"';ctx.fillStyle='rgba(150,210,255,0.55)';ctx.textAlign='left';ctx.fillText('— surface',6,SURFACE_Y+1);
+    ctx.font='9px monospace';ctx.fillStyle='rgba(150,210,255,0.55)';ctx.textAlign='left';ctx.fillText('— surface',6,SURFACE_Y+1);
 
     // Seafloor
     var floorPts=[];for(var x=0;x<=W;x+=3)floorPts.push([x,floorYatX(x,W)]);
@@ -367,14 +453,14 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
     for(var i=0;i<280;i++){var sx=(i*131.3+7)%W,sfy=floorYatX(sx,W)-1;if(sfy<CANVAS_H-4){var roll=i%10;if(roll<4)ctx.fillStyle='rgba('+(78+i%22)+','+(42+i%15)+','+(9+i%9)+',0.5)';else if(roll<7)ctx.fillStyle='rgba(9,4,1,0.55)';else ctx.fillStyle='rgba(182,168,142,0.26)';ctx.fillRect(sx,sfy,roll<7?2:1,1);}}
 
     // Zone lines
-    ctx.font='9px "Courier New"';ctx.fillStyle='rgba(0,200,180,0.18)';ctx.textAlign='left';
+    ctx.font='9px monospace';ctx.fillStyle='rgba(0,200,180,0.18)';ctx.textAlign='left';
     var zones=[[200,'· twilight zone'],[1000,'· midnight zone'],[4000,'· abyssal zone']];
     for(var i=0;i<zones.length;i++){var zy=depthToY(zones[i][0]);ctx.setLineDash([4,8]);ctx.strokeStyle='rgba(0,180,200,0.09)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(0,zy);ctx.lineTo(W,zy);ctx.stroke();ctx.setLineDash([]);ctx.fillText(zones[i][0]+'m '+zones[i][1],6,zy-3);}
-    ctx.fillStyle='rgba(0,220,200,0.22)';ctx.textAlign='right';ctx.font='9px "Courier New"';
+    ctx.fillStyle='rgba(79,200,216,0.22)';ctx.textAlign='right';ctx.font='9px monospace';
     var dTicks=[500,1000,2000,3000,4000,5000];for(var i=0;i<dTicks.length;i++){var ty=depthToY(dTicks[i]);if(ty<CANVAS_H-18&&ty>WATER_Y)ctx.fillText(dTicks[i]+'m',W-6,ty+3);}
 
     // Continental margin label in open water
-    var lblY=depthToY(1400);if(lblY<CANVAS_H-20&&lblY>WATER_Y+30){ctx.font='8px "Courier New"';ctx.fillStyle='rgba(120,90,50,0.22)';ctx.textAlign='left';ctx.fillText('· continental margin sediment ·',W*0.32,lblY);}
+    var lblY=depthToY(1400);if(lblY<CANVAS_H-20&&lblY>WATER_Y+30){ctx.font='8px monospace';ctx.fillStyle='rgba(120,90,50,0.22)';ctx.textAlign='left';ctx.fillText('· continental margin sediment ·',W*0.32,lblY);}
 
     // ── Features ──────────────────────────────────────────
 
@@ -383,10 +469,10 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
 
     // Pushcores at WF05-21
     var wf21i=findById('wf0521');
-    if(wf21i>=0){var pcx=getSlotX(wf21i,W);var pcOff=[-14,0,14];for(var j=0;j<3;j++){var ppx=pcx+pcOff[j],ppy=floorYatX(ppx,W);ctx.strokeStyle='rgba(180,180,160,0.55)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ppx,ppy);ctx.lineTo(ppx,ppy-20);ctx.stroke();ctx.strokeStyle='rgba(140,140,120,0.45)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ppx,ppy-7);ctx.lineTo(ppx,ppy-18);ctx.stroke();ctx.fillStyle='rgba(200,190,160,0.38)';ctx.fillRect(ppx-3,ppy-2,6,3);}ctx.font='8px "Courier New"';ctx.fillStyle='rgba(180,170,140,0.42)';ctx.textAlign='center';ctx.fillText('pushcores',pcx,floorYatX(pcx,W)+20);}
+    if(wf21i>=0){var pcx=getSlotX(wf21i,W);var pcOff=[-14,0,14];for(var j=0;j<3;j++){var ppx=pcx+pcOff[j],ppy=floorYatX(ppx,W);ctx.strokeStyle='rgba(180,180,160,0.55)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ppx,ppy);ctx.lineTo(ppx,ppy-20);ctx.stroke();ctx.strokeStyle='rgba(140,140,120,0.45)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(ppx,ppy-7);ctx.lineTo(ppx,ppy-18);ctx.stroke();ctx.fillStyle='rgba(200,190,160,0.38)';ctx.fillRect(ppx-3,ppy-2,6,3);}ctx.font='8px monospace';ctx.fillStyle='rgba(180,170,140,0.42)';ctx.textAlign='center';ctx.fillText('pushcores',pcx,floorYatX(pcx,W)+20);}
 
     // Vents at FK210922
-    var fki=findById('fk210922');if(fki>=0){var vx=getSlotX(fki,W);var vOff=[-16,0,16];for(var j=0;j<3;j++){var nvx=vx+vOff[j];drawVent(nvx,floorYatX(nvx,W),now,j);}ctx.font='8px "Courier New"';ctx.fillStyle='rgba(200,155,80,0.45)';ctx.textAlign='center';ctx.fillText('hydrothermal vents',vx,floorYatX(vx,W)+20);}
+    var fki=findById('fk210922');if(fki>=0){var vx=getSlotX(fki,W);var vOff=[-16,0,16];for(var j=0;j<3;j++){var nvx=vx+vOff[j];drawVent(nvx,floorYatX(nvx,W),now,j);}ctx.font='8px monospace';ctx.fillStyle='rgba(200,155,80,0.45)';ctx.textAlign='center';ctx.fillText('hydrothermal vents',vx,floorYatX(vx,W)+20);}
 
     // Benthic creatures
     var britX=W*0.58,britY=floorYatX(W*0.58,W)+18;if(britY<CANVAS_H-15)drawBrittleStar(britX,britY);
@@ -397,7 +483,7 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
 
     // ── Expedition markers ─────────────────────────────
     for(var i=0;i<sorted.length;i++){
-      var exp=sorted[i],x=getSlotX(i,W),col=TYPE_COLOR[exp.type]||'#00dcc8';
+      var exp=sorted[i],x=getSlotX(i,W),col=TYPE_COLOR[exp.type]||'#4fc8d8';
       var isDay=exp.type==='day',mr=6,tipY,dotY;
       if(isDay){dotY=dayCruiseY(exp.maxDepth);tipY=dotY;}
       else{tipY=floorYatX(x,W);dotY=tipY-90;}
@@ -409,21 +495,68 @@ var TYPE_COLOR = { alvin:'#8B1A1A', rov:'#E8C030', day:'#7ab8e0' };
       ctx.strokeStyle=col+'40';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,dotY,mr+4,0,Math.PI*2);ctx.stroke();
       ctx.save();ctx.translate(x,dotY-mr-8);ctx.rotate(-Math.PI/4);ctx.textAlign='left';
       var idPart=exp.cruiseID?exp.cruiseID+' | ':'';
-      ctx.font='500 9.5px Georgia';ctx.fillStyle='rgba(200,230,240,0.9)';ctx.fillText(idPart+exp.name,0,0);
-      ctx.font='8.5px "Courier New"';ctx.fillStyle='rgba(160,200,220,0.52)';ctx.fillText(exp.ship+' · '+exp.chiefSci,0,12);
+      ctx.font='500 9.5px Georgia, serif';ctx.fillStyle='rgba(200,230,240,0.9)';ctx.fillText(idPart+exp.name,0,0);
+      ctx.font='8.5px monospace';ctx.fillStyle='rgba(160,200,220,0.52)';ctx.fillText(exp.ship+' · '+exp.chiefSci,0,12);
       ctx.restore();
     }
 
     // Legend
     ctx.textAlign='left';
     var legItems=[['DSV Alvin','#8B1A1A'],['ROV / Ship cruise','#E8C030'],['Day cruise','#7ab8e0']];
-    var lx=8;for(var i=0;i<legItems.length;i++){ctx.fillStyle=legItems[i][1];ctx.beginPath();ctx.arc(lx+5,CANVAS_H-12,4,0,Math.PI*2);ctx.fill();ctx.font='8px "Courier New"';ctx.fillStyle='rgba(180,220,240,0.5)';ctx.fillText(legItems[i][0],lx+12,CANVAS_H-8);lx+=legItems[i][0].length*5.5+22;}
+    var lx=8;for(var i=0;i<legItems.length;i++){ctx.fillStyle=legItems[i][1];ctx.beginPath();ctx.arc(lx+5,CANVAS_H-12,4,0,Math.PI*2);ctx.fill();ctx.font='8px monospace';ctx.fillStyle='rgba(180,220,240,0.5)';ctx.fillText(legItems[i][0],lx+12,CANVAS_H-8);lx+=legItems[i][0].length*5.5+22;}
   }
 
   function animate(){draw();requestAnimationFrame(animate);}
   setSize();animate();
   window.addEventListener('resize',function(){setSize();});
 })();
+</script>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('biolum-layer');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = Array.from({ length: Math.max(32, Math.floor(window.innerWidth / 36)) }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.0 + 0.5,
+        vy: Math.random() * 0.16 + 0.02,
+        vx: (Math.random() - 0.5) * 0.1,
+        glow: Math.random() * Math.PI * 2,
+        a: Math.random() * 0.40 + 0.16
+      }));
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of particles) {
+        p.x += p.vx + Math.sin((t * 0.00022) + p.glow) * 0.05;
+        p.y += p.vy;
+        if (p.y > canvas.height + 10) p.y = -10;
+        if (p.x > canvas.width + 10) p.x = -10;
+        if (p.x < -10) p.x = canvas.width + 10;
+        const alpha = p.a + 0.14 * Math.sin((t * 0.0016) + p.glow);
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 7);
+        g.addColorStop(0, `rgba(110,255,212,${Math.max(0, alpha)})`);
+        g.addColorStop(0.45, `rgba(79,200,216,${Math.max(0, alpha * 0.42)})`);
+        g.addColorStop(1, 'rgba(79,200,216,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    requestAnimationFrame(draw);
+    window.addEventListener('resize', resize);
+  })();
 </script>
 </body>
 </html>

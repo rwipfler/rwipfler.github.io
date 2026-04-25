@@ -35,8 +35,8 @@
     #water-column::after {
       content: ''; position: absolute; inset: 0 0 75% 0;
       background:
-        radial-gradient(ellipse at 25% -5%, rgba(180,230,255,0.18), transparent 50%),
-        radial-gradient(ellipse at 75% -5%, rgba(140,200,255,0.14), transparent 55%);
+        radial-gradient(ellipse at 25% -5%, rgba(180,230,255,0.12), transparent 50%),
+        radial-gradient(ellipse at 75% -5%, rgba(140,200,255,0.09), transparent 55%);
       pointer-events: none;
       opacity: var(--surface-haze-opacity, 1);
       transition: opacity 0.12s linear;
@@ -46,11 +46,56 @@
     #stars, #biolum-layer, #marine-snow {
       position: fixed; inset: 0; pointer-events: none;
     }
-    #stars       { z-index: 1; }
-    #biolum-layer{ z-index: 2;  }
-    #marine-snow { z-index: 3;  }
-    #creatures-layer { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
-    #alvin-layer     { position: fixed; inset: 0; pointer-events: none; z-index: 6; }
+    #stars       { z-index: 41; }
+    #biolum-layer{ z-index: 44;  }
+    #marine-snow { z-index: 43;  }
+    #creatures-layer { position: fixed; inset: 0; pointer-events: none; z-index: 45; }
+    #alvin-layer     { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
+
+    #dive-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 40;
+      opacity: 0; transition: opacity 0.25s ease;
+    }
+    body.dive-mode #dive-overlay { opacity: 1; }
+    body.dive-mode main,
+    body.dive-mode nav,
+    body.dive-mode footer { filter: none; transition: filter 0.2s ease; }
+
+    .depth-rail { z-index: 85; }
+    body.dive-mode .depth-rail {
+      filter: none !important;
+      opacity: 1 !important;
+    }
+    body.dive-mode #depth-readout,
+    body.dive-mode .depth-tick,
+    body.dive-mode .depth-cursor {
+      opacity: 0.95 !important;
+      color: var(--biolum);
+      text-shadow: 0 0 8px rgba(110,255,212,0.35);
+    }
+
+    .dive-mode-toggle {
+      position: fixed; top: 22px; left: 50%; transform: translateX(-50%);
+      z-index: 90;
+      padding: 10px 16px;
+      border: 1px solid rgba(110,255,212,0.28);
+      background: rgba(3,10,22,0.72);
+      backdrop-filter: blur(8px);
+      color: var(--biolum);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.28em; text-transform: uppercase;
+      border-radius: 999px;
+      box-shadow: 0 0 20px rgba(79,200,216,0.08);
+      cursor: none;
+      transition: border-color 0.2s, color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    .dive-mode-toggle:hover,
+    .dive-mode-toggle[aria-pressed="true"] {
+      border-color: rgba(110,255,212,0.55);
+      color: #d8fff7;
+      box-shadow: 0 0 28px rgba(79,200,216,0.18);
+      background: rgba(4,14,28,0.84);
+    }
 
     /* ══ DSV ALVIN ══ */
     #alvin {
@@ -60,26 +105,10 @@
     }
     /* beam — two versions for left/right facing */
     #sub-beam {
-      position: fixed;
-      width: 260px; height: 80px;
-      transform-origin: left center;
-      background: radial-gradient(ellipse at left center,
-        rgba(255,248,200,0.24) 0%,
-        rgba(255,230,140,0.11) 35%,
-        rgba(255,220,100,0.04) 60%,
-        transparent 100%);
-      pointer-events: none; z-index: 5;
-      border-radius: 0 50% 50% 0;
+      display: none !important;
     }
     #sub-beam.facing-left {
-      transform-origin: right center;
-      background: radial-gradient(ellipse at right center,
-        rgba(255,248,200,0.24) 0%,
-        rgba(255,230,140,0.11) 35%,
-        rgba(255,220,100,0.04) 60%,
-        transparent 100%);
-        pointer-events: none; z-index: 5;
-      border-radius: 0 50% 50% 0;
+      display: none !important;
     }
 
     /* ══ CUSTOM CURSOR — cyan ══ */
@@ -100,7 +129,7 @@
     /* ══ DEPTH RAIL ══ */
     .depth-rail {
       position: fixed; top: 0; left: 14px; bottom: 0;
-      width: 40px; z-index: 5;
+      width: 40px; z-index: 85;
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px; letter-spacing: 0.1em;
       color: var(--ink-dim); pointer-events: none;
@@ -130,7 +159,7 @@
     /* ══ RIGHT NAV ══ */
     nav {
       position: fixed; top: 0; right: 14px; bottom: 0;
-      width: 44px; z-index: 5;
+      width: 44px; z-index: 80;
       display: flex; flex-direction: column;
       justify-content: center; align-items: center;
       gap: 2.2rem;
@@ -271,6 +300,52 @@
       margin-top: 5px; margin-right: 4px; letter-spacing: 0.1em;
     }
 
+    /* ══ SECTION HEADER LINKS ══ */
+    .sect-head h2 a {
+      color: inherit; text-decoration: none;
+      border-bottom: 1px solid rgba(79,200,216,0.0);
+      transition: border-color 0.3s, text-shadow 0.3s;
+    }
+    .sect-head h2 a:hover {
+      border-bottom-color: rgba(79,200,216,0.4);
+      text-shadow: 0 0 28px rgba(79,200,216,0.25);
+    }
+
+    /* ══ DIVE IN CARD ══ */
+    .dive-in-card {
+      display: block; max-width: 560px; margin-top: 2.2rem;
+      padding: 18px 48px 18px 22px;
+      border: 1px solid rgba(110,255,212,0.2);
+      background: rgba(4,14,34,0.45); backdrop-filter: blur(6px);
+      font-family: 'JetBrains Mono', monospace;
+      position: relative; transition: all 0.3s; cursor: none;
+    }
+    .dive-in-card:hover {
+      border-color: rgba(110,255,212,0.5);
+      background: rgba(6,22,52,0.6);
+      box-shadow: 0 0 28px rgba(110,255,212,0.08);
+    }
+    .dive-in-card .dic-label {
+      font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+      color: var(--biolum); margin-bottom: 6px; opacity: 0.7;
+    }
+    .dive-in-card .dic-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 20px; font-style: italic; color: var(--ink);
+      display: block; margin-bottom: 4px;
+    }
+    .dive-in-card .dic-desc {
+      font-size: 10px; letter-spacing: 0.08em; color: var(--ink-dim);
+      line-height: 1.6;
+    }
+    .dive-in-card::after {
+      content: '→'; position: absolute; right: 20px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; color: var(--biolum);
+      transition: right 0.25s, color 0.25s;
+    }
+    .dive-in-card:hover::after { right: 14px; color: #fff; }
+
     /* ══ CREATIVE ══ */
     .creative-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 20px; }
     .creative-card {
@@ -330,12 +405,14 @@
 
 <!-- ── FIXED DARK WATER COLUMN ── -->
 <div id="water-column"></div>
+<button id="dive-toggle" class="dive-mode-toggle" type="button" aria-pressed="false">Dive Mode</button>
 
 <!-- ── CANVAS LAYERS ── -->
 <canvas id="stars"></canvas>
 <canvas id="biolum-layer"></canvas>
 <canvas id="marine-snow"></canvas>
 <div id="creatures-layer"></div>
+<canvas id="dive-overlay" aria-hidden="true"></canvas>
 
 <!-- ── DSV ALVIN ── -->
 <div id="alvin-layer">
@@ -399,14 +476,15 @@
   <div id="depth-readout">DEPTH: 0m</div>
 </div>
 
-<!-- ── RIGHT NAV — Expeditions links to expedition page ── -->
+<!-- ── RIGHT NAV — all items scroll within page; subpage links live in section headers + Dive In cards ── -->
 <nav>
-  <a href="#hero"           class="nav-link">Surface</a>
-  <a href="#about"          class="nav-link">About</a>
-  <a href="expeditions.html" class="nav-link">Expeditions</a>
-  <a href="#research"       class="nav-link">Research</a>
-  <a href="#creative"       class="nav-link">Creative</a>
-  <a href="#contact"        class="nav-link">Contact</a>
+  <a href="#hero"         class="nav-link">Surface</a>
+  <a href="#about"        class="nav-link">About</a>
+  <a href="#expeditions"  class="nav-link">Expeditions</a>
+  <a href="#research"     class="nav-link">Research</a>
+  <a href="#creative"     class="nav-link">Creative</a>
+  <a href="#watch"        class="nav-link">Watch</a>
+  <a href="#contact"      class="nav-link">Contact</a>
 </nav>
 
 <!-- ══ MAIN CONTENT ══ -->
@@ -432,8 +510,7 @@
 
   <!-- ABOUT -->
   <section id="about">
-    <a href="#about" class="explore-link">↓ about</a>
-    <div class="sect-head"><h2>About</h2></div>
+    <div class="sect-head"><h2><a href="about.html">About</a></h2></div>
 
     <div class="stats">
       <div class="stat"><span class="n">12</span><span class="l">Expeditions</span></div>
@@ -443,43 +520,26 @@
     </div>
 
     <p class="bio-block">
-      I'm a fifth-year PhD candidate at Caltech in the
-      <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a>,
-      working on the biogeochemistry of deep-sea methane seeps.
-      My dissertation focuses on measuring microbial metabolic activity
-      in situ — at pressure, in the dark, on the seafloor —
-      using custom high-pressure incubation systems I've been building
-      and deploying from research vessels.
-    </p>
-    <p class="bio-block">
-      I'm also an
-      <a href="https://nautiluslive.org/people/rebecca-wipfler" target="_blank">Ocean Exploration Trust alumni</a>,
-      having joined E/V Nautilus first as an intern and later as Science Manager in Training.
+      Fifth-year PhD candidate in the
+      <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a>
+      at Caltech, measuring microbial metabolic activity in situ — at pressure,
+      in the dark, on the seafloor — using custom high-pressure incubation
+      systems built and deployed from research vessels.
+      NSF Graduate Research Fellow, 2020–2025.
     </p>
 
-    <div class="card">
-      <h3>NSF Graduate Research Fellow</h3>
-      <p>Nationally competitive fellowship recognizing exceptional early-career research potential in STEM.</p>
-      <div class="meta">2020–2025 · National Science Foundation</div>
-    </div>
-    <div class="card">
-      <h3>PhD Candidate — Caltech</h3>
-      <p>Thesis: <em>In-situ Microbial Activity in the Deep Ocean</em></p>
-      <div class="meta">2019–present · Geological &amp; Planetary Sciences</div>
-    </div>
-    <div class="card">
-      <h3>B.S. Molecular &amp; Cellular Biology, Summa Cum Laude</h3>
-      <p>University of Illinois Urbana-Champaign</p>
-      <div class="meta">2015–2019</div>
-    </div>
+    <a href="about.html" class="dive-in-card">
+      <div class="dic-label">Dive In</div>
+      <span class="dic-title">About</span>
+      <span class="dic-desc">Full bio, background, quick facts, and CV download.</span>
+    </a>
   </section>
 
   <div class="zone-label">— Midnight Zone · 1000–4000m —</div>
 
   <!-- EXPEDITIONS -->
   <section id="expeditions">
-    <a href="expeditions.html" class="explore-link">→ open expedition map &amp; depth graphic</a>
-    <div class="sect-head"><h2>Expeditions</h2></div>
+    <div class="sect-head"><h2><a href="expeditions.html">Expeditions</a></h2></div>
 
     <div class="exp-entry">
       <div class="exp-year">2025</div>
@@ -493,16 +553,6 @@
       </div>
     </div>
     <div class="exp-entry">
-      <div class="exp-year">2024</div>
-      <div class="exp-dot" style="background:#7ab8e0;"></div>
-      <div class="exp-content">
-        <h3>F/V Western Flyer day cruise — Monterey Bay</h3>
-        <p>Day cruise aboard the restored vessel made famous by John Steinbeck &amp; Ed Ricketts' 1940 Sea of Cortez expedition.</p>
-        <span class="tag" style="background:rgba(100,160,220,0.15);color:#7ab8e0;">Day cruise</span>
-        <span class="tag" style="background:rgba(100,160,220,0.15);color:#7ab8e0;">Monterey Bay</span>
-      </div>
-    </div>
-    <div class="exp-entry">
       <div class="exp-year">2023</div>
       <div class="exp-dot" style="background:#8B1A1A;"></div>
       <div class="exp-content">
@@ -510,43 +560,6 @@
         <p>NSF Methane Seep Footprints project. Sediment, rock, and water sample collection at California margin seeps.</p>
         <span class="tag" style="background:rgba(139,26,26,0.15);color:#c96060;">DSV Alvin</span>
         <span class="tag" style="background:rgba(0,160,130,0.15);color:#5DCAA5;">Methane seeps</span>
-      </div>
-    </div>
-    <div class="exp-entry">
-      <div class="exp-year">2023</div>
-      <div class="exp-dot" style="background:#E8C030;"></div>
-      <div class="exp-content">
-        <h3>R/V Yellowfin — California Water Column</h3>
-        <p>Led deployment of autonomous high-pressure water sampler. CTD operations and sample processing.</p>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">ROV cruise</span>
-      </div>
-    </div>
-    <div class="exp-entry">
-      <div class="exp-year">2021</div>
-      <div class="exp-dot" style="background:#E8C030;"></div>
-      <div class="exp-content">
-        <h3>R/V Western Flyer · WF05-21 — California Margin</h3>
-        <p>ROV Doc Ricketts dives. Managed high-pressure water sampler deployments and science team training.</p>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">ROV Doc Ricketts</span>
-      </div>
-    </div>
-    <div class="exp-entry">
-      <div class="exp-year">2021</div>
-      <div class="exp-dot" style="background:#E8C030;"></div>
-      <div class="exp-content">
-        <h3>R/V Falkor · FK210922 — Pescadero Basin, Mexico</h3>
-        <p>ROV SuBastian dives to hydrothermal vents. Custom deep ocean visualization system field test.</p>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">ROV SuBastian</span>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">Hydrothermal vents</span>
-      </div>
-    </div>
-    <div class="exp-entry">
-      <div class="exp-year">2020</div>
-      <div class="exp-dot" style="background:#E8C030;"></div>
-      <div class="exp-content">
-        <h3>R/V Western Flyer · WF02-20 — California Margin</h3>
-        <p>Equipment preparation, ROV deployments, and bathymetry analysis for sample site selection.</p>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">ROV cruise</span>
       </div>
     </div>
     <div class="exp-entry">
@@ -559,33 +572,19 @@
         <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">Ocean Exploration Trust</span>
       </div>
     </div>
-    <div class="exp-entry">
-      <div class="exp-year">2017</div>
-      <div class="exp-dot" style="background:#E8C030;"></div>
-      <div class="exp-content">
-        <h3>E/V Nautilus · Ocean Science Intern — Pacific Northwest</h3>
-        <p>Quinault Canyon &amp; Heceta Bank cruises. Sample collection, ROV operations, and live Ship-to-Shore broadcasts.</p>
-        <span class="tag" style="background:rgba(200,160,0,0.15);color:#E8C030;">E/V Nautilus</span>
-      </div>
-    </div>
-    <div class="exp-entry">
-      <div class="exp-year">2015–19</div>
-      <div class="exp-dot" style="background:#f0b030;"></div>
-      <div class="exp-content">
-        <h3>Yellowstone field research — NASA Astrobiology Institute, UIUC</h3>
-        <p>Backcountry sample collection from remote hydrothermal springs. Studying <em>Sulfolobus islandicus</em> with Dr. Rachel Whitaker.</p>
-        <span class="tag" style="background:rgba(180,120,0,0.15);color:#f0b030;">Field research</span>
-        <span class="tag" style="background:rgba(180,120,0,0.15);color:#f0b030;">Extremophiles</span>
-      </div>
-    </div>
+
+    <a href="expeditions.html" class="dive-in-card">
+      <div class="dic-label">Dive In</div>
+      <span class="dic-title">All 12 expeditions — globe &amp; depth graphic</span>
+      <span class="dic-desc">Interactive globe, full depth profile, and complete expedition log from 2015 to 2025.</span>
+    </a>
   </section>
 
   <div class="zone-label">— Abyssal Zone · 4000–6500m —</div>
 
   <!-- RESEARCH -->
   <section id="research">
-    <a href="#research" class="explore-link">↓ research &amp; publications</a>
-    <div class="sect-head"><h2>Research</h2></div>
+    <div class="sect-head"><h2><a href="research.html">Research</a></h2></div>
     <div class="card">
       <h3>Cryptic methane cycling and methylotrophic metabolisms in salt marsh sediment</h3>
       <p>Krause, S.J., Wipfler, R., et al.</p>
@@ -606,32 +605,55 @@
       <p>Kelley, C.; Hourigan, T.; … Wipfler, R.; et al.</p>
       <div class="meta">Oceanography · 2019</div>
     </div>
+
+    <p class="bio-block" style="font-size:15px; margin-top:1.8rem;">
+      <a href="research.html#outreach" style="color:var(--ink-dim); border-bottom:1px solid rgba(120,146,181,0.3);">Ship-to-Shore broadcasts · mentorship · public talks →</a>
+    </p>
+
+    <a href="research.html" class="dive-in-card">
+      <div class="dic-label">Dive In</div>
+      <span class="dic-title">Research themes &amp; publications</span>
+      <span class="dic-desc">In-situ measurement · methane seep biogeochemistry · deep-sea visualization · outreach.</span>
+    </a>
   </section>
 
   <!-- CREATIVE -->
   <section id="creative">
-    <a href="#creative" class="explore-link">↓ creative projects</a>
-    <div class="sect-head"><h2>Creative</h2></div>
-    <div class="creative-grid">
-      <div class="creative-card">
-        <div class="tag-head">Photography</div>
-        <h3>Expedition images</h3>
-        <p>Expedition and underwater images from the field — coming soon.</p>
-      </div>
-      <div class="creative-card">
-        <div class="tag-head">Field notes</div>
-        <h3>Writing from sea</h3>
-        <p>Dispatches, observations, and stories from the deep — coming soon.</p>
-      </div>
-      <div class="creative-card">
-        <div class="tag-head">Video</div>
-        <h3>Dive footage</h3>
-        <p>Footage from Alvin dives and ROV expeditions — coming soon.</p>
-      </div>
-    </div>
+    <div class="sect-head"><h2><a href="creative.html">Creative</a></h2></div>
+    <p class="bio-block">
+      A curated collection of the artists and objects that shape how I think
+      about the deep ocean — biodiversity illustrators, field artifacts, a
+      giant isopod Halloween costume photographed alongside live isopods,
+      and the crushed-cup art that accumulates on every expedition.
+    </p>
+    <p class="bio-block" style="font-size:16px;">
+      Six featured artists · field artifact shelf · 3D prints · expedition objects.
+    </p>
+    <a href="creative.html" class="dive-in-card">
+      <div class="dic-label">Dive In</div>
+      <span class="dic-title">Creative &amp; Community</span>
+      <span class="dic-desc">Artists I collect, objects I build, and the visual culture of the deep sea.</span>
+    </a>
   </section>
 
   <div class="zone-label">— Hadal Zone · &gt;6000m —</div>
+
+  <!-- WATCH -->
+  <section id="watch">
+    <div class="sect-head"><h2><a href="live.html">Watch Live</a></h2></div>
+    <p class="bio-block">
+      Links to the official livestream hubs for deep-sea exploration —
+      Nautilus Live, NOAA Okeanos Explorer, Schmidt Ocean's R/V Falkor (too),
+      and OceanX. When an ROV is in the water somewhere, one of these will have it.
+    </p>
+    <a href="live.html" class="dive-in-card">
+      <div class="dic-label">Dive In</div>
+      <span class="dic-title">Watch Live</span>
+      <span class="dic-desc">Official ROV livestream hubs, current expedition status, and archived dive footage.</span>
+    </a>
+  </section>
+
+  <div class="zone-label">— Below Chart Datum —</div>
 
   <!-- CONTACT -->
   <section id="contact">
@@ -672,8 +694,23 @@ const state = { subLag: 8, jellyCount: 4, biolumIntensity: 14, snowDensity: 50, 
 const alvin     = document.getElementById('alvin');
 const cursorDot = document.getElementById('cursor-dot');
 const subBeam   = document.getElementById('sub-beam');
+const diveToggle = document.getElementById('dive-toggle');
+const diveOverlayCanvas = document.getElementById('dive-overlay');
+const diveOverlayCtx = diveOverlayCanvas.getContext('2d');
+let diveMode = false;
 
 const beamState = { originX:0, originY:0, dirX:-1, dirY:0, length:260, halfAngle:Math.PI/8 };
+
+function getSeafloorScreenTop() {
+  const sf = document.getElementById('seafloor');
+  if (!sf) return window.innerHeight + 9999;
+  return sf.getBoundingClientRect().top;
+}
+
+let alvinBloom = [];
+const BLOOM_MAX = 36;
+let sedimentCloud = [];
+const SEDIMENT_CLOUD_MAX = 70;
 
 function isLitByBeam(px, py) {
   const dx = px - beamState.originX, dy = py - beamState.originY;
@@ -696,77 +733,139 @@ document.addEventListener('mousemove', e => {
   cursorDot.style.top  = mouseY+'px';
 });
 
+diveToggle.addEventListener('click', () => {
+  diveMode = !diveMode;
+  document.body.classList.toggle('dive-mode', diveMode);
+  diveToggle.setAttribute('aria-pressed', diveMode ? 'true' : 'false');
+  diveToggle.textContent = diveMode ? 'Dive Mode: On' : 'Dive Mode';
+});
+
 let driftX=0, driftY=0, driftT=0;
 animateSub.facing  = -1;
-animateSub.pitchDir= 0;
 animateSub.pitch   = 0;
 
+function normalizeAngle(deg) {
+  let a = deg;
+  while (a > 180) a -= 360;
+  while (a < -180) a += 360;
+  return a;
+}
+
 function animateSub() {
-  // lag: state.subLag 1-30 maps to 0.04-0.25 follow speed
-  const lag = 0.04 + (state.subLag / 100) * 0.21;
+  // Heavier, more submarine-like motion.
+  const lag = 0.018 + (state.subLag / 100) * 0.04;
   driftT += 0.008;
-  driftX *= 0.95; driftY *= 0.95;
+  driftX *= 0.92; driftY *= 0.92;
 
-  subX += (mouseX - 60 + driftX - subX) * lag;
-  subY += (mouseY + driftY - subY) * lag;
+  const bob = Math.sin(performance.now() * 0.00125) * 1.6;
+  const subHalfW = 80;
 
-  const dxC = mouseX - subX, dyC = mouseY - subY;
+  // Stable front-crossing logic with hysteresis so Alvin does not chatter
+  // when the cursor sits inside the body/nose zone.
+  const frontOffset = subHalfW * 0.56;
+  const noseX = subX + (animateSub.facing === 1 ? frontOffset : -frontOffset);
+  const bodyDeadZone = subHalfW * 0.62;
+  const noseCrossMargin = 14;
 
-  // horizontal facing with hysteresis
-  if (dxC >  20) animateSub.facing =  1;
-  else if (dxC < -20) animateSub.facing = -1;
+  if (Math.abs(mouseX - subX) > bodyDeadZone) {
+    if (animateSub.facing === 1 && mouseX < noseX - noseCrossMargin) animateSub.facing = -1;
+    else if (animateSub.facing === -1 && mouseX > noseX + noseCrossMargin) animateSub.facing = 1;
+  }
 
-  // vertical pitch
-  if (dyC < -60 && Math.abs(dxC) > 20)      animateSub.pitchDir = -1;
-  else if (dyC > 60 && Math.abs(dxC) > 20)  animateSub.pitchDir =  1;
-  else if (Math.abs(dyC) < 40)               animateSub.pitchDir =  0;
+  // Keep Alvin offset so the cursor feels like the thing it's tracking in the lights.
+  const standoffX = diveMode ? 72 : 96;
+  const desiredX = mouseX - animateSub.facing * standoffX + driftX * 0.18;
+  const seafloorTop = getSeafloorScreenTop();
+  const hullOffset = 42;
+  const sedimentTouchDepth = 52;
+  const desiredYRaw = mouseY + driftY * 0.14;
+  let targetY = desiredYRaw;
 
-  animateSub.pitch += (animateSub.pitchDir * 22 - animateSub.pitch) * 0.12;
-  const flipX      = animateSub.facing === 1 ? -1 : 1;
-  const visualPitch= animateSub.pitch * -animateSub.facing;
-  const bob        = Math.sin(performance.now() * 0.002) * 2;
+  // Clamp Alvin using the visual bottom of the hull rather than the SVG center.
+  // This removes the apparent gap while still allowing partial entry into the sediment.
+  if (mouseY > seafloorTop) {
+    const belowSediment = mouseY - seafloorTop;
+    const partialSink = Math.min(sedimentTouchDepth, belowSediment * 0.72 + 14);
+    const maxCenterY = seafloorTop - hullOffset + partialSink;
+    if (targetY > maxCenterY) targetY = maxCenterY;
+  } else {
+    const nearBottomSlack = sedimentTouchDepth * 0.28;
+    const maxCenterY = seafloorTop - hullOffset + nearBottomSlack;
+    if (targetY > maxCenterY) targetY = maxCenterY;
+  }
 
-  alvin.style.left      = subX+'px';
-  alvin.style.top       = (subY+bob)+'px';
-  alvin.style.transform = `translate(-50%,-50%) scaleX(${flipX}) rotate(${visualPitch}deg)`;
+  subX += (desiredX - subX) * lag;
+  subY += (targetY - subY) * lag;
 
-  // ── BEAM: origin at the HEADLIGHT side of the sub ──
-  // The headlight is on the LEFT side of the SVG (cx=48, which is ~22% of 220px wide)
-  // When facing LEFT (flipX=1, no flip): headlight is on the left → originX offset = -subHalfW*0.56
-  // When facing RIGHT (flipX=-1, mirrored): headlight is now on the right → originX offset = +subHalfW*0.56
-  const subHalfW = 80; // half of 160px rendered width
   const headlightOffsetX = animateSub.facing === 1 ? subHalfW * 0.56 : -subHalfW * 0.56;
   const beamOriginX = subX + headlightOffsetX;
   const beamOriginY = subY + bob;
+  const aimAngle = Math.atan2(mouseY - beamOriginY, mouseX - beamOriginX) * 180 / Math.PI;
 
-  // beam points away from the sub in the facing direction
-  const beamAngle = animateSub.facing === 1 ? 0 : 180;
-  const pitchContrib = animateSub.pitch * animateSub.facing;
-  const finalBeamAngle = beamAngle + pitchContrib;
+  const hullBase = animateSub.facing === 1 ? 0 : 180;
+  let localAim = normalizeAngle(aimAngle - hullBase);
+  localAim = Math.max(-16, Math.min(16, localAim));
+  animateSub.pitch += (localAim - animateSub.pitch) * 0.06;
 
-  // CSS: position beam with transform-origin at left (beam points right from origin)
-  // For left-facing sub we need to flip the beam div
-  // Beam: always use transform-origin left center (beam shoots rightward from origin).
-  // For right-facing: origin is at the right side of the sub, beam shoots right.
-  // For left-facing:  origin is at the left side of the sub, beam shoots left
-  //                   by rotating 180deg.
-  subBeam.classList.remove('facing-left');
-  if (animateSub.facing === 1) {
-    // facing right: beam origin at right-ish side of sub, no flip
-    subBeam.style.transform =
-      `translate(${beamOriginX}px,${beamOriginY}px) rotate(${pitchContrib}deg) translateY(-50%)`;
-  } else {
-    // facing left: beam origin at left side of sub, rotate 180 to shoot left
-    // We shift the div left by its full width so the right edge (transform-origin) sits at beamOriginX
-    subBeam.style.transform =
-      `translate(${beamOriginX - 260}px,${beamOriginY}px) rotate(${pitchContrib}deg) translateY(-50%) scaleX(-1)`;
-  }
+  const flipX = animateSub.facing === 1 ? -1 : 1;
+  alvin.style.left = subX + 'px';
+  alvin.style.top = (subY + bob) + 'px';
+  alvin.style.transform = `translate(-50%,-50%) rotate(${animateSub.pitch}deg) scaleX(${flipX})`;
 
-  const rad = finalBeamAngle * Math.PI/180;
+  const rad = aimAngle * Math.PI/180;
   beamState.originX = beamOriginX;
   beamState.originY = beamOriginY;
   beamState.dirX    = Math.cos(rad);
   beamState.dirY    = Math.sin(rad);
+  beamState.length  = 210;
+  beamState.halfAngle = Math.PI / 10;
+
+  const speed = Math.hypot(subX - prevSubX, subY - prevSubY);
+  if (diveMode && speed > 0.28) {
+    const now = performance.now();
+    const count = (Math.random() < 0.55) ? 1 : 0;
+    const trailDir = animateSub.facing === 1 ? -1 : 1;
+    for (let j = 0; j < count; j++) {
+      const spread = 10 + Math.random() * 20;
+      alvinBloom.push({
+        x: subX + trailDir * (10 + Math.random() * 16) + (Math.random() - 0.5) * 8,
+        y: subY + bob + (Math.random() - 0.5) * 10,
+        vx: trailDir * (0.03 + Math.random() * 0.10) + (Math.random() - 0.5) * 0.03,
+        vy: (Math.random() - 0.5) * 0.06 - 0.01,
+        drift: 0.992 + Math.random() * 0.005,
+        r: 1.4 + Math.random() * 2.8,
+        glow: spread,
+        alpha: 0.15 + Math.random() * 0.10,
+        born: now,
+        life: 2600 + Math.random() * 2200
+      });
+    }
+    if (alvinBloom.length > BLOOM_MAX) alvinBloom.splice(0, alvinBloom.length - BLOOM_MAX);
+  }
+
+  // Near-bottom disturbance cloud: non-biolum particulate haze kicked up as Alvin
+  // skims the sediment. This is separate from the blue bloom in the water column.
+  const alvinVisualBottom = subY + bob + hullOffset;
+  const nearBottom = (seafloorTop - alvinVisualBottom) < 36;
+  if (diveMode && nearBottom && speed > 0.16 && Math.random() < 0.55) {
+    const now = performance.now();
+    const trailDir = animateSub.facing === 1 ? -1 : 1;
+    const spawnX = subX + trailDir * (18 + Math.random() * 18);
+    const spawnY = Math.min(seafloorTop + 8, seafloorTop - 2 + Math.random() * 10);
+    sedimentCloud.push({
+      x: spawnX + (Math.random() - 0.5) * 14,
+      y: spawnY + (Math.random() - 0.5) * 6,
+      vx: trailDir * (0.05 + Math.random() * 0.10) + (Math.random() - 0.5) * 0.08,
+      vy: -(0.03 + Math.random() * 0.10),
+      drift: 0.988 + Math.random() * 0.006,
+      r: 1.0 + Math.random() * 2.0,
+      glow: 10 + Math.random() * 18,
+      alpha: 0.07 + Math.random() * 0.08,
+      born: now,
+      life: 1400 + Math.random() * 1800
+    });
+    if (sedimentCloud.length > SEDIMENT_CLOUD_MAX) sedimentCloud.splice(0, sedimentCloud.length - SEDIMENT_CLOUD_MAX);
+  }
 
   prevSubX = subX; prevSubY = subY;
   requestAnimationFrame(animateSub);
@@ -784,7 +883,7 @@ const snowCanvas   = document.getElementById('marine-snow');
 const snowCtx      = snowCanvas.getContext('2d');
 
 function resizeCanvases() {
-  [starsCanvas, biolumCanvas, snowCanvas].forEach(c => {
+  [starsCanvas, biolumCanvas, snowCanvas, diveOverlayCanvas].forEach(c => {
     c.width  = window.innerWidth;
     c.height = window.innerHeight;
   });
@@ -947,19 +1046,121 @@ function drawChaser(t) {
   biolumCtx.fillStyle=`rgba(220,40,20,${rp})`; biolumCtx.fill();
 }
 
+function drawAlvinBloom(t) {
+  if (!diveMode) {
+    alvinBloom.length = 0;
+    return;
+  }
+
+  const seafloorTop = getSeafloorScreenTop();
+  const now = performance.now();
+  biolumCtx.save();
+  biolumCtx.globalCompositeOperation = 'lighter';
+
+  for (let i = alvinBloom.length - 1; i >= 0; i--) {
+    const p = alvinBloom[i];
+    const age = now - p.born;
+    if (age > p.life) {
+      alvinBloom.splice(i, 1);
+      continue;
+    }
+
+    p.x += p.vx;
+    p.y += p.vy + Math.sin(t * 0.00065 + i * 0.7) * 0.025;
+    p.vx *= p.drift;
+    p.vy *= p.drift;
+
+    if (p.y > seafloorTop + 6) p.y = seafloorTop + 6;
+
+    const lifePct = age / p.life;
+    const appear = Math.min(1, lifePct / 0.30);
+    const fadeOut = Math.max(0, 1 - Math.max(0, lifePct - 0.66) / 0.34);
+    const fade = appear * fadeOut;
+    const alpha = p.alpha * fade * 1.28;
+    if (alpha <= 0.003) continue;
+
+    const glowR = p.glow * (0.72 + lifePct * 1.08);
+    const grad = biolumCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+    grad.addColorStop(0, `rgba(140,250,255,${alpha})`);
+    grad.addColorStop(0.28, `rgba(95,225,255,${alpha * 0.7})`);
+    grad.addColorStop(0.7, `rgba(55,180,255,${alpha * 0.22})`);
+    grad.addColorStop(1, 'rgba(55,180,255,0)');
+    biolumCtx.fillStyle = grad;
+    biolumCtx.fillRect(p.x - glowR, p.y - glowR, glowR * 2, glowR * 2);
+
+    biolumCtx.beginPath();
+    biolumCtx.arc(p.x, p.y, p.r * (1.0 + lifePct * 0.42), 0, Math.PI * 2);
+    biolumCtx.fillStyle = `rgba(200,255,255,${Math.min(1, alpha * 1.05)})`;
+    biolumCtx.fill();
+  }
+
+  biolumCtx.restore();
+}
+
+function drawSedimentCloud(t) {
+  if (!diveMode) {
+    sedimentCloud.length = 0;
+    return;
+  }
+
+  const seafloorTop = getSeafloorScreenTop();
+  const now = performance.now();
+  snowCtx.save();
+  snowCtx.globalCompositeOperation = 'screen';
+
+  for (let i = sedimentCloud.length - 1; i >= 0; i--) {
+    const p = sedimentCloud[i];
+    const age = now - p.born;
+    if (age > p.life) {
+      sedimentCloud.splice(i, 1);
+      continue;
+    }
+
+    p.x += p.vx;
+    p.y += p.vy + Math.sin(t * 0.0012 + i * 0.8) * 0.05;
+    p.vx *= p.drift;
+    p.vy *= p.drift;
+
+    if (p.y > seafloorTop + 10) p.y = seafloorTop + 10;
+
+    const lifePct = age / p.life;
+    const alpha = p.alpha * Math.max(0, 1 - lifePct) * (0.85 + 0.15 * Math.sin(t * 0.001 + i));
+    if (alpha <= 0.002) continue;
+
+    const glowR = p.glow * (0.55 + lifePct * 0.7);
+    const grad = snowCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowR);
+    grad.addColorStop(0, `rgba(210,205,180,${alpha * 0.42})`);
+    grad.addColorStop(0.45, `rgba(150,135,100,${alpha * 0.22})`);
+    grad.addColorStop(1, 'rgba(120,90,60,0)');
+    snowCtx.fillStyle = grad;
+    snowCtx.fillRect(p.x - glowR, p.y - glowR, glowR * 2, glowR * 2);
+
+    snowCtx.beginPath();
+    snowCtx.arc(p.x, p.y, p.r * (0.9 + lifePct * 0.5), 0, Math.PI * 2);
+    snowCtx.fillStyle = `rgba(205,190,150,${alpha * 0.55})`;
+    snowCtx.fill();
+  }
+
+  snowCtx.restore();
+}
+
 function drawBiolum(t) {
   biolumCtx.clearRect(0,0,biolumCanvas.width,biolumCanvas.height);
+  const depthPct = currentScrollPct;
+  const biolumGlobal = diveMode ? 1 : 0.58 * Math.max(0, Math.min(1, (depthPct - 0.016) / 0.05));
+  const seafloorTop = getSeafloorScreenTop();
   for (const p of biolumParticles) {
     p.x += p.drift;
     if (p.x<0) p.x+=window.innerWidth;
     if (p.x>window.innerWidth) p.x-=window.innerWidth;
     p.y = p.baseY + Math.sin(t*0.0006+p.phase)*14;
+    if (p.y > seafloorTop - 8) continue;
 
     let pulse;
     if (p.kind==='slow')  pulse=0.5+0.5*Math.sin(t*p.pulseRate*0.4+p.phase);
     else if (p.kind==='flash') {
       const c=(t*0.004+p.phase)%(Math.PI*2);
-      pulse=Math.pow(Math.max(0,Math.sin(c)),4); // sharper flash peak
+      pulse=Math.pow(Math.max(0,Math.sin(c)),4);
     } else pulse=0.5+0.5*Math.sin(t*p.pulseRate+p.phase);
 
     if (p.isFlasher) {
@@ -969,15 +1170,12 @@ function drawBiolum(t) {
     }
 
     const dist=Math.hypot(p.x-mouseX,p.y-mouseY);
-    const boost=dist<100?(1-dist/100)*0.9:0;
+    const boost=dist<110?(1-dist/110)*1.2:0;
+    const litBoost = isLitByBeam(p.x, p.y) * 0.9;
+    const surfaceFade = diveMode ? 1 : Math.max(0, Math.min(1, (p.y - window.innerHeight * 0.18) / (window.innerHeight * 0.18)));
 
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const depthPct = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
-    const biolumGlobal = Math.max(0, Math.min(1, (depthPct - 0.015) / 0.05));
-    const surfaceFade = Math.max(0, Math.min(1, (p.y - window.innerHeight * 0.16) / (window.innerHeight * 0.18)));
-
-    const alpha=Math.min(1,(pulse*p.maxAlpha+boost) * biolumGlobal * surfaceFade);
-    if (alpha<0.04) continue; // skip near-invisible particles
+    const alpha=Math.min(1,(pulse*p.maxAlpha + boost + litBoost) * biolumGlobal * surfaceFade);
+    if (alpha<0.025) continue;
 
     const c=p.color;
     const glowR=p.r*(4+boost*5);
@@ -990,18 +1188,6 @@ function drawBiolum(t) {
     biolumCtx.beginPath(); biolumCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
     biolumCtx.fillStyle=`rgba(${c.r},${c.g},${c.b},${alpha})`; biolumCtx.fill();
   }
-  // cursor disturbance trail
-  biolumCtx.globalCompositeOperation='lighter';
-  for (let i=mouseTrail.length-1;i>=0;i--) {
-    const p=mouseTrail[i], age=(performance.now()-p.t)/1000;
-    if (age>0.6) {mouseTrail.splice(i,1);continue;}
-    const a=(1-age/0.6)*0.08, r=12+age*8;
-    const g=biolumCtx.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
-    g.addColorStop(0,`rgba(79,200,216,${a*0.5})`);
-    g.addColorStop(1,`rgba(79,200,216,0)`);
-    biolumCtx.fillStyle=g; biolumCtx.fillRect(p.x-r,p.y-r,r*2,r*2);
-  }
-  biolumCtx.globalCompositeOperation='source-over';
 }
 
 // ════════════════════════════════════════════════════════
@@ -1019,12 +1205,16 @@ function rebuildSnow() {
 }
 rebuildSnow();
 function drawSnow(t) {
-  snowCtx.clearRect(0,0,snowCanvas.width,snowCanvas.height);
+  snowCtx.clearRect(0,0,snowCanvas.width, snowCanvas.height);
+  const seafloorTop = getSeafloorScreenTop();
   for (const s of snowflakes) {
     s.y+=s.vy; s.x+=Math.sin(t*0.0005+s.phase)*s.wobble*0.3;
     if (s.y>window.innerHeight) {s.y=-5; s.x=Math.random()*window.innerWidth;}
+    if (s.y > seafloorTop - 4) continue;
     snowCtx.beginPath(); snowCtx.arc(s.x,s.y,s.r,0,Math.PI*2);
-    snowCtx.fillStyle=`rgba(235,245,255,${s.alpha})`; snowCtx.fill();
+    const lit = isLitByBeam(s.x, s.y);
+    const snowAlpha = Math.min(1, s.alpha + lit * 0.55);
+    snowCtx.fillStyle=`rgba(235,245,255,${snowAlpha})`; snowCtx.fill();
     if (s.r>1.2) {
       const gr=s.r*3;
       const grad=snowCtx.createRadialGradient(s.x,s.y,0,s.x,s.y,gr);
@@ -1032,6 +1222,44 @@ function drawSnow(t) {
       grad.addColorStop(1,`rgba(235,245,255,0)`);
       snowCtx.fillStyle=grad; snowCtx.fillRect(s.x-gr,s.y-gr,gr*2,gr*2);
     }
+  }
+}
+
+
+let methaneBubbles = [];
+function maybeSpawnMethaneBubble() {
+  if (currentScrollPct < 0.72) return;
+  if (methaneBubbles.length > 18) return;
+  if (Math.random() < 0.025) {
+    methaneBubbles.push({
+      x: window.innerWidth * (0.42 + Math.random()*0.16),
+      y: window.innerHeight + 20,
+      r: 1.8 + Math.random()*2.8,
+      vy: 0.9 + Math.random()*0.9,
+      vx: (Math.random()-0.5) * 0.18,
+      wobble: Math.random()*0.8 + 0.25,
+      phase: Math.random()*Math.PI*2,
+    });
+  }
+}
+function drawMethaneBubbles(t) {
+  maybeSpawnMethaneBubble();
+  const seafloorTop = getSeafloorScreenTop();
+  for (let i = methaneBubbles.length - 1; i >= 0; i--) {
+    const b = methaneBubbles[i];
+    b.y -= b.vy;
+    b.x += b.vx + Math.sin(t*0.0012 + b.phase) * b.wobble * 0.35;
+    if (b.y < -30) { methaneBubbles.splice(i, 1); continue; }
+    if (b.y > seafloorTop - 8) continue;
+    const lit = isLitByBeam(b.x, b.y);
+    const alpha = 0.18 + lit * 0.42;
+    snowCtx.beginPath();
+    snowCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    snowCtx.fillStyle = `rgba(168,220,255,${alpha*0.18})`;
+    snowCtx.fill();
+    snowCtx.strokeStyle = `rgba(135,205,255,${alpha})`;
+    snowCtx.lineWidth = 0.7;
+    snowCtx.stroke();
   }
 }
 
@@ -1084,6 +1312,7 @@ function rebuildJellies() {
 rebuildJellies();
 function drawJellies(t) {
   const scrollY=window.scrollY;
+  const seafloorTop = getSeafloorScreenTop();
   for (const j of jellies) {
     j.x+=j.vx; j.docY+=j.vy;
     if (j.x<-j.sz) j.x=window.innerWidth+j.sz;
@@ -1094,7 +1323,15 @@ function drawJellies(t) {
     const sway=Math.sin(t*0.0008+j.phase)*8;
     j.el.style.left=(j.x+sway)+'px'; j.el.style.top=vy+'px';
     j.el.style.transform=`translate(-50%,-50%) scaleY(${pulse}) scaleX(${2-pulse})`;
-    j.el.style.opacity=(vy>window.innerHeight+j.sz||vy<-j.sz*2)?0:0.85;
+
+    if (vy > window.innerHeight + j.sz || vy < -j.sz * 2 || vy > seafloorTop - 24) {
+      j.el.style.opacity = 0;
+    } else if (diveMode) {
+      const lit = isLitByBeam(j.x + sway, vy);
+      j.el.style.opacity = Math.max(0, lit * 1.35 - 0.05).toFixed(3);
+    } else {
+      j.el.style.opacity = 0.85;
+    }
   }
 }
 
@@ -1203,21 +1440,59 @@ function makeVampSquid() {
     vx:(Math.random()>0.5?1:-1)*(0.03+Math.random()*0.04)};
 }
 
+
+function makeGlowSquid(anchor=false) {
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;width:96px;height:96px;pointer-events:none;opacity:0;';
+  el.innerHTML=`<svg viewBox="0 0 96 96" style="width:100%;height:100%;overflow:visible">
+    <defs>
+      <radialGradient id="gsquidbody" cx="0.5" cy="0.4" r="0.7">
+        <stop offset="0%" stop-color="#86d6ff" stop-opacity="0.75"/>
+        <stop offset="55%" stop-color="#2a4f8c" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#071327" stop-opacity="0.45"/>
+      </radialGradient>
+    </defs>
+    <path d="M48,10 Q68,20 72,42 Q74,60 60,72 Q54,78 48,84 Q42,78 36,72 Q22,60 24,42 Q28,20 48,10 Z" fill="url(#gsquidbody)" stroke="#83cfff" stroke-width="0.9"/>
+    <circle cx="39" cy="36" r="5" fill="#d7fbff" opacity="0.95"/>
+    <circle cx="57" cy="36" r="5" fill="#d7fbff" opacity="0.95"/>
+    <g fill="#7ee8ff" opacity="0.9">
+      <circle cx="30" cy="56" r="2.5"/><circle cx="40" cy="62" r="2.1"/><circle cx="48" cy="66" r="2.4"/><circle cx="56" cy="62" r="2.1"/><circle cx="66" cy="56" r="2.5"/>
+      <circle cx="34" cy="72" r="1.8"/><circle cx="48" cy="76" r="2.0"/><circle cx="62" cy="72" r="1.8"/>
+    </g>
+    <g stroke="#9deeff" stroke-width="1" opacity="0.75">
+      <path d="M36,70 Q30,82 28,94"/><path d="M44,74 Q42,86 42,96"/><path d="M52,74 Q54,86 54,96"/><path d="M60,70 Q66,82 68,94"/>
+    </g>
+  </svg>`;
+  creaturesLayer.appendChild(el);
+  const maxDocY=document.documentElement.scrollHeight;
+  return {
+    el,kind:'glowsquid',
+    x:70+Math.random()*(window.innerWidth-140),
+    docY: anchor ? maxDocY*0.42 : Math.random()*maxDocY,
+    anchor,
+    screenY: 0.34 + Math.random()*0.12,
+    phase:Math.random()*Math.PI*2,
+    vx:(Math.random()>0.5?1:-1)*(0.025+Math.random()*0.03)
+  };
+}
+
 let deepCreatures=[];
 function rebuildDeepCreatures() {
   deepCreatures.forEach(c=>c&&c.el&&c.el.remove()); deepCreatures=[];
   deepCreatures.push(makeAnglerfish()); // only 1 (#3 fix)
   ['shrimp','worm','eel','shrimp','worm'].forEach(k=>deepCreatures.push(makeLightshy(k))); // no isopods (#4 fix)
   deepCreatures.push(makeVampSquid());
+  deepCreatures.push(makeGlowSquid());
+  deepCreatures.push(makeGlowSquid());
 }
 rebuildDeepCreatures();
 
 function drawDeepCreatures(t,scrollPct) {
   const scrollY=window.scrollY;
+  const seafloorTop = getSeafloorScreenTop();
   for (const c of deepCreatures) {
     if(!c||!c.el) continue;
     if (c.kind==='angler') {
-      // Scroll-anchored like jellyfish (#3 fix)
       c.x+=c.vx;
       if (c.x<-200) c.x=window.innerWidth+200;
       if (c.x>window.innerWidth+200) c.x=-200;
@@ -1226,12 +1501,10 @@ function drawDeepCreatures(t,scrollPct) {
       const vy=viewportY+bob;
       c.el.style.left=c.x+'px'; c.el.style.top=vy+'px';
       c.el.style.transform=`translate(-50%,-50%) scaleX(${c.vx<0?-1:1})`;
-      const offScreen=vy>window.innerHeight+60||vy<-60;
-      c.el.style.opacity=offScreen?0:0.9;
-      if (!offScreen && c.body) {
-        const lit=isLitByBeam(c.x,vy);
-        c.body.style.opacity=(0.06+lit*0.94).toFixed(3);
-      }
+      const offScreen=vy>window.innerHeight+60||vy<-60||vy>seafloorTop-30;
+      const lit=offScreen?0:isLitByBeam(c.x,vy);
+      c.el.style.opacity=offScreen?0:(0.16 + lit*0.84).toFixed(3);
+      if (!offScreen && c.body) c.body.style.opacity=(0.03+lit*0.97).toFixed(3);
     } else if (c.kind==='lightshy') {
       c.x+=c.vx;
       if (c.x<20) c.vx=Math.abs(c.vx);
@@ -1240,19 +1513,35 @@ function drawDeepCreatures(t,scrollPct) {
       const vy=c.docY-scrollY;
       c.el.style.left=c.x+'px'; c.el.style.top=(vy+sway)+'px';
       c.el.style.transform=`translate(-50%,-50%) scaleX(${c.vx<0?-1:1})`;
-      const offScreen=vy>window.innerHeight+40||vy<-40;
+      const offScreen=vy>window.innerHeight+40||vy<-40||vy>seafloorTop-24;
       const lit=offScreen?0:isLitByBeam(c.x,vy+sway);
-      c.el.style.opacity=(lit*0.95).toFixed(3);
+      c.el.style.opacity=(lit*0.98).toFixed(3);
     } else if (c.kind==='vampsquid') {
       c.x+=c.vx;
       if (c.x<50) c.vx=Math.abs(c.vx);
       if (c.x>window.innerWidth-50) c.vx=-Math.abs(c.vx);
       const vy=c.docY-scrollY;
       const pulse=1+Math.sin(t*0.002+c.phase)*0.04;
+      const lit=(vy>window.innerHeight+100||vy<-200||vy>seafloorTop-36)?0:isLitByBeam(c.x,vy);
       c.el.style.left=(c.x+Math.sin(t*0.0004+c.phase)*10)+'px';
       c.el.style.top=vy+'px';
-      c.el.style.transform=`translate(-50%,-50%) scale(${pulse})`;
-      c.el.style.opacity=(vy>window.innerHeight+100||vy<-200)?0:0.8;
+      c.el.style.transform=`translate(-50%,-50%) scale(${pulse + lit*0.05})`;
+      c.el.style.opacity=(vy>window.innerHeight+100||vy<-200||vy>seafloorTop-36)?0:(0.10 + lit*0.90).toFixed(3);
+      c.el.style.filter = `drop-shadow(0 0 ${8 + lit*14}px rgba(160,80,255,${0.18 + lit*0.45}))`;
+    } else if (c.kind==='glowsquid') {
+      c.x+=c.vx;
+      if (c.x<60) c.vx=Math.abs(c.vx);
+      if (c.x>window.innerWidth-60) c.vx=-Math.abs(c.vx);
+      const vyBase = c.docY - scrollY;
+      const bob=vyBase + Math.sin(t*0.0014+c.phase)*10;
+      const nightFactor = diveMode ? 1 : 0;
+      const lit=(bob>window.innerHeight+120||bob<-160||bob>seafloorTop-28)?0:isLitByBeam(c.x,bob);
+      const pulse = 0.55 + 0.45*Math.sin(t*0.004 + c.phase);
+      c.el.style.left=(c.x + Math.sin(t*0.0007+c.phase)*8)+'px';
+      c.el.style.top=bob+'px';
+      c.el.style.transform=`translate(-50%,-50%) scale(${0.96 + pulse*0.08 + lit*0.08}) scaleX(${c.vx<0?-1:1})`;
+      c.el.style.opacity=(bob>window.innerHeight+120||bob<-160||bob>seafloorTop-28)?0:((0.18 + pulse*0.30 + lit*0.62) * nightFactor).toFixed(3);
+      c.el.style.filter = `drop-shadow(0 0 ${16 + lit*22}px rgba(126,232,255,${0.34 + lit*0.52}))`;
     }
   }
 }
@@ -1599,9 +1888,53 @@ function drawDeepCreatures(t,scrollPct) {
 // MAIN LOOP
 // ════════════════════════════════════════════════════════
 let currentScrollPct=0;
+
+function punchLight(x, y, rx, ry, strength=1) {
+  diveOverlayCtx.save();
+  diveOverlayCtx.translate(x, y);
+  diveOverlayCtx.scale(rx, ry);
+  const grad = diveOverlayCtx.createRadialGradient(0, 0, 0, 0, 0, 1);
+  grad.addColorStop(0, `rgba(0,0,0,${Math.min(1, strength)})`);
+  grad.addColorStop(0.42, `rgba(0,0,0,${Math.min(1, strength*0.92)})`);
+  grad.addColorStop(0.72, `rgba(0,0,0,${Math.max(0, strength*0.32)})`);
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  diveOverlayCtx.fillStyle = grad;
+  diveOverlayCtx.beginPath();
+  diveOverlayCtx.arc(0, 0, 1, 0, Math.PI * 2);
+  diveOverlayCtx.fill();
+  diveOverlayCtx.restore();
+}
+
+function drawDiveOverlay() {
+  diveOverlayCtx.clearRect(0, 0, diveOverlayCanvas.width, diveOverlayCanvas.height);
+  if (!diveMode) return;
+
+  const deepness = Math.min(1, Math.max(0, 0.72 + currentScrollPct * 0.9));
+  diveOverlayCtx.fillStyle = `rgba(0, 0, 6, ${0.972 + deepness*0.02})`;
+  diveOverlayCtx.fillRect(0, 0, diveOverlayCanvas.width, diveOverlayCanvas.height);
+  diveOverlayCtx.globalCompositeOperation = 'destination-out';
+
+  const dx = mouseX - beamState.originX;
+  const dy = mouseY - beamState.originY;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ux = dx / dist;
+  const uy = dy / dist;
+  const forwardX = beamState.originX + ux * Math.min(78, dist * 0.34);
+  const forwardY = beamState.originY + uy * Math.min(78, dist * 0.34);
+  const farX = beamState.originX + ux * Math.min(130, dist * 0.54);
+  const farY = beamState.originY + uy * Math.min(130, dist * 0.54);
+
+  punchLight(beamState.originX, beamState.originY, 42, 34, 1);
+  punchLight(forwardX, forwardY, 84, 50, 0.985);
+  punchLight(farX, farY, 110, 58, 0.86);
+  punchLight(mouseX, mouseY, 34, 28, 0.48);
+
+  diveOverlayCtx.globalCompositeOperation = 'source-over';
+}
+
 function loop(t){
-  drawStars(t); drawBiolum(t); drawCombBursts(t); drawChaser(t);
-  drawSnow(t); drawJellies(t); drawDeepCreatures(t,currentScrollPct);
+  drawStars(t); drawBiolum(t); drawAlvinBloom(t); drawCombBursts(t); drawChaser(t);
+  drawSnow(t); drawSedimentCloud(t); drawMethaneBubbles(t); drawJellies(t); drawDeepCreatures(t,currentScrollPct); drawDiveOverlay();
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
@@ -1621,7 +1954,7 @@ function waterColorFor(pct){
   // then drive to near-black much earlier.
   if (pct < 0.008) return '';
 
-  const t = Math.min(1, Math.max(0, (pct - 0.008) / 0.11));
+  const t = Math.min(1, Math.max(0, (pct - 0.006) / 0.08));
   const ease = Math.pow(t, 0.62);
   const lerp=(a,b,x)=>Math.round(a+(b-a)*Math.min(1,Math.max(0,x)));
 
@@ -1663,7 +1996,7 @@ function onScroll(){
   const color = waterColorFor(pct);
   waterCol.style.background = color;
 
-  const hazeOpacity = Math.max(0, 1 - Math.min(1, pct / 0.06));
+  const hazeOpacity = Math.max(0, 1 - Math.min(1, pct / 0.035));
   waterCol.style.setProperty('--surface-haze-opacity', hazeOpacity.toFixed(3));
 
   let activeIdx = 0;
