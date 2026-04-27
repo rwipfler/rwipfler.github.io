@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search for the Samoan Clipper · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../expedition.css">
+</head>
+<body>
+<canvas id="biolum-layer"></canvas>
+
+<div class="surface-rail">
+  <div class="rail-spine"></div>
+  <a href="../expeditions.html" class="surface-link">← Expeditions</a>
+  <div class="zone-badge">— Twilight Zone · NA111 —</div>
+</div>
+
+<a href="../expeditions.html" class="dive-out-btn">
+  <span class="dive-out-icon">←</span>
+  <span>Back to Expeditions</span>
+</a>
+
+<nav>
+  <a href="../index.html" class="nav-surface">↑ Surface</a>
+  <a href="../about.html">About</a>
+  <a href="../expeditions.html" class="active">Expeditions</a>
+  <a href="../research.html">Research</a>
+  <a href="../creative.html">Creative</a>
+  <a href="../live.html">Watch</a>
+  <a href="../index.html#contact">Contact</a>
+</nav>
+
+<main>
+  <div class="exp-hero">
+    <div class="hero-badges">
+      <span class="hero-badge">E/V Nautilus · NA111</span>
+      <span class="hero-badge hero-badge--rov">ROV Hercules</span>
+    </div>
+    <h1 class="hero-title">Search for the<br>Samoan Clipper</h1>
+    <div class="hero-sub">Jul 2019 · American Samoa, South Pacific Ocean</div>
+    <div class="hero-depth">↓ ~800 m · Twilight Zone</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><span class="n">~800m</span><span class="l">Max depth</span></div>
+    <div class="stat"><span class="n">Lost Jan 1938</span><span class="l">Pan Am S-42 flying boat</span></div>
+    <div class="stat"><span class="n">Science team</span><span class="l">Rebecca's role</span></div>
+    <div class="stat"><span class="n">Archaeology + biology</span><span class="l">Research focus</span></div>
+  </div>
+
+  <section class="exp-section">
+    <div class="sec-label">Field notes</div>
+    <!-- FILL: Your narrative here — 3–8 sentences in your own voice. What it was like searching for a 1938 wreck, what you saw, one memorable moment. Write casually. -->
+    <div class="fill-placeholder">[ Narrative coming soon — field notes from the Samoan Clipper search, Jul 2019 ]</div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Dive imagery</div>
+    <div class="gallery-grid">
+      <div class="gallery-slot">Photo 1</div>
+      <div class="gallery-slot">Photo 2</div>
+      <div class="gallery-slot">Photo 3</div>
+      <div class="gallery-slot">Photo 4</div>
+    </div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Expedition details</div>
+    <div class="meta-grid">
+      <div class="meta-block">
+        <div class="meta-label">Chief Scientists</div>
+        <div class="meta-value">R. Matthews &amp; M. Brennan · NOAA</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Research focus</div>
+        <div class="meta-value">Search for the Pan American Airways Sikorsky S-42 flying boat that disappeared in January 1938, combining historical maritime archaeology with deep-sea biological survey</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Coordinates</div>
+        <div class="meta-value">14.3°S · 170.7°W</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Funding</div>
+        <div class="meta-value" style="color:rgba(79,200,216,0.28)"><!-- FILL --></div>
+      </div>
+    </div>
+    <div class="ext-links" style="margin-top:1.5rem;">
+      <a class="ext-link" href="https://nautiluslive.org/cruise/NA111" target="_blank" rel="noopener noreferrer">Nautilus Live · NA111 ↗</a>
+    </div>
+  </section>
+</main>
+
+<div class="exp-nav">
+  <a href="expedition-na101.html" class="exp-nav-link">← Papahānaumokuākea</a>
+  <a href="../expeditions.html" class="exp-nav-link exp-nav-link--center">All Expeditions</a>
+  <a href="expedition-na112.html" class="exp-nav-link">American Samoa →</a>
+</div>
+
+<footer>
+  <span>© 2026 R. WIPFLER</span>
+  <span>NA111 · SAMOAN CLIPPER SEARCH</span>
+  <span>JUL 2019</span>
+</footer>
+
+<script src="../particles.js"></script>
+<script>initParticles("biolum-layer");</script>
+<div id="cursor-dot"></div>
+<script>
+  const _cd = document.getElementById('cursor-dot');
+  document.addEventListener('mousemove', e => { _cd.style.left = e.clientX+'px'; _cd.style.top = e.clientY+'px'; });
+</script>
+</body>
+</html>

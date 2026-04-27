@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aleutian Islands Seeps · HOV Alvin · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../expedition.css">
+</head>
+<body>
+<canvas id="biolum-layer"></canvas>
+
+<div class="surface-rail">
+  <div class="rail-spine"></div>
+  <a href="../expeditions.html" class="surface-link">← Expeditions</a>
+  <div class="zone-badge">— Hadal Zone · AT50-24 —</div>
+</div>
+
+<a href="../expeditions.html" class="dive-out-btn">
+  <span class="dive-out-icon">←</span>
+  <span>Back to Expeditions</span>
+</a>
+
+<nav>
+  <a href="../index.html" class="nav-surface">↑ Surface</a>
+  <a href="../about.html">About</a>
+  <a href="../expeditions.html" class="active">Expeditions</a>
+  <a href="../research.html">Research</a>
+  <a href="../creative.html">Creative</a>
+  <a href="../live.html">Watch</a>
+  <a href="../index.html#contact">Contact</a>
+</nav>
+
+<main>
+  <div class="exp-hero">
+    <div class="hero-badges">
+      <span class="hero-badge">R/V Atlantis · AT50-24</span>
+      <span class="hero-badge hero-badge--alvin">HOV Alvin</span>
+    </div>
+    <h1 class="hero-title">Aleutian Islands Seeps<br><em style="font-size:0.62em;font-style:normal;color:rgba(220,140,140,0.75);letter-spacing:0.04em;">Deepest Expedition</em></h1>
+    <div class="hero-sub">2025 · Aleutian Islands, Alaska · Levin Lab / Scripps</div>
+    <div class="hero-depth">↓ ~5,500 m · Deepest expedition on record</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><span class="n">~5,500m</span><span class="l">Max depth</span></div>
+    <div class="stat"><span class="n">Aleutian margin</span><span class="l">Cold seeps, Alaska</span></div>
+    <div class="stat"><span class="n">Scientific observer</span><span class="l">Rebecca's Alvin role</span></div>
+    <div class="stat"><span class="n">Seep ecology</span><span class="l">Research focus</span></div>
+  </div>
+
+  <section class="exp-section">
+    <div class="sec-label">Field notes</div>
+    <!-- FILL: Your narrative here — 3–8 sentences in your own voice. What does 5,500m feel like inside Alvin? What did you see out that porthole? One moment that will stay with you. Write casually. -->
+    <div class="fill-placeholder">[ Narrative coming soon — field notes from the Aleutian Islands, HOV Alvin, 2025 ]</div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Dive imagery</div>
+    <div class="gallery-grid">
+      <div class="gallery-slot">Photo 1</div>
+      <div class="gallery-slot">Photo 2</div>
+      <div class="gallery-slot">Photo 3</div>
+      <div class="gallery-slot">Photo 4</div>
+    </div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Expedition details</div>
+    <div class="meta-grid">
+      <div class="meta-block">
+        <div class="meta-label">Chief Scientist</div>
+        <div class="meta-value">Lisa Levin · Scripps Institution of Oceanography, UCSD</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Research focus</div>
+        <div class="meta-value">Cold seep ecology along the Aleutian Islands margin — benthic community structure, microbial biogeochemistry, and sediment sampling at extreme depths via HOV Alvin</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Coordinates</div>
+        <div class="meta-value">53.0°N · 168.5°W</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Funding</div>
+        <div class="meta-value" style="color:rgba(79,200,216,0.28)"><!-- FILL --></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="exp-nav">
+  <a href="expedition-wflyer.html" class="exp-nav-link">← Western Flyer Day Cruise</a>
+  <a href="../expeditions.html" class="exp-nav-link exp-nav-link--center">All Expeditions</a>
+  <span class="exp-nav-link exp-nav-link--dim">→</span>
+</div>
+
+<footer>
+  <span>© 2026 R. WIPFLER</span>
+  <span>AT50-24 · HOV ALVIN · ALEUTIAN ISLANDS</span>
+  <span>2025</span>
+</footer>
+
+<script src="../particles.js"></script>
+<script>initParticles("biolum-layer");</script>
+<div id="cursor-dot"></div>
+<script>
+  const _cd = document.getElementById('cursor-dot');
+  document.addEventListener('mousemove', e => { _cd.style.left = e.clientX+'px'; _cd.style.top = e.clientY+'px'; });
+</script>
+</body>
+</html>

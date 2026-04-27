@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>California Water Column Survey · Rebecca Wipfler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../site.css">
+  <link rel="stylesheet" href="../expedition.css">
+</head>
+<body>
+<canvas id="biolum-layer"></canvas>
+
+<div class="surface-rail">
+  <div class="rail-spine"></div>
+  <a href="../expeditions.html" class="surface-link">← Expeditions</a>
+  <div class="zone-badge">— Sunlight Zone · 2023 —</div>
+</div>
+
+<a href="../expeditions.html" class="dive-out-btn">
+  <span class="dive-out-icon">←</span>
+  <span>Back to Expeditions</span>
+</a>
+
+<nav>
+  <a href="../index.html" class="nav-surface">↑ Surface</a>
+  <a href="../about.html">About</a>
+  <a href="../expeditions.html" class="active">Expeditions</a>
+  <a href="../research.html">Research</a>
+  <a href="../creative.html">Creative</a>
+  <a href="../live.html">Watch</a>
+  <a href="../index.html#contact">Contact</a>
+</nav>
+
+<main>
+  <div class="exp-hero">
+    <div class="hero-badges">
+      <span class="hero-badge">R/V Yellowfin</span>
+      <span class="hero-badge hero-badge--day">Day Cruise</span>
+    </div>
+    <h1 class="hero-title">California Water Column Survey</h1>
+    <div class="hero-sub">2023 · Southern California Bight · Orphan Lab / Caltech</div>
+    <div class="hero-depth">↓ ~50 m · Sunlight Zone (Epipelagic)</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat"><span class="n">~50m</span><span class="l">Max depth</span></div>
+    <div class="stat"><span class="n">Southern CA Bight</span><span class="l">Region</span></div>
+    <div class="stat"><span class="n">Graduate researcher</span><span class="l">Rebecca's role</span></div>
+    <div class="stat"><span class="n">Water column microbiology</span><span class="l">Research focus</span></div>
+  </div>
+
+  <section class="exp-section">
+    <div class="sec-label">Field notes</div>
+    <!-- FILL: Your narrative here — 3–8 sentences in your own voice. What it was like, what you were sampling, one memorable moment. Write casually. -->
+    <div class="fill-placeholder">[ Narrative coming soon — field notes from the California Water Column day cruise, 2023 ]</div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Imagery</div>
+    <div class="gallery-grid">
+      <div class="gallery-slot">Photo 1</div>
+      <div class="gallery-slot">Photo 2</div>
+      <div class="gallery-slot">Photo 3</div>
+      <div class="gallery-slot">Photo 4</div>
+    </div>
+  </section>
+
+  <section class="exp-section">
+    <div class="sec-label">Expedition details</div>
+    <div class="meta-grid">
+      <div class="meta-block">
+        <div class="meta-label">PI / Chief Scientist</div>
+        <div class="meta-value">Victoria Orphan · Caltech</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Research focus</div>
+        <div class="meta-value">Pelagic microbial community characterization across the water column of the Southern California Bight — CTD casts, filtered water samples, and in situ incubations</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Coordinates</div>
+        <div class="meta-value">34.1°N · 119.8°W</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-label">Cruise ID</div>
+        <div class="meta-value" style="color:rgba(79,200,216,0.28)"><!-- FILL --></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="exp-nav">
+  <a href="expedition-at5012.html" class="exp-nav-link">← California Seeps (Alvin)</a>
+  <a href="../expeditions.html" class="exp-nav-link exp-nav-link--center">All Expeditions</a>
+  <a href="expedition-wflyer.html" class="exp-nav-link">Western Flyer Day Cruise →</a>
+</div>
+
+<footer>
+  <span>© 2026 R. WIPFLER</span>
+  <span>R/V YELLOWFIN · WATER COLUMN · S. CALIFORNIA BIGHT</span>
+  <span>2023</span>
+</footer>
+
+<script src="../particles.js"></script>
+<script>initParticles("biolum-layer");</script>
+<div id="cursor-dot"></div>
+<script>
+  const _cd = document.getElementById('cursor-dot');
+  document.addEventListener('mousemove', e => { _cd.style.left = e.clientX+'px'; _cd.style.top = e.clientY+'px'; });
+</script>
+</body>
+</html>

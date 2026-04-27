@@ -83,7 +83,7 @@
       backdrop-filter: blur(8px);
       color: var(--biolum);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase;
+      font-size: 15px; letter-spacing: 0.28em; text-transform: uppercase;
       border-radius: 999px;
       box-shadow: 0 0 20px rgba(79,200,216,0.08);
       cursor: none;
@@ -133,7 +133,7 @@
       position: fixed; top: 0; left: 14px; bottom: 0;
       width: 40px; z-index: 85;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.1em;
+      font-size: 14px; letter-spacing: 0.1em;
       color: var(--ink-dim); pointer-events: none;
     }
     .depth-tick {
@@ -154,7 +154,7 @@
     #depth-readout {
       position: absolute; left: 28px; top: 8%;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; letter-spacing: 0.1em; color: var(--biolum);
+      font-size: 14px; letter-spacing: 0.1em; color: var(--biolum);
       opacity: 0.7; writing-mode: vertical-rl; transform: rotate(180deg);
       transition: top 0.15s ease-out;
     }
@@ -167,7 +167,7 @@
       justify-content: center; align-items: center;
       gap: 2.2rem;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; letter-spacing: 0.35em;
+      font-size: 15px; letter-spacing: 0.35em;
     }
     nav a {
       writing-mode: vertical-rl; color: var(--ink-dim);
@@ -184,18 +184,18 @@
     section {
       min-height: 100vh; padding: 120px 40px;
       display: flex; flex-direction: column; justify-content: center;
-      max-width: 860px; position: relative; width: 100%;
+      max-width: 50vw; position: relative; width: 100%;
     }
 
     /* ══ HERO ══ */
     #hero { min-height: 100vh; }
     .hero h1 {
-      font-size: clamp(50px, 8vw, 101px); font-weight: 500;
+      font-size: clamp(47px, 7.5vw, 95px); font-weight: 500;
       letter-spacing: -0.01em; line-height: 1; margin-bottom: 18px;
     }
     .hero .subtitle {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 12px; letter-spacing: 0.35em; color: var(--cyan);
+      font-size: 15px; letter-spacing: 0.35em; color: var(--cyan);
       text-shadow: 0 0 8px rgba(79,200,216,0.4);
       margin-bottom: 36px; display: flex; gap: 40px; flex-wrap: wrap;
     }
@@ -229,7 +229,7 @@
     /* ══ SECTION HEADS — no index numbers ══ */
     .sect-head { margin-bottom: 44px; }
     .sect-head h2 {
-      font-size: clamp(37px, 5.2vw, 60px); font-weight: 400;
+      font-size: clamp(46px, 6.5vw, 75px); font-weight: 400;
       font-style: italic; color: var(--cyan);
       text-shadow: 0 0 20px rgba(79,200,216,0.15);
     }
@@ -238,7 +238,7 @@
     .explore-link {
       display: inline-block; margin-bottom: 28px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; letter-spacing: 0.3em;
+      font-size: 13px; letter-spacing: 0.3em;
       color: rgba(79,200,216,0.45);
       border-bottom: 1px solid rgba(79,200,216,0.15);
       transition: all 0.3s; text-transform: uppercase; cursor: none;
@@ -248,7 +248,7 @@
     /* ══ ZONE LABELS — brighter + hover glow ══ */
     .zone-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; letter-spacing: 0.25em;
+      font-size: 13px; letter-spacing: 0.25em;
       color: rgba(79,200,216,0.35);
       text-transform: uppercase; text-align: center;
       padding: 0.5rem 0; position: relative; z-index: 2;
@@ -263,12 +263,12 @@
     /* ══ STATS ══ */
     .stats { display: flex; gap: 1.8rem; margin-bottom: 2.5rem; flex-wrap: wrap; }
     .stat { text-align: center; }
-    .stat .n { font-family: 'JetBrains Mono', monospace; font-size: 2.3rem; color: var(--biolum); display: block; }
-    .stat .l { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: rgba(150,200,220,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
+    .stat .n { font-family: 'JetBrains Mono', monospace; font-size: 2.875rem; color: var(--biolum); display: block; }
+    .stat .l { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: rgba(150,200,220,0.45); letter-spacing: 0.1em; text-transform: uppercase; }
 
     /* ══ BIO BLOCK ══ */
     .bio-block {
-      font-size: 21px; line-height: 1.7; max-width: 580px;
+      font-size: 26px; line-height: 1.7; max-width: 44vw;
       color: rgba(200,220,240,0.8); margin-bottom: 1.8rem;
     }
     .bio-block a, .bio-block-link { color: var(--biolum); border-bottom: 1px solid rgba(110,255,212,0.3); transition: color 0.2s; }
@@ -278,7 +278,7 @@
     .card {
       position: relative;
       border-left: 2px solid rgba(216,230,245,0.1);
-      padding: 16px 20px 16px 36px; margin-bottom: 1.2rem; max-width: 660px;
+      padding: 16px 20px 16px 36px; margin-bottom: 1.2rem; max-width: 47vw;
       transition: border-color 0.3s;
     }
     .card:hover { border-left-color: var(--cyan); }
@@ -288,35 +288,35 @@
       transform: translateY(-50%) rotate(180deg);
       writing-mode: vertical-rl;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
       color: rgba(79,200,216,0.28); pointer-events: none; white-space: nowrap;
     }
     .card:hover::before { color: rgba(79,200,216,0.55); transition: color 0.3s; }
     .pub-section-label {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+      font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
       color: rgba(79,200,216,0.4); padding-left: 36px;
       margin-bottom: 0.8rem; margin-top: 1.6rem;
     }
-    .card h3 { font-size: 23px; font-weight: 400; color: var(--ink); margin-bottom: 6px; }
-    .card p { font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: var(--ink-dim); }
-    .card .meta { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); margin-top: 6px; letter-spacing: 0.15em; }
+    .card h3 { font-size: 29px; font-weight: 400; color: var(--ink); margin-bottom: 6px; }
+    .card p { font-family: 'JetBrains Mono', monospace; font-size: 16px; line-height: 1.7; color: var(--ink-dim); }
+    .card .meta { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--cyan); margin-top: 6px; letter-spacing: 0.15em; }
 
     /* ══ EXPEDITION ENTRIES ══ */
     .exp-entry {
       display: flex; gap: 1rem; padding: 0.9rem 0;
       border-bottom: 1px dashed rgba(216,230,245,0.08);
-      max-width: 700px; align-items: baseline; transition: border-color 0.3s;
+      max-width: 48vw; align-items: baseline; transition: border-color 0.3s;
     }
     .exp-entry:hover { border-bottom-color: var(--biolum); }
     .exp-entry:last-child { border-bottom: none; }
-    .exp-year { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan); width: 52px; flex-shrink: 0; }
+    .exp-year { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--cyan); width: 52px; flex-shrink: 0; }
     .exp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
-    .exp-content h3 { font-size: 23px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
-    .exp-content p { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .exp-content h3 { font-size: 29px; font-weight: 400; color: var(--ink); margin-bottom: 4px; }
+    .exp-content p { font-family: 'JetBrains Mono', monospace; font-size: 15px; color: var(--ink-dim); line-height: 1.6; }
     .tag {
       display: inline-block; font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; padding: 2px 8px; border-radius: 8px;
+      font-size: 13px; padding: 2px 8px; border-radius: 8px;
       margin-top: 5px; margin-right: 4px; letter-spacing: 0.1em;
     }
     /* ══ EXPEDITION TYPE COLOURS ══ */
@@ -343,7 +343,7 @@
 
     /* ══ DIVE IN CARD ══ */
     .dive-in-card {
-      display: block; max-width: 560px; margin-top: 2.2rem;
+      display: block; max-width: 43vw; margin-top: 2.2rem;
       padding: 18px 48px 18px 22px;
       border: 1px solid rgba(110,255,212,0.2);
       background: rgba(4,14,34,0.45); backdrop-filter: blur(6px);
@@ -356,34 +356,34 @@
       box-shadow: 0 0 28px rgba(110,255,212,0.08);
     }
     .dive-in-card .dic-label {
-      font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+      font-size: 13px; letter-spacing: 0.32em; text-transform: uppercase;
       color: var(--biolum); margin-bottom: 6px; opacity: 0.7;
     }
     .dive-in-card .dic-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 23px; font-style: italic; color: var(--ink);
+      font-size: 29px; font-style: italic; color: var(--ink);
       display: block; margin-bottom: 4px;
     }
     .dive-in-card .dic-desc {
-      font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim);
+      font-size: 15px; letter-spacing: 0.08em; color: var(--ink-dim);
       line-height: 1.6;
     }
     .dive-in-card::after {
       content: '→'; position: absolute; right: 20px; top: 50%;
       transform: translateY(-50%);
-      font-size: 21px; color: var(--biolum);
+      font-size: 26px; color: var(--biolum);
       transition: right 0.25s, color 0.25s;
     }
     .dive-in-card:hover::after { right: 14px; color: #fff; }
 
 
     /* ══ CONTACT ══ */
-    .contact-block { font-size: 28px; line-height: 1.65; max-width: 600px; font-style: italic; margin-bottom: 2.5rem; }
+    .contact-block { font-size: 35px; line-height: 1.65; max-width: 45vw; font-style: italic; margin-bottom: 2.5rem; }
     .contact-link {
       display: block; font-family: 'JetBrains Mono', monospace;
-      font-size: 14px; color: var(--ink-dim); padding: 0.6rem 0;
+      font-size: 18px; color: var(--ink-dim); padding: 0.6rem 0;
       border-bottom: 0.5px solid rgba(216,230,245,0.08);
-      max-width: 420px; transition: color 0.2s;
+      max-width: 30vw; transition: color 0.2s;
     }
     .contact-link:hover { color: var(--biolum); }
 
@@ -409,14 +409,14 @@
     /* ══ FOOTER ══ */
     footer {
       padding: 36px 80px 52px; font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; letter-spacing: 0.3em; color: var(--ink-dim);
+      font-size: 13px; letter-spacing: 0.3em; color: var(--ink-dim);
       display: flex; justify-content: space-between;
       opacity: 0.4; position: relative; z-index: 5;
     }
 
     @media (max-width: 800px) {
       main { padding-left: 60px; padding-right: 60px; }
-      nav { font-size: 9px; }
+      nav { font-size: 11px; }
       .depth-rail { display: none; }
     }
   </style>
@@ -486,19 +486,18 @@
 <div class="depth-rail">
   <div class="spine"></div>
   <div class="depth-tick" style="top:8%">0m</div>
-  <div class="depth-tick" style="top:22%">200m</div>
-  <div class="depth-tick" style="top:38%">1000m</div>
-  <div class="depth-tick" style="top:54%">2500m</div>
+  <div class="depth-tick" style="top:11%">200m</div>
+  <div class="depth-tick" style="top:24%">1000m</div>
+  <div class="depth-tick" style="top:47%">2500m</div>
   <div class="depth-tick" style="top:70%">4000m</div>
   <div class="depth-tick" style="top:86%">5000m</div>
   <div class="depth-cursor" id="depth-cursor" style="top:8%"></div>
-  <div id="depth-readout">DEPTH: 0m</div>
+  <div id="depth-readout">0m</div>
 </div>
 
 <!-- ── RIGHT NAV — all items scroll within page; subpage links live in section headers + Dive In cards ── -->
 <nav>
   <a href="#hero"         class="nav-link">Surface</a>
-  <a href="#about"        class="nav-link">About</a>
   <a href="#expeditions"  class="nav-link">Expeditions</a>
   <a href="#research"     class="nav-link">Research</a>
   <a href="#creative"     class="nav-link">Creative</a>
@@ -516,18 +515,16 @@
       <span>Deep-sea Microbiologist</span>
       <span>PhD Candidate · Caltech</span>
     </div>
-    <p class="bio">
-      I am a field-tested researcher exploring how microscopic life
-      thrives in the deep ocean under the conditions they actually experience.
+
+    <p class="bio-block">
+      Fifth-year PhD candidate in the
+      <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a>
+      at Caltech. I study how microscopic life thrives in the deep ocean —
+      measuring microbial metabolic activity under the conditions they actually experience,
+      using custom high-pressure incubation systems built and deployed from
+      research vessels or seafloor platforms.
+      NSF Graduate Research Fellow, 2020–2025.
     </p>
-    <a href="expeditions.html" class="dive-btn">SCIENTIFIC EXPEDITIONS → GLOBE &amp; DEPTH GRAPHIC</a>
-  </section>
-
-  <div class="zone-label">— Twilight Zone · 200–1000m —</div>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="sect-head"><h2><a href="about.html">About</a></h2></div>
 
     <div class="stats">
       <div class="stat"><span class="n">12</span><span class="l">Expeditions</span></div>
@@ -536,15 +533,6 @@
       <div class="stat"><span class="n">~110</span><span class="l">Days at sea</span></div>
     </div>
 
-    <p class="bio-block">
-      Fifth-year PhD candidate in the
-      <a href="https://orphanlab.caltech.edu" target="_blank">Orphan Lab</a>
-      at Caltech, measuring microbial metabolic activity in situ conditions
-      using custom high-pressure incubation systems
-      built and deployed from research vessels or seafloor platforms.
-      NSF Graduate Research Fellow, 2020–2025.
-    </p>
-
     <a href="about.html" class="dive-in-card">
       <div class="dic-label">Dive In</div>
       <span class="dic-title">About</span>
@@ -552,7 +540,7 @@
     </a>
   </section>
 
-  <div class="zone-label">— Midnight Zone · 1000–4000m —</div>
+  <div class="zone-label">— Twilight Zone · 200–1000m —</div>
 
   <!-- EXPEDITIONS -->
   <section id="expeditions">
@@ -604,7 +592,7 @@
     </a>
   </section>
 
-  <div class="zone-label">— Abyssal Zone · 4000–5000m —</div>
+  <div class="zone-label">— Midnight Zone · 1000–4000m —</div>
 
   <!-- RESEARCH -->
   <section id="research">
@@ -657,7 +645,7 @@
       giant isopod Halloween costume photographed alongside live isopods,
       and the crushed-cup art that accumulates on every expedition.
     </p>
-    <p class="bio-block" style="font-size:16px;">
+    <p class="bio-block" style="font-size:20px;">
       Six featured artists · field artifact shelf · 3D prints · expedition objects.
     </p>
     <a href="creative.html" class="dive-in-card">
@@ -667,7 +655,7 @@
     </a>
   </section>
 
-  <div class="zone-label">— Hadal Zone · &gt;6000m —</div>
+  <div class="zone-label">— Abyssal Zone · 4000–6000m —</div>
 
   <!-- WATCH -->
   <section id="watch">
@@ -684,7 +672,7 @@
     </a>
   </section>
 
-  <div class="zone-label">— Below Chart Datum —</div>
+  <div class="zone-label">— Hadal Zone · &gt;6000m —</div>
 
   <!-- CONTACT -->
   <section id="contact">
@@ -718,9 +706,10 @@
 // STATE
 // ════════════════════════════════════════════════════════
 const SUB_LAG          = 8;
-const JELLY_COUNT      = 4;
-const BIOLUM_INTENSITY = 14;
+const JELLY_COUNT      = 0;
+const BIOLUM_INTENSITY = 60;   // ← soft-blue ambient dots: raise for more sparkle
 const SNOW_DENSITY     = 50;
+const CHASE_RADIUS     = 300;  // ← px cursor can roam before Alvin follows
 
 // ════════════════════════════════════════════════════════
 // CURSOR + DSV ALVIN
@@ -852,8 +841,10 @@ function animateSub() {
     if (targetY > maxCenterY) targetY = maxCenterY;
   }
 
-  subX += (desiredX - subX) * lag;
-  subY += (targetY - subY) * lag;
+  const cursorDist = Math.hypot(mouseX - subX, mouseY - subY);
+  const chaseBlend = Math.max(0, Math.min(1, (cursorDist - CHASE_RADIUS) / 120));
+  subX += (desiredX - subX) * lag * chaseBlend;
+  subY += (targetY - subY) * lag * chaseBlend;
 
   const headlightOffsetX = subFacing === 1 ? subHalfW * 0.56 : -subHalfW * 0.56;
   const beamOriginX = subX + headlightOffsetX;
@@ -875,8 +866,8 @@ function animateSub() {
   beamState.originY = beamOriginY;
   beamState.dirX    = Math.cos(rad);
   beamState.dirY    = Math.sin(rad);
-  beamState.length  = 210;
-  beamState.halfAngle = Math.PI / 10;
+  beamState.length  = 420;
+  beamState.halfAngle = Math.PI / 6;
 
   const speed = Math.hypot(subX - prevSubX, subY - prevSubY);
   if (diveMode && speed > 0.28) {
@@ -1024,7 +1015,7 @@ rebuildBiolum();
 let combBursts = [];
 function rebuildCombBursts() {
   combBursts = [];
-  for (let b = 0; b < 4; b++) {
+  for (let b = 0; b < 3; b++) {
     const dots = [];
     for (let d = 0; d < 14; d++) {
       const angle = (d / 14) * Math.PI * 2;
@@ -1046,6 +1037,92 @@ function rebuildCombBursts() {
 }
 rebuildCombBursts();
 
+// ── SIPHONOPHORES ──
+// Colonial organism chains — traveling wave of bioluminescence along a sinuous strand.
+// Dive-mode only (the most dramatic deep-sea visual you never see without lights off).
+let siphonophores = [];
+function rebuildSiphonophores() {
+  siphonophores = [];
+  for (let s = 0; s < 2; s++) {
+    const nodes = [];
+    const nodeCount = 20;
+    for (let n = 0; n < nodeCount; n++) {
+      nodes.push({
+        ox: (Math.random()-0.5)*14,
+        oy: n * 22,
+        phase: n / nodeCount,
+        r: 1.0 + Math.random()*1.6,
+        glowR: 7 + Math.random()*10,
+      });
+    }
+    siphonophores.push({
+      x: 80 + Math.random()*(window.innerWidth-160),
+      docY: Math.random()*document.documentElement.scrollHeight,
+      vx: (Math.random()>0.5?1:-1)*(0.012+Math.random()*0.022),
+      vy: -(0.008+Math.random()*0.014),
+      phase: Math.random()*Math.PI*2,
+      cycleSpeed: 0.0010+Math.random()*0.0010,
+      nodes,
+    });
+  }
+}
+rebuildSiphonophores();
+
+function drawSiphonophores(t) {
+  if (!diveMode) return;
+  const scrollY = window.scrollY;
+  const seafloorTop = getSeafloorScreenTop();
+  const docH = document.documentElement.scrollHeight;
+  for (const s of siphonophores) {
+    s.x += s.vx;
+    s.docY += s.vy;
+    if (s.x < -120) s.x = window.innerWidth+120;
+    if (s.x > window.innerWidth+120) s.x = -120;
+    if (s.docY < -500) { s.docY = docH+200; s.x = Math.random()*window.innerWidth; }
+    const baseY = s.docY - scrollY;
+    if (baseY < -500 || baseY > window.innerHeight+500) continue;
+    if (baseY > seafloorTop - 10) continue;
+
+    // Faint connecting strand
+    biolumCtx.beginPath();
+    for (let n = 0; n < s.nodes.length; n++) {
+      const nd = s.nodes[n];
+      const sway = Math.sin(t*0.0004 + s.phase + n*0.18)*10;
+      const px = s.x + nd.ox + sway;
+      const py = baseY + nd.oy;
+      n === 0 ? biolumCtx.moveTo(px,py) : biolumCtx.lineTo(px,py);
+    }
+    biolumCtx.strokeStyle = 'rgba(90,220,190,0.07)';
+    biolumCtx.lineWidth = 0.8;
+    biolumCtx.stroke();
+
+    // Photophore nodes with traveling wave
+    for (let n = 0; n < s.nodes.length; n++) {
+      const nd = s.nodes[n];
+      const sway = Math.sin(t*0.0004 + s.phase + n*0.18)*10;
+      const px = s.x + nd.ox + sway;
+      const py = baseY + nd.oy;
+      if (py < -30 || py > window.innerHeight+30 || py > seafloorTop-10) continue;
+      const wave = (t*s.cycleSpeed + s.phase + nd.phase*5) % (Math.PI*2);
+      const pulse = Math.pow(Math.max(0, Math.sin(wave)), 2.5);
+      if (pulse < 0.05) continue;
+      const lit = isLitByBeam(px, py);
+      const alpha = Math.min(1, pulse*0.7 + lit*0.5);
+      if (alpha < 0.03) continue;
+      const gr = biolumCtx.createRadialGradient(px,py,0,px,py,nd.glowR*(1+pulse*0.5));
+      gr.addColorStop(0, `rgba(110,255,200,${alpha})`);
+      gr.addColorStop(0.4, `rgba(60,220,175,${alpha*0.3})`);
+      gr.addColorStop(1, 'rgba(40,180,160,0)');
+      biolumCtx.fillStyle = gr;
+      biolumCtx.fillRect(px-nd.glowR, py-nd.glowR, nd.glowR*2, nd.glowR*2);
+      biolumCtx.beginPath();
+      biolumCtx.arc(px, py, nd.r*(1+pulse*0.4), 0, Math.PI*2);
+      biolumCtx.fillStyle = `rgba(170,255,220,${alpha})`;
+      biolumCtx.fill();
+    }
+  }
+}
+
 function drawCombBursts(t) {
   const scrollY = window.scrollY;
   for (const b of combBursts) {
@@ -1055,6 +1132,7 @@ function drawCombBursts(t) {
     if (b.docY < -100) { b.docY = document.documentElement.scrollHeight+100; b.x = Math.random()*window.innerWidth; }
     const vy = b.docY - scrollY;
     if (vy < -80 || vy > window.innerHeight+80) continue;
+    if (vy > getSeafloorScreenTop() - 20) continue;
     for (const d of b.dots) {
       const wave = (t*b.cycleSpeed + b.phase + d.phase*3) % (Math.PI*2);
       const pulse = Math.pow(Math.max(0, Math.sin(wave)), 3);
@@ -1094,8 +1172,9 @@ function drawChaser(t) {
   chaser.predDocY += (chaser.preyDocY-chaser.predDocY)*0.003;
   const preyY = chaser.preyDocY - scrollY;
   const predY = chaser.predDocY - scrollY;
-  // prey — only draw if on screen
-  if (preyY > -30 && preyY < window.innerHeight + 30) {
+  const chaserFloorTop = getSeafloorScreenTop();
+  // prey — only draw if on screen and above sediment
+  if (preyY > -30 && preyY < window.innerHeight + 30 && preyY < chaserFloorTop - 10) {
     const pp = 0.6+0.4*Math.sin(t*0.004+chaser.preyPhase);
     const pg = biolumCtx.createRadialGradient(chaser.preyX,preyY,0,chaser.preyX,preyY,14);
     pg.addColorStop(0,`rgba(80,200,255,${pp*0.9})`); pg.addColorStop(0.4,`rgba(40,160,255,${pp*0.3})`); pg.addColorStop(1,`rgba(20,120,220,0)`);
@@ -1103,8 +1182,8 @@ function drawChaser(t) {
     biolumCtx.beginPath(); biolumCtx.arc(chaser.preyX,preyY,2.5,0,Math.PI*2);
     biolumCtx.fillStyle=`rgba(140,230,255,${pp})`; biolumCtx.fill();
   }
-  // predator (dim red — dragonfish) — only draw if on screen
-  if (predY > -30 && predY < window.innerHeight + 30) {
+  // predator (dim red — dragonfish) — only draw if on screen and above sediment
+  if (predY > -30 && predY < window.innerHeight + 30 && predY < chaserFloorTop - 10) {
     const rp = 0.3+0.2*Math.sin(t*0.002);
     const rdg = biolumCtx.createRadialGradient(chaser.predX,predY,0,chaser.predX,predY,10);
     rdg.addColorStop(0,`rgba(200,30,20,${rp*0.6})`); rdg.addColorStop(1,`rgba(180,10,0,0)`);
@@ -1138,7 +1217,7 @@ function drawAlvinBloom(t) {
     p.vx *= p.drift;
     p.vy *= p.drift;
 
-    if (p.y > seafloorTop + 6) p.y = seafloorTop + 6;
+    if (p.y > seafloorTop - 4) continue;
 
     const lifePct = age / p.life;
     const appear = Math.min(1, lifePct / 0.30);
@@ -1437,13 +1516,36 @@ function makeAnglerfish() {
     <circle cx="30" cy="35" r="4" fill="#fff8c8"/>
     <circle cx="30" cy="35" r="2" fill="#ffffff"/>
     <!-- body — only visible in headlight -->
-    <g class="abody" style="opacity:0.06;transition:opacity 0.2s">
-      <path d="M95,45 Q80,25 50,30 Q35,32 30,35" stroke="#2a3a50" stroke-width="1" fill="none"/>
-      <path d="M100,55 Q130,30 170,45 Q200,55 210,70 Q215,85 200,90 Q170,95 140,85 Q115,80 100,65 Z"
-            fill="#0a1830" stroke="#4a6078" stroke-width="1"/>
-      <path d="M205,75 Q220,65 218,55 M205,80 Q220,85 218,95" stroke="#4a6078" stroke-width="1.5" fill="none"/>
-      <circle cx="155" cy="58" r="3" fill="#1a2838"/>
-      <circle cx="155" cy="58" r="1" fill="#fff8c8"/>
+    <g class="abody" style="opacity:0.06;transition:opacity 0.3s">
+      <!-- illicium stalk -->
+      <path d="M93,44 Q78,22 52,28 Q36,31 30,35" stroke="#4a7090" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- main body mass -->
+      <path d="M98,55 Q126,30 166,43 Q197,53 210,70 Q216,87 197,93 Q164,98 134,86 Q109,78 98,65 Z"
+            fill="#1e3350" stroke="#3a6080" stroke-width="1.2"/>
+      <!-- belly — slightly lighter -->
+      <path d="M104,70 Q130,62 172,72 Q193,78 195,87 Q172,93 136,84 Q112,77 104,70 Z"
+            fill="#243d5e" opacity="0.85"/>
+      <!-- dorsal fin -->
+      <path d="M128,43 Q146,25 168,38 Q154,41 136,47 Z"
+            fill="#162438" stroke="#2e4f6e" stroke-width="0.9"/>
+      <!-- pectoral fin -->
+      <path d="M120,70 Q109,83 104,91 Q112,78 118,68 Z"
+            fill="#162438" stroke="#2e4f6e" stroke-width="0.8"/>
+      <!-- caudal fin -->
+      <path d="M203,66 Q222,56 220,48 M203,72 Q222,83 220,95"
+            stroke="#3a6080" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- eye -->
+      <circle cx="152" cy="57" r="4.5" fill="#091626" stroke="#5a8098" stroke-width="1"/>
+      <circle cx="153" cy="56" r="1.8" fill="#fff8c8" opacity="0.75"/>
+      <!-- lateral line -->
+      <path d="M116,62 Q150,57 183,64 Q197,68 204,72"
+            stroke="#2a4a72" stroke-width="0.7" fill="none" stroke-dasharray="2,3" opacity="0.55"/>
+      <!-- photophores along belly -->
+      <circle cx="118" cy="76" r="1.8" fill="#50ffc0" opacity="0.75"/>
+      <circle cx="134" cy="81" r="1.5" fill="#50ffc0" opacity="0.65"/>
+      <circle cx="152" cy="83" r="1.8" fill="#50ffc0" opacity="0.75"/>
+      <circle cx="170" cy="81" r="1.5" fill="#50ffc0" opacity="0.65"/>
+      <circle cx="186" cy="78" r="1.5" fill="#50ffc0" opacity="0.55"/>
     </g>
     <!-- teeth — always faintly visible, just barely -->
     <g style="filter:drop-shadow(0 0 2px rgba(255,248,200,0.6));opacity:0.35">
@@ -1558,14 +1660,52 @@ function makeGlowSquid(anchor=false) {
   };
 }
 
+// Tomopteris — pelagic polychaete, nearly transparent, bioluminescent parapodium tips.
+// Dive-mode only; faintly self-lit even without the beam.
+function makeGossamerWorm() {
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;width:240px;height:60px;pointer-events:none;opacity:0;';
+  el.innerHTML = `<svg viewBox="0 0 240 60" style="width:100%;height:100%;overflow:visible">
+    <path d="M10,30 Q40,18 70,30 Q100,42 130,30 Q160,18 190,30 Q215,36 230,30"
+          stroke="rgba(170,245,205,0.22)" stroke-width="1.2" fill="none"/>
+    <g stroke="rgba(140,255,195,0.38)" stroke-width="0.8" fill="none">
+      <path d="M32,23 Q28,13 25,7"/><path d="M64,28 Q60,18 57,11"/>
+      <path d="M96,37 Q92,27 89,19"/><path d="M128,28 Q124,18 121,11"/>
+      <path d="M160,23 Q156,13 153,7"/><path d="M192,29 Q188,19 185,12"/>
+    </g>
+    <g stroke="rgba(140,255,195,0.38)" stroke-width="0.8" fill="none">
+      <path d="M32,37 Q28,47 25,53"/><path d="M64,32 Q60,42 57,49"/>
+      <path d="M96,23 Q92,33 89,41"/><path d="M128,32 Q124,42 121,49"/>
+      <path d="M160,37 Q156,47 153,53"/><path d="M192,31 Q188,41 185,48"/>
+    </g>
+    <g fill="#b8ffd8" opacity="0.88" filter="url(#wglow)">
+      <circle cx="25" cy="7" r="1.7"/><circle cx="57" cy="11" r="1.7"/>
+      <circle cx="89" cy="19" r="1.7"/><circle cx="121" cy="11" r="1.7"/>
+      <circle cx="153" cy="7" r="1.7"/><circle cx="185" cy="12" r="1.7"/>
+      <circle cx="25" cy="53" r="1.7"/><circle cx="57" cy="49" r="1.7"/>
+      <circle cx="89" cy="41" r="1.7"/><circle cx="121" cy="49" r="1.7"/>
+      <circle cx="153" cy="53" r="1.7"/><circle cx="185" cy="48" r="1.7"/>
+    </g>
+  </svg>`;
+  creaturesLayer.appendChild(el);
+  const maxDocY = document.documentElement.scrollHeight;
+  return {
+    el, kind: 'gossamer',
+    x: 80 + Math.random()*(window.innerWidth-160),
+    docY: 80 + Math.random()*(maxDocY-160),
+    phase: Math.random()*Math.PI*2,
+    vx: (Math.random()>0.5?1:-1)*(0.025+Math.random()*0.04),
+  };
+}
+
 let deepCreatures=[];
 function rebuildDeepCreatures() {
   deepCreatures.forEach(c=>c&&c.el&&c.el.remove()); deepCreatures=[];
-  deepCreatures.push(makeAnglerfish()); // only 1 (#3 fix)
-  ['shrimp','worm','eel','shrimp','worm'].forEach(k=>deepCreatures.push(makeLightshy(k))); // no isopods (#4 fix)
+  deepCreatures.push(makeAnglerfish());
+  ['shrimp','worm','eel'].forEach(k=>deepCreatures.push(makeLightshy(k)));
   deepCreatures.push(makeVampSquid());
   deepCreatures.push(makeGlowSquid());
-  deepCreatures.push(makeGlowSquid());
+  deepCreatures.push(makeGossamerWorm());
 }
 rebuildDeepCreatures();
 
@@ -1585,7 +1725,7 @@ function drawDeepCreatures(t) {
       c.el.style.transform=`translate(-50%,-50%) scaleX(${c.vx<0?-1:1})`;
       const offScreen=vy>window.innerHeight+60||vy<-60||vy>seafloorTop-30;
       const lit=offScreen?0:isLitByBeam(c.x,vy);
-      c.el.style.opacity=offScreen?0:(0.16 + lit*0.84).toFixed(3);
+      c.el.style.opacity=offScreen?0:((diveMode?0.22:0) + lit*0.78).toFixed(3);
       if (!offScreen && c.body) c.body.style.opacity=(0.03+lit*0.97).toFixed(3);
     } else if (c.kind==='lightshy') {
       c.x+=c.vx;
@@ -1624,6 +1764,24 @@ function drawDeepCreatures(t) {
       c.el.style.transform=`translate(-50%,-50%) scale(${0.96 + pulse*0.08 + lit*0.08}) scaleX(${c.vx<0?-1:1})`;
       c.el.style.opacity=(bob>window.innerHeight+120||bob<-160||bob>seafloorTop-28)?0:((0.18 + pulse*0.30 + lit*0.62) * nightFactor).toFixed(3);
       c.el.style.filter = `drop-shadow(0 0 ${16 + lit*22}px rgba(126,232,255,${0.34 + lit*0.52}))`;
+    } else if (c.kind==='gossamer') {
+      c.x += c.vx;
+      if (c.x < -140) c.vx = Math.abs(c.vx);
+      if (c.x > window.innerWidth+140) c.vx = -Math.abs(c.vx);
+      const undulate = Math.sin(t*0.0011+c.phase)*7;
+      const vy = c.docY - scrollY + undulate;
+      c.el.style.left = c.x+'px';
+      c.el.style.top  = vy+'px';
+      c.el.style.transform = `translate(-50%,-50%) scaleX(${c.vx<0?-1:1})`;
+      const offScreen = vy>window.innerHeight+60||vy<-60||vy>seafloorTop-24;
+      if (offScreen || !diveMode) {
+        c.el.style.opacity = 0;
+        c.el.style.filter = 'none';
+      } else {
+        const lit = isLitByBeam(c.x, vy);
+        c.el.style.opacity = Math.min(1, 0.20 + lit*0.80).toFixed(3);
+        c.el.style.filter = `drop-shadow(0 0 ${5+lit*10}px rgba(180,255,210,${0.25+lit*0.45}))`;
+      }
     }
   }
 }
@@ -2001,21 +2159,21 @@ function drawDiveOverlay() {
   const dist = Math.hypot(dx, dy) || 1;
   const ux = dx / dist;
   const uy = dy / dist;
-  const forwardX = beamState.originX + ux * Math.min(78, dist * 0.34);
-  const forwardY = beamState.originY + uy * Math.min(78, dist * 0.34);
-  const farX = beamState.originX + ux * Math.min(130, dist * 0.54);
-  const farY = beamState.originY + uy * Math.min(130, dist * 0.54);
+  const forwardX = beamState.originX + ux * Math.min(150, dist * 0.34);
+  const forwardY = beamState.originY + uy * Math.min(150, dist * 0.34);
+  const farX = beamState.originX + ux * Math.min(260, dist * 0.54);
+  const farY = beamState.originY + uy * Math.min(260, dist * 0.54);
 
-  punchLight(beamState.originX, beamState.originY, 42, 34, 1);
-  punchLight(forwardX, forwardY, 84, 50, 0.985);
-  punchLight(farX, farY, 110, 58, 0.86);
-  punchLight(mouseX, mouseY, 34, 28, 0.48);
+  punchLight(beamState.originX, beamState.originY, 80, 64, 1);
+  punchLight(forwardX, forwardY, 160, 96, 0.985);
+  punchLight(farX, farY, 210, 112, 0.86);
+  punchLight(mouseX, mouseY, 64, 52, 0.48);
 
   diveOverlayCtx.globalCompositeOperation = 'source-over';
 }
 
 function loop(t){
-  drawStars(t); drawBiolum(t); drawAlvinBloom(t); drawCombBursts(t); drawChaser(t);
+  drawStars(t); drawBiolum(t); drawAlvinBloom(t); drawCombBursts(t); drawSiphonophores(t); drawChaser(t);
   drawSnow(t); drawSedimentCloud(t); drawMethaneBubbles(t); drawJellies(t); drawDeepCreatures(t); drawDiveOverlay();
   requestAnimationFrame(loop);
 }
@@ -2071,7 +2229,7 @@ function onScroll(){
   depthCursor.style.top  = railPct;
   depthReadout.style.top = railPct;
   const depthM = Math.round(pct*5000);
-  const txt = `DEPTH: ${depthM}m`;
+  const txt = `${depthM}m`;
   depthReadout.textContent = txt;
   if (footerDepth) footerDepth.textContent = txt;
 
@@ -2083,9 +2241,12 @@ function onScroll(){
   const hazeOpacity = Math.max(0, 1 - Math.min(1, pct / 0.035));
   waterCol.style.setProperty('--surface-haze-opacity', hazeOpacity.toFixed(3));
 
-  let activeIdx = 0;
-  pageSections.forEach((s,i) => { if (s.getBoundingClientRect().top < window.innerHeight*0.5) activeIdx=i; });
-  navLinks.forEach((a,i) => a.classList.toggle('active', i===activeIdx));
+  let activeId = pageSections[0]?.id || '';
+  pageSections.forEach(s => { if (s.getBoundingClientRect().top < window.innerHeight*0.5) activeId=s.id; });
+  navLinks.forEach(a => {
+    const href = a.getAttribute('href');
+    a.classList.toggle('active', href.startsWith('#') && href.slice(1) === activeId);
+  });
 }
 window.addEventListener('scroll',onScroll,{passive:true});
 onScroll();
