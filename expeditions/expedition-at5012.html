@@ -1,14 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>California Seeps · HOV Alvin · Rebecca Wipfler</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../site.css">
-  <link rel="stylesheet" href="../expedition.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>California Seeps · HOV Alvin · AT50-12</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<link rel="stylesheet" href="../expedition.css">
+<style>
+  /* ============================================================
+     AT50-12 DASHBOARD — Palette A (Deep Ocean)
+     Scoped under .dash-page so it doesn't fight site.css.
+     ============================================================ */
+  .dash-page {
+    --bg-0:         #050a14;
+    --bg-1:         #0a1426;
+    --bg-2:         #0f1d34;
+    --line-soft:    rgba(120,180,230,0.12);
+    --line-mid:     rgba(120,180,230,0.28);
+    --line-strong:  rgba(180,220,255,0.55);
+    --ink:          #e6efff;
+    --ink-dim:      #8aa0c4;
+    --ink-faint:    #4a6080;
+    --accent:       #6effd4;
+    --accent-dim:   #2eb888;
+    --readout:      #6dd6e6;
+    --readout-glow: rgba(109,214,230,0.45);
+    --highlight:    #e8a88c;
+
+    color: var(--ink);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 28px 60px;
+  }
+
+  .dash-page * { box-sizing: border-box; }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 16px;
+    grid-auto-rows: min-content;
+  }
+
+  /* HEADER */
+  .dash-header {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line-soft);
+    gap: 24px;
+  }
+  .dash-header .id {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 16px;
+    letter-spacing: 0.3em;
+    text-shadow: 0 0 6px rgba(110,255,212,0.45);
+  }
+  .dash-header h1 {
+    margin: 6px 0 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .dash-header h1 em {
+    display: block;
+    font-style: italic;
+    color: var(--ink-dim);
+    font-size: 0.575em;
+    margin-top: 4px;
+  }
+  .dash-header-right {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    color: var(--ink-dim);
+    font-size: 16px;
+    letter-spacing: 0.2em;
+  }
+  .dash-header-right .stamp {
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 10px;
+    text-shadow: 0 0 4px rgba(110,255,212,0.4);
+  }
+
+  .label-tiny {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.22em;
+    color: var(--ink-dim);
+    text-transform: uppercase;
+  }
+
+  /* OBJECTIVES */
+  .objectives {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    gap: 18px;
+    padding: 16px 18px;
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.6);
+    position: relative;
+  }
+  .objectives::before {
+    content: '';
+    position: absolute; top: -1px; left: 18px; width: 60px; height: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .obj-label {
+    border-right: 1px solid var(--line-soft);
+    padding-right: 18px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .obj-label .label-tiny { color: var(--accent); }
+  .obj-label .obj-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+  .obj-card { display: flex; flex-direction: column; gap: 6px; }
+  .obj-card .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--readout);
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 4px var(--readout-glow);
+  }
+  .obj-card .h {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .obj-card .b {
+    font-size: 16px;
+    color: var(--ink-dim);
+    line-height: 1.55;
+  }
+
+  /* TILES */
+  .tile {
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.5);
+    padding: 18px;
+  }
+  .tile .label-tiny { display: block; margin-bottom: 14px; }
+  .tile .big {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 41px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 10px rgba(110,255,212,0.45);
+  }
+  .tile .big small {
+    font-size: 16px; color: var(--ink-dim); margin-left: 4px; text-shadow: none;
+  }
+  .tile .sub {
+    margin-top: 10px; color: var(--ink-dim);
+    font-size: 16px; letter-spacing: 0.14em;
+  }
+  .tile .sub a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(110,255,212,0.25);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tile .sub a:hover { color: var(--ink); border-color: rgba(110,255,212,0.6); }
+  .tile .vlines {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 18px;
+    line-height: 1.35;
+    text-shadow: 0 0 8px rgba(110,255,212,0.45);
+    margin-top: 4px;
+  }
+
+  /* MONITOR */
+  .monitor-wrap {
+    grid-column: 1 / 3;
+    grid-row: span 2;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .monitor {
+    border: 1px solid var(--line-mid);
+    background: var(--bg-0);
+    aspect-ratio: 4 / 3;
+    position: relative;
+    overflow: hidden;
+  }
+  .monitor img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: opacity 0.35s;
+  }
+  .monitor-hud {
+    position: absolute; inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.16em;
+    text-shadow: 0 0 4px rgba(110,255,212,0.5);
+  }
+  .monitor-hud .corner-tl { position: absolute; top: 6px; left: 8px; }
+  .monitor-hud .corner-tr { position: absolute; top: 6px; right: 8px; }
+  .monitor-hud .corner-bl { position: absolute; bottom: 6px; left: 8px; }
+  .monitor-hud .corner-br { position: absolute; bottom: 6px; right: 8px; }
+  .monitor-hud .rec::before {
+    content: '●'; color: #ff5050; margin-right: 6px;
+    animation: dashBlink 1.4s infinite;
+  }
+  @keyframes dashBlink { 50% { opacity: 0.3; } }
+
+  .dive-info {
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.5);
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 18px;
+  }
+  .dive-info .col .k { display: block; margin-bottom: 4px; }
+  .dive-info .col .v {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink);
+    font-size: 16px;
+  }
+
+  /* NARRATIVE */
+  .narrative {
+    grid-column: 3 / 5;
+    grid-row: span 2;
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.5);
+    padding: 22px;
+    display: flex; flex-direction: column;
+  }
+  .narrative .objective-call {
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+    margin-bottom: 18px;
+  }
+  .narrative .objective-call .label-tiny { color: var(--accent); }
+  .narrative .objective-call h4 {
+    margin: 4px 0 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .narrative p {
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+  .placeholder {
+    color: var(--accent-dim);
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    border-left: 2px solid var(--accent-dim);
+    padding-left: 12px;
+    line-height: 1.7;
+  }
+  .narrative-meta {
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 18px;
+  }
+  .narrative-meta .k { display: block; margin-bottom: 4px; }
+  .narrative-meta .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  /* DIVE PICKER */
+  .divepicker {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.5);
+    padding: 14px 18px;
+  }
+  .divepicker-row {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+  }
+  .switch-btn {
+    padding: 8px 4px;
+    background: var(--bg-0);
+    border: 1px solid var(--line-soft);
+    color: var(--ink-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .switch-btn .swno { display: block; font-size: 16px; color: var(--readout); }
+  .switch-btn:hover { border-color: var(--accent-dim); color: var(--ink); }
+  .switch-btn.active {
+    background: rgba(110,255,212,0.10);
+    border-color: var(--accent);
+    color: var(--ink);
+    box-shadow:
+      0 0 12px rgba(110,255,212,0.35),
+      inset 0 0 8px rgba(110,255,212,0.18);
+  }
+  .switch-btn.active .swno {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(110,255,212,0.6);
+  }
+
+  .unit-pill {
+    display: inline-flex;
+    border: 1px solid var(--line-mid);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .unit-pill button {
+    background: transparent;
+    color: var(--ink-dim);
+    border: 0;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+  }
+  .unit-pill button.active {
+    background: var(--accent);
+    color: var(--bg-0);
+    text-shadow: none;
+  }
+
+  /* GALLERY */
+  .gallery-section { grid-column: 1 / -1; margin-top: 8px; }
+  .gallery-section .label-tiny { display: block; margin-bottom: 12px; }
+  .gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+    height: 460px;
+  }
+  .gphoto {
+    background: var(--bg-0);
+    border: 1px solid var(--line-soft);
+    overflow: hidden;
+    position: relative;
+  }
+  .gphoto img {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: contrast(1.05) saturate(0.95);
+  }
+  .gphoto.big { grid-row: 1 / 3; }
+  .gphoto-tag {
+    position: absolute; top: 10px; left: 10px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    background: rgba(0,0,0,0.55);
+    padding: 3px 8px;
+    letter-spacing: 0.18em;
+    border: 1px solid rgba(110,255,212,0.4);
+  }
+  .gphoto-cap {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.68);
+    padding: 6px 10px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 0.16em;
+    border-top: 1px solid rgba(110,255,212,0.22);
+    white-space: normal;
+    line-height: 1.55;
+  }
+
+  .placeholder-photo {
+    width: 100%; height: 100%;
+    background:
+      repeating-linear-gradient(45deg,
+        rgba(110,255,212,0.08) 0,
+        rgba(110,255,212,0.08) 4px,
+        var(--bg-0) 4px,
+        var(--bg-0) 8px);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-align: center;
+    padding: 12px;
+    white-space: pre-line;
+  }
+  /* FIELD NOTES PANEL */
+  .field-notes-panel {
+    grid-column: 1 / -1;
+    border: 1px solid var(--line-soft);
+    background: rgba(15,29,52,0.5);
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .field-notes-panel .label-tiny { color: var(--accent); }
+  .field-notes-panel p {
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(2,6,16,0.96);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .lightbox img {
+    max-width: 90vw; max-height: 90vh;
+    object-fit: contain;
+    cursor: default;
+    border: 1px solid rgba(110,255,212,0.15);
+    box-shadow: 0 0 60px rgba(0,0,0,0.8);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 28px;
+    color: rgba(110,255,212,0.55);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; letter-spacing: 0.2em;
+    pointer-events: none;
+  }
+  .gphoto { cursor: pointer; }
+  .monitor { cursor: zoom-in; }
+
+  /* ── TOP EXPEDITION NAV ── */
+  .exp-nav {
+    margin-top: 0;
+    border-top: none;
+    border-bottom: 0.5px solid rgba(79,200,216,0.18);
+    padding: 1.2rem 28px;
+    background: rgba(3,9,22,0.55);
+  }
+  .exp-nav-link {
+    font-size: 18px;
+    letter-spacing: 0.12em;
+    color: #6effd4;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: none;
+  }
+  .exp-nav-link:hover { color: #6dd6e6; }
+  .exp-nav-link--center {
+    font-size: 16px;
+    color: rgba(150,200,220,0.45);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+</style>
 </head>
 <body>
 <canvas id="biolum-layer"></canvas>
@@ -18,11 +497,6 @@
   <a href="../expeditions.html" class="surface-link">← Expeditions</a>
   <div class="zone-badge">— Midnight Zone · AT50-12 —</div>
 </div>
-
-<a href="../expeditions.html" class="dive-out-btn">
-  <span class="dive-out-icon">←</span>
-  <span>Back to Expeditions</span>
-</a>
 
 <nav>
   <a href="../index.html" class="nav-surface">↑ Surface</a>
@@ -34,68 +508,15 @@
   <a href="../index.html#contact">Contact</a>
 </nav>
 
-<main>
-  <div class="exp-hero">
-    <div class="hero-badges">
-      <span class="hero-badge">R/V Atlantis · AT50-12</span>
-      <span class="hero-badge hero-badge--alvin">HOV Alvin</span>
-    </div>
-    <h1 class="hero-title">California Seeps<br><em style="font-size:0.62em;font-style:normal;color:rgba(220,140,140,0.75);letter-spacing:0.04em;">First Alvin Dive</em></h1>
-    <div class="hero-sub">2023 · Southern California continental margin · Levin Lab / Scripps</div>
-    <div class="hero-depth">↓ ~1,020 m · Midnight Zone</div>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat"><span class="n">~1,020m</span><span class="l">Max depth</span></div>
-    <div class="stat"><span class="n">First dive</span><span class="l">Inside HOV Alvin</span></div>
-    <div class="stat"><span class="n">Scientific observer</span><span class="l">Rebecca's Alvin role</span></div>
-    <div class="stat"><span class="n">Cold seep communities</span><span class="l">Research focus</span></div>
-  </div>
-
-  <section class="exp-section">
-    <div class="sec-label">Field notes</div>
-    <!-- FILL: Your narrative here — this one especially deserves a good story. What was it like inside Alvin for the first time? What did you see? One moment that stuck with you. Write casually, 3–8 sentences. -->
-    <div class="fill-placeholder">[ Narrative coming soon — field notes from the first HOV Alvin dive, AT50-12, 2023 ]</div>
-  </section>
-
-  <section class="exp-section">
-    <div class="sec-label">Dive imagery</div>
-    <div class="gallery-grid">
-      <div class="gallery-slot">Photo 1</div>
-      <div class="gallery-slot">Photo 2</div>
-      <div class="gallery-slot">Photo 3</div>
-      <div class="gallery-slot">Photo 4</div>
-    </div>
-  </section>
-
-  <section class="exp-section">
-    <div class="sec-label">Expedition details</div>
-    <div class="meta-grid">
-      <div class="meta-block">
-        <div class="meta-label">Chief Scientist</div>
-        <div class="meta-value">Lisa Levin · Scripps Institution of Oceanography, UCSD</div>
-      </div>
-      <div class="meta-block">
-        <div class="meta-label">Research focus</div>
-        <div class="meta-value">Cold methane seep ecology along the Southern California margin — benthic community structure, microbial biogeochemistry, and infaunal sampling at active seep sites</div>
-      </div>
-      <div class="meta-block">
-        <div class="meta-label">Coordinates</div>
-        <div class="meta-value">33.2°N · 118.0°W</div>
-      </div>
-      <div class="meta-block">
-        <div class="meta-label">Funding</div>
-        <div class="meta-value" style="color:rgba(79,200,216,0.28)"><!-- FILL --></div>
-      </div>
-    </div>
-  </section>
-</main>
-
 <div class="exp-nav">
   <a href="expedition-wf0521.html" class="exp-nav-link">← California Margin II</a>
   <a href="../expeditions.html" class="exp-nav-link exp-nav-link--center">All Expeditions</a>
   <a href="expedition-yellowfin.html" class="exp-nav-link">California Day Cruise →</a>
 </div>
+
+<main>
+  <div id="dash-root" class="dash-page"></div>
+</main>
 
 <footer>
   <span>© 2026 R. WIPFLER</span>
@@ -104,11 +525,252 @@
 </footer>
 
 <script src="../particles.js"></script>
-<script>initParticles("biolum-layer");</script>
+<script>if (window.initParticles) initParticles("biolum-layer");</script>
 <div id="cursor-dot"></div>
 <script>
   const _cd = document.getElementById('cursor-dot');
-  document.addEventListener('mousemove', e => { _cd.style.left = e.clientX+'px'; _cd.style.top = e.clientY+'px'; });
+  document.addEventListener('mousemove', e => {
+    if (_cd) { _cd.style.left = e.clientX+'px'; _cd.style.top = e.clientY+'px'; }
+  });
 </script>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+
+/* ============================================================
+   AT50-12 dive log — replace per-dive numbers with real values
+   when you have them. Each dive has its own scientific objective.
+   ============================================================ */
+const DIVES = [
+  { n: 1, depth_m: 1018, lat: '33.219°N', lon: '-118.012°W', site: 'San Pedro Basin', duration: '07h 42m', date: '2023-10-14', img: 'seafloor1',
+    objective: 'Carbonate pavement survey', detail: 'First descent — characterize seep-rim microbial mats.' },
+  { n: 2, depth_m:  942, lat: '33.218°N', lon: '-118.018°W', site: 'San Pedro Basin', duration: '08h 06m', date: '2023-10-15', img: 'seafloor1',
+    objective: 'Push-core sampling',     detail: 'Sediment cores across the methane gradient.' },
+  { n: 3, depth_m:  788, lat: '33.221°N', lon: '-118.024°W', site: 'San Pedro Basin', duration: '07h 18m', date: '2023-10-16', img: 'group',
+    objective: 'Tubeworm bush census',   detail: 'Population mapping of vestimentiferan symbioses.' },
+  { n: 4, depth_m: 1004, lat: '33.218°N', lon: '-118.016°W', site: 'San Pedro Basin', duration: '08h 22m', date: '2023-10-17', img: 'ondeck',
+    objective: 'Carbonate rock recovery',detail: 'Targeted rock samples for microbial culturing.' },
+  { n: 5, depth_m:  605, lat: '33.190°N', lon: '-117.998°W', site: 'Del Mar Seep',    duration: '06h 54m', date: '2023-10-19', img: 'seafloor1',
+    objective: 'Bubble-plume traverse',  detail: 'Map active venting along Del Mar fault scarp.' },
+  { n: 6, depth_m:  860, lat: '33.188°N', lon: '-118.001°W', site: 'Del Mar Seep',    duration: '07h 30m', date: '2023-10-20', img: 'seafloor1',
+    objective: 'Symbiont host collection',detail: 'Live mussel + clam sampling for transcriptomics.' },
+  { n: 7, depth_m:  450, lat: '33.176°N', lon: '-117.984°W', site: 'Lasuen Knoll',    duration: '06h 12m', date: '2023-10-21', img: 'group',
+    objective: 'Shallow-margin reference',detail: 'Background community for non-seep comparison.' },
+  { n: 8, depth_m: 1020, lat: '33.218°N', lon: '-118.018°W', site: 'San Pedro Basin', duration: '08h 44m', date: '2023-10-22', img: 'ondeck',
+    objective: 'Mosaic photo transect',   detail: 'Final dive — high-res photomosaic of focal seep.' },
+];
+
+const IMG_PATHS = {
+  group:    '../images/expeditions/at5012/group.jpeg',
+  seafloor1:'../images/expeditions/at5012/seafloor1.png',
+  ondeck:   '../images/expeditions/at5012/ondeck.png',
+};
+
+function Photo({ which, alt }) {
+  const [err, setErr] = useState(false);
+  if (err) {
+    const labels = {
+      group:    '[ GROUP PHOTO\nDECK ]',
+      seafloor1:'[ SEAFLOOR\n~1020M ]',
+      ondeck:   '[ ON DECK\nPRE-DIVE ]',
+    };
+    return <div className="placeholder-photo">{labels[which] || '[ IMAGE ]'}</div>;
+  }
+  return <img src={IMG_PATHS[which]} alt={alt} onError={() => setErr(true)} />;
+}
+
+function fmtDepth(m, unit) {
+  if (unit === 'ft') return Math.round(m * 3.28084).toLocaleString();
+  return m.toLocaleString();
+}
+
+function Dashboard() {
+  const [dive, setDive] = useState(1);
+  const [unit, setUnit] = useState('m');
+  const [lightbox, setLightbox] = useState(null);
+  React.useEffect(() => {
+    const handler = e => { if (e.key === 'Escape') setLightbox(null); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+  const d = DIVES[dive - 1];
+  const totalBottomMin = DIVES.reduce((acc, dv) => {
+    const [h, m] = dv.duration.split(/h|m/).map(s => parseInt(s.trim()) || 0);
+    return acc + h * 60 + m;
+  }, 0);
+  const totalH = Math.floor(totalBottomMin / 60);
+
+  return (
+    <>
+    <div className="dash-grid">
+      <div className="dash-header">
+        <div>
+          <span className="id">AT50-12 · 2023.10</span>
+          <h1>
+            Methane Footprints — California Seeps
+            <em>First HOV Alvin dive · Southern California margin</em>
+          </h1>
+        </div>
+        <div></div>
+        <div className="dash-header-right">
+          <span>33.2°N · 118.0°W</span>
+          <div className="unit-pill" style={{marginTop:4}}>
+            <button className={unit==='m'?'active':''} onClick={() => setUnit('m')}>METRIC</button>
+            <button className={unit==='ft'?'active':''} onClick={() => setUnit('ft')}>IMPERIAL</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="objectives">
+        <div className="obj-label">
+          <span className="label-tiny">▸ Scientific Objectives</span>
+          <span className="obj-title">Defining the methanosphere</span>
+        </div>
+        <div className="obj-card">
+          <span className="num">▮ 01</span>
+          <span className="h">Microbial methane consumption</span>
+          <span className="b">Map archaea + bacteria that anaerobically oxidize methane at seep boundaries.</span>
+        </div>
+        <div className="obj-card">
+          <span className="num">▮ 02</span>
+          <span className="h">Animal–microbe symbioses</span>
+          <span className="b">Sample tubeworms, mussels, and clams hosting methane-oxidizing endosymbionts.</span>
+        </div>
+        <div className="obj-card">
+          <span className="num">▮ 03</span>
+          <span className="h">Carbonate rocks as habitat</span>
+          <span className="b">Test the role of authigenic carbonate in sustaining seep food webs beyond active venting.</span>
+        </div>
+      </div>
+
+      <div className="tile">
+        <span className="label-tiny">MAX DEPTH</span>
+        <div className="big">{fmtDepth(Math.max(...DIVES.map(d=>d.depth_m)), unit)}<small>{unit}</small></div>
+      </div>
+      <div className="tile">
+        <span className="label-tiny">DIVES COMPLETED</span>
+        <div className="big">08<small>/ 08</small></div>
+      </div>
+      <div className="tile">
+        <span className="label-tiny">TOTAL BOTTOM TIME</span>
+        <div className="big">{totalH}<small>HRS</small></div>
+      </div>
+      <div className="tile">
+        <span className="label-tiny">VESSEL · VEHICLE</span>
+        <div className="vlines">R/V ATLANTIS<br/>DSV ALVIN</div>
+        <div className="sub"><a href="https://www.whoi.edu" target="_blank">WHOI</a> · <a href="https://ndsf.whoi.edu" target="_blank">NDSF</a></div>
+      </div>
+
+      <div className="field-notes-panel">
+        <span className="label-tiny">▸ Field Notes</span>
+        <p className="placeholder">
+          [ Narrative coming soon — field notes from the first HOV Alvin dive,
+          AT50-12, October 2023. What was it like inside Alvin for the first
+          time? What did you see? One moment that stuck with you. ]
+        </p>
+      </div>
+
+      <div className="monitor-wrap">
+        <div className="monitor" onClick={() => setLightbox(IMG_PATHS[d.img])}>
+          <Photo which={d.img} alt={`Dive ${d.n}`} />
+          <div className="monitor-hud">
+            <span className="corner-tl">CAM 01 · DIVE {String(d.n).padStart(2,'0')}</span>
+            <span className="corner-tr rec">REC</span>
+          </div>
+        </div>
+        <div className="dive-info">
+          <div className="col"><span className="k label-tiny">Site</span><span className="v text">{d.site}</span></div>
+          <div className="col"><span className="k label-tiny">Date</span><span className="v">{d.date}</span></div>
+          <div className="col"><span className="k label-tiny">Duration</span><span className="v">{d.duration}</span></div>
+          <div className="col"><span className="k label-tiny">Depth</span><span className="v">{fmtDepth(d.depth_m, unit)}{unit}</span></div>
+        </div>
+      </div>
+
+      <div className="narrative">
+        <div className="objective-call">
+          <span className="label-tiny">▸ Dive {String(d.n).padStart(2,'0')} Objective</span>
+          <h4>{d.objective}</h4>
+          <p style={{fontFamily:'JetBrains Mono', fontSize: 16, color: 'var(--ink-dim)', margin: '4px 0 0', lineHeight: 1.55, letterSpacing:'0.02em'}}>
+            {d.detail}
+          </p>
+        </div>
+        <div className="narrative-meta">
+          <div>
+            <span className="k label-tiny">Chief Scientist</span>
+            <span className="v">Lisa Levin · Scripps Institution of Oceanography, UCSD</span>
+          </div>
+          <div>
+            <span className="k label-tiny">Funding</span>
+            <span className="v">NSF "Methanosphere" — Redefining the footprint of deep ocean methane seepage for benthic ecosystems (2021–2026).</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="divepicker">
+        <span className="label-tiny" style={{whiteSpace:'nowrap'}}>▸ Select Dive</span>
+        <div className="divepicker-row">
+          {DIVES.map(dv => (
+            <button
+              key={dv.n}
+              className={`switch-btn ${dive === dv.n ? 'active' : ''}`}
+              onClick={() => setDive(dv.n)}
+            >
+              <span className="swno">{String(dv.n).padStart(2,'0')}</span>
+              {fmtDepth(dv.depth_m, unit)}{unit}
+            </button>
+          ))}
+        </div>
+        <span className="label-tiny" style={{whiteSpace:'nowrap'}}>{d.site.toUpperCase()}</span>
+      </div>
+
+      <div className="gallery-section">
+        <span className="label-tiny">▸ Expedition Photo Log</span>
+        <div className="gallery">
+          <div className="gphoto big" onClick={() => setLightbox(IMG_PATHS.group)}>
+            <Photo which="group" alt="science party" />
+            <span className="gphoto-tag">01 · DECK</span>
+            <div className="gphoto-cap">AT50-12 science party on deck of R/V Atlantis.</div>
+          </div>
+          <div className="gphoto" onClick={() => setLightbox(IMG_PATHS.seafloor1)}>
+            <Photo which="seafloor1" alt="seafloor" />
+            <span className="gphoto-tag">02 · SEAFLOOR</span>
+            <div className="gphoto-cap">Cold seep community at ~1,020 m.</div>
+          </div>
+          <div className="gphoto" onClick={() => setLightbox(IMG_PATHS.ondeck)}>
+            <Photo which="ondeck" alt="pre-dive" />
+            <span className="gphoto-tag">03 · PRE-DIVE</span>
+            <div className="gphoto-cap">Pre-dive with PhD advisor Dr. Victoria Orphan.</div>
+          </div>
+          <div className="gphoto" onClick={() => setLightbox(IMG_PATHS.seafloor1)}>
+            <Photo which="seafloor1" alt="carbonate" />
+            <span className="gphoto-tag">04 · CARBONATE</span>
+            <div className="gphoto-cap">Authigenic carbonate pavement, San Pedro Basin.</div>
+          </div>
+          <div className="gphoto" onClick={() => setLightbox(IMG_PATHS.group)}>
+            <Photo which="group" alt="lab work" />
+            <span className="gphoto-tag">05 · LAB</span>
+            <div className="gphoto-cap">Sample processing in the wet lab.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {lightbox && (
+      <div className="lightbox" onClick={() => setLightbox(null)}>
+        <span className="lightbox-close">ESC · CLICK TO CLOSE</span>
+        <img src={lightbox} alt="" onClick={e => e.stopPropagation()} />
+      </div>
+    )}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('dash-root')).render(<Dashboard />);
+</script>
+
 </body>
 </html>

@@ -4,7 +4,7 @@
 
 /* ── HERO ── */
 .exp-hero {
-  padding: 5rem 3rem 2.5rem;
+  padding: 5rem 68px 2.5rem;
   border-bottom: 0.5px solid rgba(79,200,216,0.10);
   position: relative; z-index: 2;
 }
@@ -44,7 +44,7 @@
 /* ── STATS ROW ── */
 .stats-row {
   display: flex; flex-wrap: wrap; gap: 2rem;
-  padding: 1.5rem 3rem;
+  padding: 1.5rem 68px;
   border-bottom: 0.5px solid rgba(79,200,216,0.08);
   position: relative; z-index: 2;
 }
@@ -61,13 +61,13 @@
 
 /* ── MAIN ── */
 main { position: relative; z-index: 2; padding-bottom: 2rem; }
-.exp-section { padding: 2.5rem 3rem 0; max-width: 920px; }
+.exp-section { padding: 2.5rem 68px 0; }
 .exp-section + .exp-section { padding-top: 2rem; }
 
 /* ── NARRATIVE ── */
 .exp-narrative {
   font-size: 1.22rem; line-height: 1.65;
-  color: rgba(217,230,245,0.88); max-width: 740px;
+  color: rgba(217,230,245,0.88);
 }
 .exp-narrative + .exp-narrative { margin-top: 1rem; }
 
@@ -77,7 +77,6 @@ main { position: relative; z-index: 2; padding-bottom: 2rem; }
   color: rgba(79,200,216,0.25);
   border: 1px dashed rgba(79,200,216,0.14);
   padding: 1.2rem 1.5rem;
-  max-width: 720px;
 }
 
 /* ── META GRID ── */
@@ -85,7 +84,6 @@ main { position: relative; z-index: 2; padding-bottom: 2rem; }
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1.3rem 2.5rem;
-  max-width: 860px;
 }
 .meta-block {}
 .meta-label {
@@ -101,6 +99,9 @@ main { position: relative; z-index: 2; padding-bottom: 2rem; }
   border-bottom: 1px solid rgba(110,255,212,0.28); padding-bottom: 2px;
 }
 .meta-link:hover { color: #fff; border-bottom-color: rgba(110,255,212,0.7); }
+
+/* ── WIDE SECTION (gallery — removes gallery-grid's internal max-width) ── */
+.exp-section--wide .gallery-grid { max-width: none; }
 
 /* ── GALLERY ── */
 .gallery-grid {
@@ -122,6 +123,8 @@ main { position: relative; z-index: 2; padding-bottom: 2rem; }
   border: 1px solid rgba(79,200,216,0.12);
   aspect-ratio: 16/9;
 }
+.gallery-item--portrait { aspect-ratio: 3/4; }
+.gallery-item--full { grid-column: 1 / -1; }
 .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery-caption {
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -145,7 +148,7 @@ main { position: relative; z-index: 2; padding-bottom: 2rem; }
 /* ── EXPEDITION NAV FOOTER ── */
 .exp-nav {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 2rem 3rem;
+  padding: 2rem 68px;
   border-top: 0.5px solid rgba(79,200,216,0.10);
   margin-top: 3rem; position: relative; z-index: 2;
   flex-wrap: wrap; gap: 1rem;
