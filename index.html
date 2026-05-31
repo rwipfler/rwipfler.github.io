@@ -99,7 +99,7 @@
 
     /* ══ DSV ALVIN ══ */
     #alvin {
-      position: absolute; width: 160px; height: 100px;
+      position: absolute; width: 200px; height: 90px;
       pointer-events: none; transform: translate(-50%,-50%);
       filter: drop-shadow(0 0 8px rgba(100,160,255,0.2));
     }
@@ -437,46 +437,8 @@
 <!-- ── DSV ALVIN ── -->
 <div id="alvin-layer">
   <div id="alvin">
-    <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0%" stop-color="#fffbd6" stop-opacity="1"/>
-          <stop offset="40%" stop-color="#ffe89a" stop-opacity="0.7"/>
-          <stop offset="100%" stop-color="#ffcc44" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#e8ecef"/>
-          <stop offset="50%" stop-color="#b6bec5"/>
-          <stop offset="100%" stop-color="#5b6670"/>
-        </linearGradient>
-        <linearGradient id="hullTop" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#ff9e38"/>
-          <stop offset="100%" stop-color="#c86a10"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="45" cy="72" rx="55" ry="28" fill="url(#lamp)" opacity="0.55" class="alvin-lamp"/>
-      <rect x="175" y="56" width="18" height="6" fill="#2a333b" rx="1"/>
-      <rect x="175" y="76" width="18" height="6" fill="#2a333b" rx="1"/>
-      <circle cx="195" cy="59" r="5" fill="none" stroke="#3a4650" stroke-width="1.2"/>
-      <circle cx="195" cy="79" r="5" fill="none" stroke="#3a4650" stroke-width="1.2"/>
-      <path d="M95,42 Q115,28 145,34 L150,46 L90,46 Z" fill="url(#hullTop)" stroke="#6a3a08" stroke-width="0.5"/>
-      <ellipse cx="115" cy="70" rx="75" ry="24" fill="url(#hull)" stroke="#3a4650" stroke-width="1"/>
-      <path d="M60,58 Q115,46 175,58 L175,64 Q115,52 60,64 Z" fill="#d97716" opacity="0.85"/>
-      <circle cx="70" cy="72" r="8" fill="#0a1a2e" stroke="#e8ecef" stroke-width="1.5"/>
-      <circle cx="68" cy="70" r="2.5" fill="#6fbcff" opacity="0.7"/>
-      <circle cx="105" cy="78" r="4" fill="#0a1a2e" stroke="#a9b3ba" stroke-width="0.8"/>
-      <g stroke="#3a4650" stroke-width="2" fill="none" stroke-linecap="round">
-        <line x1="50" y1="86" x2="30" y2="98"/><line x1="30" y1="98" x2="18" y2="94"/>
-      </g>
-      <circle cx="18" cy="94" r="2" fill="#d97716"/>
-      <rect x="88" y="90" width="40" height="8" fill="none" stroke="#3a4650" stroke-width="1"/>
-      <line x1="92" y1="90" x2="92" y2="98" stroke="#3a4650" stroke-width="0.6"/>
-      <line x1="100" y1="90" x2="100" y2="98" stroke="#3a4650" stroke-width="0.6"/>
-      <line x1="108" y1="90" x2="108" y2="98" stroke="#3a4650" stroke-width="0.6"/>
-      <line x1="116" y1="90" x2="116" y2="98" stroke="#3a4650" stroke-width="0.6"/>
-      <line x1="124" y1="90" x2="124" y2="98" stroke="#3a4650" stroke-width="0.6"/>
-      <circle cx="48" cy="72" r="3" fill="#ffffff" opacity="0.9" class="alvin-headlight"/>
-      <text x="115" y="74" font-family="monospace" font-size="5" fill="#2a333b" text-anchor="middle" opacity="0.9">DSV ALVIN</text>
+    <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" style="width:200px;height:90px;display:block;">
+      <image href="images/Alvin_ROV_Graphic.png" x="0" y="0" width="200" height="90" preserveAspectRatio="xMidYMid meet"/>
     </svg>
   </div>
 </div>
@@ -744,7 +706,7 @@ function getSeafloorScreenTop() {
 }
 
 let alvinBloom = [];
-const BLOOM_MAX = 36;
+const BLOOM_MAX = 7;
 let sedimentCloud = [];
 const SEDIMENT_CLOUD_MAX = 70;
 
@@ -819,7 +781,7 @@ function animateSub() {
   driftX *= 0.92; driftY *= 0.92;
 
   const bob = Math.sin(performance.now() * 0.00125) * 1.6;
-  const subHalfW = 80;
+  const subHalfW = 100;
 
   // Stable front-crossing logic with hysteresis so Alvin does not chatter
   // when the cursor sits inside the body/nose zone.
@@ -870,7 +832,7 @@ function animateSub() {
   localAim = Math.max(-16, Math.min(16, localAim));
   subPitch += (localAim - subPitch) * 0.06;
 
-  const flipX = subFacing === 1 ? -1 : 1;
+  const flipX = subFacing;
   alvin.style.left = subX + 'px';
   alvin.style.top = (subY + bob) + 'px';
   alvin.style.transform = `translate(-50%,-50%) rotate(${subPitch}deg) scaleX(${flipX})`;
@@ -886,7 +848,7 @@ function animateSub() {
   const speed = Math.hypot(subX - prevSubX, subY - prevSubY);
   if (diveMode && speed > 0.28) {
     const now = performance.now();
-    const count = (Math.random() < 0.55) ? 1 : 0;
+    const count = (Math.random() < 0.11) ? 1 : 0;
     const trailDir = subFacing === 1 ? -1 : 1;
     for (let j = 0; j < count; j++) {
       const spread = 10 + Math.random() * 20;
